@@ -1,36 +1,120 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Hua Hin Vibes
 
-## Getting Started
+Next.js App Router project for a Hua Hin travel guide with restaurants, hotels, attractions, blog posts, admin-managed places, and Programmatic SEO landing pages.
 
-First, run the development server:
+## Local Development
 
 ```bash
+npm install --legacy-peer-deps
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+For a production-like cache test:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+## Programmatic SEO
 
-To learn more about Next.js, take a look at the following resources:
+The generic long-tail landing page route is:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```text
+app/[location]/[q]/page.tsx
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Example URLs:
 
-## Deploy on Vercel
+```text
+/hua-hin/restaurants
+/hua-hin/somtam
+/khao-takiab/seafood
+/cha-am/hotels
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Important behavior:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `params` is awaited before reading `location` and `q`.
+- URL params are decoded with `decodeURIComponent`.
+- `generateMetadata` creates SEO title and description dynamically.
+- `generateStaticParams` pre-renders a limited number of location/query combinations.
+- `revalidate = 86400` enables ISR every 24 hours.
+- Result data is fetched through `getCachedData`, which wraps `searchData` with React `cache()`.
+
+Data helpers live in:
+
+```text
+lib/places.ts
+```
+
+The pSEO page reads from the Prisma database. Google Places should be used to enrich/admin-import data into the database, not as a live fetch on every SEO page view.
+
+## Sitemap
+
+Dynamic sitemap is handled by:
+
+```text
+app/sitemap.ts
+```
+
+It includes:
+
+- Static pages
+- Restaurant pSEO pages
+- Hotel pSEO pages
+- Attraction pSEO pages
+- Generic long-tail pages from `/[location]/[q]`
+- Individual place pages
+- Blog pages
+
+After deployment, submit this URL in Google Search Console:
+
+```text
+https://yourdomain.com/sitemap.xml
+```
+
+## Environment Variables
+
+Set these in local `.env` and in Vercel.
+
+```text
+DATABASE_URL=
+DATABASE_URL_UNPOOLED=
+NEXT_PUBLIC_BASE_URL=https://yourdomain.com
+GOOGLE_MAPS_API_KEY=
+```
+
+`NEXT_PUBLIC_BASE_URL` is required so the sitemap generates correct production URLs.
+
+`GOOGLE_MAPS_API_KEY` is used by the admin Google Place ID auto-fill route:
+
+```text
+app/api/google-places/route.ts
+```
+
+## Vercel Notes
+
+Recommended install command:
+
+```bash
+npm install --legacy-peer-deps
+```
+
+Make sure the Vercel project has:
+
+- Correct production domain in `NEXT_PUBLIC_BASE_URL`
+- Database connection variables
+- Google Maps API key if using the admin auto-fill feature
+
+## Useful Commands
+
+```bash
+npm run lint
+npm run build
+npm run start
+npm run db:migrate
+npm run seed
+```
