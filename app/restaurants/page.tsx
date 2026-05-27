@@ -16,6 +16,11 @@ function areaLabel(area?: string) {
   return AREAS.find((a) => a.value === area)?.labelTh ?? AREAS.find((a) => a.value === area)?.label ?? area;
 }
 
+function areaLabelEn(area?: string) {
+  if (!area) return "Hua Hin";
+  return AREAS.find((a) => a.value === area)?.label ?? area;
+}
+
 function buildSearchRecommendation({
   q,
   area,
@@ -26,24 +31,55 @@ function buildSearchRecommendation({
   places: Place[];
 }) {
   const location = areaLabel(area);
+  const locationEn = areaLabelEn(area);
   const countText = places.length.toLocaleString("th-TH");
+  const countTextEn = places.length.toLocaleString("en-US");
+  const countTextZh = places.length.toLocaleString("zh-CN");
   const topPlaces = places.slice(0, 2);
   const names = topPlaces.map((place) => place.name);
-  const title = `แนะนำ ${countText} ร้าน${q}ใน${location}`;
-  const listText =
+  const listTextTh =
     names.length === 1
       ? names[0]
       : `${names.slice(0, -1).join(", ")} และ ${names[names.length - 1]}`;
+  const listTextEn =
+    names.length === 1
+      ? names[0]
+      : `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+  const listTextZh = names.join("、");
   const bestRating = Math.max(...places.map((place) => place.rating ?? 0));
   const totalReviews = places.reduce((sum, place) => sum + (place.reviewCount ?? 0), 0);
+  const totalReviewsTh = totalReviews.toLocaleString("th-TH");
+  const totalReviewsEn = totalReviews.toLocaleString("en-US");
+  const totalReviewsZh = totalReviews.toLocaleString("zh-CN");
 
   return {
-    title,
-    intro: `ถ้ากำลังมองหา${q}ใน${location} ระบบพบ ${countText} ร้านที่น่าสนใจ ได้แก่ ${listText} โดยเรียงจากร้านที่มีข้อมูลรีวิว คะแนน และรายละเอียดครบถ้วน เหมาะสำหรับใช้เลือกก่อนออกไปกินจริงในหัวหิน`,
-    proof:
-      bestRating > 0 || totalReviews > 0
-        ? `กลุ่มร้านนี้มีคะแนนสูงสุด ${bestRating.toFixed(1)} และมีรีวิวรวม ${totalReviews.toLocaleString("th-TH")} รีวิว`
-        : "ข้อมูลนี้อัปเดตจากร้านที่เผยแพร่ใน Hua Hin Vibes",
+    th: {
+      label: "ภาษาไทย",
+      title: `แนะนำ ${countText} ร้าน${q}ใน${location}`,
+      intro: `ถ้ากำลังมองหา${q}ใน${location} ระบบพบ ${countText} ร้านที่น่าสนใจ ได้แก่ ${listTextTh} โดยเรียงจากร้านที่มีข้อมูลรีวิว คะแนน และรายละเอียดครบถ้วน เหมาะสำหรับใช้เลือกก่อนออกไปกินจริงในหัวหิน`,
+      proof:
+        bestRating > 0 || totalReviews > 0
+          ? `กลุ่มร้านนี้มีคะแนนสูงสุด ${bestRating.toFixed(1)} และมีรีวิวรวม ${totalReviewsTh} รีวิว`
+          : "ข้อมูลนี้อัปเดตจากร้านที่เผยแพร่ใน Hua Hin Vibes",
+    },
+    en: {
+      label: "English",
+      title: `${countTextEn} recommended ${q} restaurants in ${locationEn}`,
+      intro: `Looking for ${q} in ${locationEn}? Hua Hin Vibes found ${countTextEn} useful restaurant picks, including ${listTextEn}. The list is sorted from real place data such as ratings, reviews, location details, and descriptions so you can choose more confidently before visiting.`,
+      proof:
+        bestRating > 0 || totalReviews > 0
+          ? `The highest rating in this group is ${bestRating.toFixed(1)}, with ${totalReviewsEn} total reviews.`
+          : "This recommendation is generated from published Hua Hin Vibes place data.",
+    },
+    zh: {
+      label: "中文",
+      title: `${locationEn} 推荐 ${countTextZh} 家 ${q} 餐厅`,
+      intro: `如果你正在${locationEn}寻找${q}，Hua Hin Vibes 找到 ${countTextZh} 个值得参考的选择，包括 ${listTextZh}。列表会根据评分、评论、位置和店铺介绍等真实资料自动整理，方便你出发前快速比较。`,
+      proof:
+        bestRating > 0 || totalReviews > 0
+          ? `本组店铺最高评分为 ${bestRating.toFixed(1)}，累计评论 ${totalReviewsZh} 条。`
+          : "此推荐内容根据 Hua Hin Vibes 已发布的地点资料自动生成。",
+    },
     topPlaces,
   };
 }
@@ -93,15 +129,22 @@ export default async function RestaurantsPage({
           </p>
           {recommendation && (
             <section className="mt-6 max-w-3xl border-l-4 border-primary bg-primary/5 px-5 py-4 rounded-r-2xl">
-              <h2 className="text-xl md:text-2xl font-extrabold text-foreground mb-2">
-                {recommendation.title}
-              </h2>
-              <p className="text-sm md:text-base text-muted-foreground leading-7 mb-3">
-                {recommendation.intro}
-              </p>
-              <p className="text-sm font-semibold text-primary mb-3">
-                {recommendation.proof}
-              </p>
+              {[recommendation.th, recommendation.en, recommendation.zh].map((content) => (
+                <div key={content.label} className="mb-5 last:mb-0">
+                  <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">
+                    {content.label}
+                  </p>
+                  <h2 className="text-xl md:text-2xl font-extrabold text-foreground mb-2">
+                    {content.title}
+                  </h2>
+                  <p className="text-sm md:text-base text-muted-foreground leading-7 mb-3">
+                    {content.intro}
+                  </p>
+                  <p className="text-sm font-semibold text-primary">
+                    {content.proof}
+                  </p>
+                </div>
+              ))}
               <div className="space-y-2">
                 {recommendation.topPlaces.map((place, index) => (
                   <p key={place.id} className="text-sm text-muted-foreground leading-6">
