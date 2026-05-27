@@ -193,8 +193,8 @@ export default function PlaceForm({ place, mode }: Props) {
         </div>
       </section>
 
-      {/* Location */}
-      <section className="bg-card border border-border rounded-2xl p-6">
+      {/* Location — hide for Blog */}
+      {form.type !== "BLOG" && <section className="bg-card border border-border rounded-2xl p-6">
         <h2 className="font-bold text-base mb-5 pb-3 border-b border-border">Location & Google Maps</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="md:col-span-2">
@@ -232,7 +232,7 @@ export default function PlaceForm({ place, mode }: Props) {
             <input type="number" step="any" value={form.lng ?? ""} onChange={(e) => set("lng", parseFloat(e.target.value))} className={inputCls} placeholder="99.9576" />
           </div>
         </div>
-      </section>
+      </section>}
 
       {/* Type-specific */}
       {form.type === "RESTAURANT" && (
@@ -240,11 +240,19 @@ export default function PlaceForm({ place, mode }: Props) {
           <h2 className="font-bold text-base mb-5 pb-3 border-b border-border">Restaurant Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className={labelCls}>Cuisine</label>
-              <select value={form.cuisine ?? ""} onChange={(e) => set("cuisine", e.target.value)} className={inputCls}>
-                <option value="">Select cuisine</option>
-                {CUISINES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
-              </select>
+              <label className={labelCls}>Cuisine <span className="font-normal text-muted-foreground normal-case">(พิมพ์เองหรือเลือกจากรายการ)</span></label>
+              <input
+                list="cuisine-suggestions"
+                value={form.cuisine ?? ""}
+                onChange={(e) => set("cuisine", e.target.value)}
+                className={inputCls}
+                placeholder="เช่น thai-seafood, korean, vegan..."
+              />
+              <datalist id="cuisine-suggestions">
+                {CUISINES.map((c) => (
+                  <option key={c.value} value={c.value}>{c.labelEn}</option>
+                ))}
+              </datalist>
             </div>
             <div>
               <label className={labelCls}>Price Range</label>
@@ -328,7 +336,8 @@ export default function PlaceForm({ place, mode }: Props) {
         </section>
       )}
 
-      {/* Contact */}
+      {/* Contact — hide for Blog */}
+      {form.type !== "BLOG" && (
       <section className="bg-card border border-border rounded-2xl p-6">
         <h2 className="font-bold text-base mb-5 pb-3 border-b border-border">Contact & Links</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -350,6 +359,7 @@ export default function PlaceForm({ place, mode }: Props) {
           </div>
         </div>
       </section>
+      )}
 
       {/* Media */}
       <section className="bg-card border border-border rounded-2xl p-6">
@@ -370,7 +380,8 @@ export default function PlaceForm({ place, mode }: Props) {
         </div>
       </section>
 
-      {/* Rating */}
+      {/* Rating — hide for Blog */}
+      {form.type !== "BLOG" && (
       <section className="bg-card border border-border rounded-2xl p-6">
         <h2 className="font-bold text-base mb-5 pb-3 border-b border-border">Rating & Reviews</h2>
         <div className="grid grid-cols-2 gap-4">
@@ -384,6 +395,7 @@ export default function PlaceForm({ place, mode }: Props) {
           </div>
         </div>
       </section>
+      )}
 
       {/* SEO */}
       <section className="bg-card border border-border rounded-2xl p-6">
