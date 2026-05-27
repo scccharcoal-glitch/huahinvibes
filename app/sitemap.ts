@@ -7,15 +7,22 @@ const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
 export const revalidate = 3600; // regenerate sitemap hourly
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // Pull real data from DB — no hard-coded lists
-  const [activeCuisines, activeAreas, places] = await Promise.all([
-    getActiveCuisines(),
-    getActiveAreas(),
-    prisma.place.findMany({
-      where: { status: "published" },
-      select: { slug: true, type: true, updatedAt: true },
-    }),
-  ]);
+  let activeCuisines: string[] = [];
+  let activeAreas: string[] = [];
+  let places: { slug: string; type: string; updatedAt: Date }[] = [];
+
+  try {
+    [activeCuisines, activeAreas, places] = await Promise.all([
+      getActiveCuisines(),
+      getActiveAreas(),
+      prisma.place.findMany({
+        where: { status: "published" },
+        select: { slug: true, type: true, updatedAt: true },
+      }),
+    ]);
+  } catch {
+    // DB not ready yet — return static pages only
+  }
 
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [

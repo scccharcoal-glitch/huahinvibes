@@ -8,13 +8,16 @@ import NearMeRedirect from "@/components/places/NearMeRedirect";
 import Link from "next/link";
 import { MapPin, UtensilsCrossed, Star, MessageCircle } from "lucide-react";
 
-// Build params from ACTUAL DB data (not hard-coded)
+// Build params — falls back to constants if DB unavailable at build time
 export async function generateStaticParams() {
-  const [cuisines, areas] = await Promise.all([getActiveCuisines(), getActiveAreas()]);
-  // Also include all defined CUISINES × AREAS so URL always works
-  const allCuisines = [...new Set([...cuisines, ...CUISINES.map((c) => c.value)])];
-  const allAreas    = [...new Set([...areas,    ...AREAS.map((a) => a.value)])];
-  return allCuisines.flatMap((cuisine) => allAreas.map((area) => ({ cuisine, area })));
+  try {
+    const [cuisines, areas] = await Promise.all([getActiveCuisines(), getActiveAreas()]);
+    const allCuisines = [...new Set([...cuisines, ...CUISINES.map((c) => c.value)])];
+    const allAreas    = [...new Set([...areas,    ...AREAS.map((a) => a.value)])];
+    return allCuisines.flatMap((cuisine) => allAreas.map((area) => ({ cuisine, area })));
+  } catch {
+    return CUISINES.flatMap((c) => AREAS.map((a) => ({ cuisine: c.value, area: a.value })));
+  }
 }
 
 export async function generateMetadata({

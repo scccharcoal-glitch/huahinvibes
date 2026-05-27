@@ -7,8 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "postinstall": "prisma generate",
     "seed": "npx ts-node --project tsconfig.json prisma/seed.ts",
-    "db:seed": "node --loader ts-node/esm prisma/seed.ts"
+    "db:seed": "node --loader ts-node/esm prisma/seed.ts",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate deploy"
   },
   "prisma": {
     "seed": "npx ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts"
