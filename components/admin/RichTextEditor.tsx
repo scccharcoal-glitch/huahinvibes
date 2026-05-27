@@ -308,7 +308,7 @@ export default function RichTextEditor({ value, onChange, placeholder = "เข�
             value={rawHtml}
             onChange={(e) => {
               setRawHtml(e.target.value);
-              editor.commands.setContent(e.target.value, false);
+              editor.commands.setContent(e.target.value);
               onChange(e.target.value);
             }}
             className="w-full min-h-[360px] font-mono text-xs p-4 bg-gray-950 text-green-400 focus:outline-none resize-y"
