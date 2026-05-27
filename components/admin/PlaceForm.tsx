@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { type Place } from "@prisma/client";
-import { AREAS, CUISINES, HOTEL_TYPES, ATTRACTION_CATEGORIES, PRICE_RANGES } from "@/lib/places";
+import { AREAS, CUISINES, HOTEL_TYPES, ATTRACTION_CATEGORIES, BLOG_CATEGORIES, PRICE_RANGES } from "@/lib/places";
 import RichTextEditor from "./RichTextEditor";
 
 type PlaceInput = Partial<Omit<Place, "id" | "createdAt" | "updatedAt">>;
@@ -285,6 +285,25 @@ export default function PlaceForm({ place, mode }: Props) {
                 <option value="">Select price range</option>
                 {PRICE_RANGES.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
               </select>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {form.type === "BLOG" && (
+        <section className="bg-card border border-border rounded-2xl p-6">
+          <h2 className="font-bold text-base mb-5 pb-3 border-b border-border">Blog Details</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className={labelCls}>หมวดหมู่</label>
+              <select value={form.category ?? ""} onChange={(e) => set("category", e.target.value)} className={inputCls}>
+                <option value="">เลือกหมวดหมู่</option>
+                {BLOG_CATEGORIES.map((c) => <option key={c.value} value={c.value}>{c.label} — {c.labelTh}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className={labelCls}>Excerpt (สรุปสั้น)</label>
+              <input value={form.excerpt ?? ""} onChange={(e) => set("excerpt", e.target.value)} className={inputCls} placeholder="สรุปบทความสั้นๆ สำหรับ listing..." />
             </div>
           </div>
         </section>

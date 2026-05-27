@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LayoutDashboard, UtensilsCrossed, Hotel, Compass, Plus, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, UtensilsCrossed, Hotel, Compass, BookOpen, Plus, Settings, LogOut } from "lucide-react";
 
 const sideNav = [
   { href: "/admin", icon: LayoutDashboard, label: "Dashboard" },
   { href: "/admin/places?type=RESTAURANT", icon: UtensilsCrossed, label: "Restaurants" },
   { href: "/admin/places?type=HOTEL", icon: Hotel, label: "Hotels" },
   { href: "/admin/places?type=ATTRACTION", icon: Compass, label: "Attractions" },
+  { href: "/admin/places?type=BLOG", icon: BookOpen, label: "Blog" },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

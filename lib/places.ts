@@ -40,6 +40,15 @@ export const ATTRACTION_CATEGORIES = [
   { value: "nature",   label: "Nature & Park"  },
 ];
 
+export const BLOG_CATEGORIES = [
+  { value: "food-guide",    label: "Food Guide",       labelTh: "คู่มืออาหาร"      },
+  { value: "travel-tips",   label: "Travel Tips",      labelTh: "เทคนิคเดินทาง"   },
+  { value: "hidden-gems",   label: "Hidden Gems",      labelTh: "ที่ซ่อนเร้น"      },
+  { value: "lifestyle",     label: "Lifestyle",        labelTh: "ไลฟ์สไตล์"       },
+  { value: "events",        label: "Events",           labelTh: "กิจกรรม"          },
+  { value: "hotel-review",  label: "Hotel Review",     labelTh: "รีวิวโรงแรม"     },
+];
+
 export const PRICE_RANGES = [
   { value: "cheap",     label: "฿ Cheap",    symbol: "฿"    },
   { value: "moderate",  label: "฿฿ Moderate", symbol: "฿฿"   },
