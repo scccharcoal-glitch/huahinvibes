@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { type Place } from "@prisma/client";
 import { AREAS, CUISINES, HOTEL_TYPES, ATTRACTION_CATEGORIES, PRICE_RANGES } from "@/lib/places";
+import RichTextEditor from "./RichTextEditor";
 
 type PlaceInput = Partial<Omit<Place, "id" | "createdAt" | "updatedAt">>;
 
@@ -183,7 +184,11 @@ export default function PlaceForm({ place, mode }: Props) {
           </div>
           <div className="md:col-span-2">
             <label className={labelCls}>Content (long-form)</label>
-            <textarea value={form.content ?? ""} onChange={(e) => set("content", e.target.value)} rows={6} className={inputCls} placeholder="Full content / article body" />
+            <RichTextEditor
+              value={form.content ?? ""}
+              onChange={(html) => set("content", html)}
+              placeholder="เขียนรายละเอียด เนื้อหา บทความ..."
+            />
           </div>
         </div>
       </section>
