@@ -4,11 +4,49 @@ import PlaceCard from "@/components/places/PlaceCard";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Link from "next/link";
+import { type Place } from "@prisma/client";
 
 export const metadata: Metadata = {
   title: "Restaurants in Hua Hin — Best Dining Guide",
   description: "Discover the best restaurants in Hua Hin. From Thai seafood to Indian, Italian, and Japanese cuisine. Updated reviews and ratings.",
 };
+
+function areaLabel(area?: string) {
+  if (!area) return "หัวหิน";
+  return AREAS.find((a) => a.value === area)?.labelTh ?? AREAS.find((a) => a.value === area)?.label ?? area;
+}
+
+function buildSearchRecommendation({
+  q,
+  area,
+  places,
+}: {
+  q: string;
+  area?: string;
+  places: Place[];
+}) {
+  const location = areaLabel(area);
+  const countText = places.length.toLocaleString("th-TH");
+  const topPlaces = places.slice(0, 2);
+  const names = topPlaces.map((place) => place.name);
+  const title = `แนะนำ ${countText} ร้าน${q}ใน${location}`;
+  const listText =
+    names.length === 1
+      ? names[0]
+      : `${names.slice(0, -1).join(", ")} และ ${names[names.length - 1]}`;
+  const bestRating = Math.max(...places.map((place) => place.rating ?? 0));
+  const totalReviews = places.reduce((sum, place) => sum + (place.reviewCount ?? 0), 0);
+
+  return {
+    title,
+    intro: `ถ้ากำลังมองหา${q}ใน${location} ระบบพบ ${countText} ร้านที่น่าสนใจ ได้แก่ ${listText} โดยเรียงจากร้านที่มีข้อมูลรีวิว คะแนน และรายละเอียดครบถ้วน เหมาะสำหรับใช้เลือกก่อนออกไปกินจริงในหัวหิน`,
+    proof:
+      bestRating > 0 || totalReviews > 0
+        ? `กลุ่มร้านนี้มีคะแนนสูงสุด ${bestRating.toFixed(1)} และมีรีวิวรวม ${totalReviews.toLocaleString("th-TH")} รีวิว`
+        : "ข้อมูลนี้อัปเดตจากร้านที่เผยแพร่ใน Hua Hin Vibes",
+    topPlaces,
+  };
+}
 
 export default async function RestaurantsPage({
   searchParams,
@@ -32,6 +70,9 @@ export default async function RestaurantsPage({
           p.area?.includes(q.toLowerCase())
       )
     : places;
+  const recommendation = q && filtered.length > 0
+    ? buildSearchRecommendation({ q, area, places: filtered })
+    : null;
 
   return (
     <>
@@ -50,6 +91,29 @@ export default async function RestaurantsPage({
             Showing <span className="font-bold text-foreground">{filtered.length}</span> restaurants
             {q && ` for "${q}"`}
           </p>
+          {recommendation && (
+            <section className="mt-6 max-w-3xl border-l-4 border-primary bg-primary/5 px-5 py-4 rounded-r-2xl">
+              <h2 className="text-xl md:text-2xl font-extrabold text-foreground mb-2">
+                {recommendation.title}
+              </h2>
+              <p className="text-sm md:text-base text-muted-foreground leading-7 mb-3">
+                {recommendation.intro}
+              </p>
+              <p className="text-sm font-semibold text-primary mb-3">
+                {recommendation.proof}
+              </p>
+              <div className="space-y-2">
+                {recommendation.topPlaces.map((place, index) => (
+                  <p key={place.id} className="text-sm text-muted-foreground leading-6">
+                    <span className="font-bold text-foreground">{index + 1}. {place.name}</span>
+                    {place.area ? ` อยู่ย่าน ${areaLabel(place.area)}` : ""}
+                    {place.rating && place.rating > 0 ? ` คะแนน ${place.rating.toFixed(1)}` : ""}
+                    {place.description ? ` - ${place.description}` : ""}
+                  </p>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
 
         <div className="flex flex-col md:flex-row gap-8">
