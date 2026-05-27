@@ -121,15 +121,21 @@ export default async function PlaceDetailPage({
             )}
 
             {place.description && (
-              <p className="text-muted-foreground leading-relaxed text-base mb-6">{place.description}</p>
+              /^</.test(place.description.trim()) ? (
+                <div
+                  className="prose prose-sm md:prose-base max-w-none prose-headings:font-extrabold prose-a:text-primary prose-img:rounded-xl mb-6"
+                  dangerouslySetInnerHTML={{ __html: place.description }}
+                />
+              ) : (
+                <p className="text-muted-foreground leading-relaxed text-base mb-6">{place.description}</p>
+              )
             )}
 
             {place.content && (
-              <div className="text-foreground leading-relaxed space-y-4">
-                {place.content.split("\n\n").map((para, i) => (
-                  <p key={i}>{para}</p>
-                ))}
-              </div>
+              <div
+                className="prose prose-sm md:prose-base max-w-none prose-headings:font-extrabold prose-a:text-primary prose-img:rounded-xl"
+                dangerouslySetInnerHTML={{ __html: place.content }}
+              />
             )}
 
             {/* Tags */}
