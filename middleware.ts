@@ -1,28 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(req: NextRequest) {
-  const basicAuth = req.headers.get("authorization");
-  const url = req.nextUrl;
+  const { pathname } = req.nextUrl;
 
-  if (basicAuth) {
-    const authValue = basicAuth.split(" ")[1];
-    const [user, pwd] = atob(authValue).split(":");
-
-    const validUser = process.env.ADMIN_USERNAME ?? "admin";
-    const validPwd  = process.env.ADMIN_PASSWORD ?? "changeme";
-
-    if (user === validUser && pwd === validPwd) {
-      return NextResponse.next();
-    }
+  // Allow login page and login API through
+  if (pathname === "/admin/login" || pathname.startsWith("/api/admin/")) {
+    return NextResponse.next();
   }
 
-  url.pathname = "/api/auth-required";
-  return new NextResponse("Authentication required", {
-    status: 401,
-    headers: {
-      "WWW-Authenticate": 'Basic realm="Hua Hin Vibes Admin", charset="UTF-8"',
-    },
-  });
+  const session = req.cookies.get("admin_session")?.value;
+  const validToken = process.env.ADMIN_PASSWORD ?? "changeme";
+
+  if (session !== validToken) {
+    const loginUrl = new URL("/admin/login", req.url);
+    loginUrl.searchParams.set("from", pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {

@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
-import { LayoutDashboard, UtensilsCrossed, Hotel, Compass, Plus, Settings } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { LayoutDashboard, UtensilsCrossed, Hotel, Compass, Plus, Settings, LogOut } from "lucide-react";
 
 const sideNav = [
   { href: "/admin", icon: LayoutDashboard, label: "Dashboard" },
@@ -9,6 +12,12 @@ const sideNav = [
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+
+  async function handleLogout() {
+    await fetch("/api/admin/logout", { method: "POST" });
+    router.push("/admin/login");
+  }
   return (
     <div className="flex min-h-screen bg-accent/30">
       {/* Sidebar */}
@@ -40,6 +49,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Settings className="w-3 h-3" />
             View Public Site
           </Link>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 text-xs text-gray-400 hover:text-red-400 px-3 py-1.5 transition-colors w-full"
+          >
+            <LogOut className="w-3 h-3" />
+            Logout
+          </button>
         </div>
       </aside>
 
