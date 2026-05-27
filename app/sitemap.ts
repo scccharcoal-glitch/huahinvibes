@@ -1,6 +1,14 @@
 import { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
-import { getActiveCuisines, getActiveAreas, HOTEL_TYPES, ATTRACTION_CATEGORIES, AREAS } from "@/lib/places";
+import {
+  getActiveCuisines,
+  getActiveAreas,
+  HOTEL_TYPES,
+  ATTRACTION_CATEGORIES,
+  AREAS,
+  getProgrammaticSeoLocations,
+  getProgrammaticSeoQueries,
+} from "@/lib/places";
 
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
@@ -10,12 +18,16 @@ export const revalidate = 3600;
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let activeCuisines: string[] = [];
   let activeAreas: string[] = [];
+  let pseoLocations: string[] = [];
+  let pseoQueries: string[] = [];
   let places: { slug: string; type: string; updatedAt: Date }[] = [];
 
   try {
-    [activeCuisines, activeAreas, places] = await Promise.all([
+    [activeCuisines, activeAreas, pseoLocations, pseoQueries, places] = await Promise.all([
       getActiveCuisines(),
       getActiveAreas(),
+      getProgrammaticSeoLocations(),
+      getProgrammaticSeoQueries(),
       prisma.place.findMany({
         where: { status: "published" },
         select: { slug: true, type: true, updatedAt: true },
@@ -66,6 +78,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }))
   );
 
+  // Generic long-tail pSEO: /[location]/[query]
+  const programmaticSeoPages: MetadataRoute.Sitemap = pseoLocations
+    .map((location) =>
+      pseoQueries.map((query) => ({
+        url: `${baseUrl}/${encodeURIComponent(location)}/${encodeURIComponent(query)}`,
+        lastModified: new Date(),
+        changeFrequency: "weekly" as const,
+        priority: 1.0,
+      }))
+    )
+    .flat();
+
   // Individual place pages (restaurants, hotels, attractions)
   const placePages: MetadataRoute.Sitemap = places
     .filter((p) => p.type !== "BLOG")
@@ -86,5 +110,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.75,
     }));
 
-  return [...staticPages, ...restaurantPages, ...hotelPages, ...attractionPages, ...placePages, ...blogPages];
+  return [
+    ...staticPages,
+    ...restaurantPages,
+    ...hotelPages,
+    ...attractionPages,
+    ...programmaticSeoPages,
+    ...placePages,
+    ...blogPages,
+  ];
 }

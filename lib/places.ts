@@ -105,6 +105,59 @@ export async function getActiveAreas(): Promise<string[]> {
   } catch { return []; }
 }
 
+export async function getProgrammaticSeoLocations(): Promise<string[]> {
+  try {
+    const activeAreas = await getActiveAreas();
+    return [...new Set([...activeAreas, ...AREAS.map((area) => area.value)])];
+  } catch {
+    return AREAS.map((area) => area.value);
+  }
+}
+
+export async function getProgrammaticSeoQueries(): Promise<string[]> {
+  try {
+    const rows = await prisma.place.findMany({
+      where: { status: "published" },
+      select: { type: true, cuisine: true, hotelType: true, category: true, tags: true },
+    });
+
+    const dbQueries = rows.flatMap((place) => [
+      place.type.toLowerCase(),
+      place.cuisine,
+      place.hotelType,
+      place.category,
+      ...(place.tags?.split(",").map((tag) => tag.trim()).filter(Boolean) ?? []),
+    ]);
+
+    return [
+      ...new Set([
+        ...dbQueries.filter((value): value is string => Boolean(value)),
+        ...CUISINES.map((cuisine) => cuisine.value),
+        ...HOTEL_TYPES.map((type) => type.value),
+        ...ATTRACTION_CATEGORIES.map((category) => category.value),
+        "restaurants",
+        "hotels",
+        "attractions",
+        "seafood",
+        "cafe",
+        "spa",
+      ]),
+    ];
+  } catch {
+    return [
+      ...CUISINES.map((cuisine) => cuisine.value),
+      ...HOTEL_TYPES.map((type) => type.value),
+      ...ATTRACTION_CATEGORIES.map((category) => category.value),
+      "restaurants",
+      "hotels",
+      "attractions",
+      "seafood",
+      "cafe",
+      "spa",
+    ];
+  }
+}
+
 // --- Data helpers ---
 export const getPlaces = cache(
   async ({
@@ -148,6 +201,68 @@ export const getPlaceCount = cache(async (type?: string) => {
     });
   } catch { return 0; }
 });
+
+export const searchData = async (query: string, location: string) => {
+  const q = query.trim();
+  const locationValue = location.trim();
+  const normalizedQuery = slugify(q);
+  const normalizedLocation = slugify(locationValue);
+  const area = AREAS.find((item) =>
+    [item.value, slugify(item.label), slugify(item.labelTh)].includes(normalizedLocation)
+  );
+
+  const type =
+    /\brestaurants?\b|ร้านอาหาร|food|dining/i.test(q) ? "RESTAURANT" :
+    /\bhotels?\b|resorts?|villa|ที่พัก|โรงแรม/i.test(q) ? "HOTEL" :
+    /\battractions?\b|beach|temple|market|activity|สถานที่|เที่ยว/i.test(q) ? "ATTRACTION" :
+    undefined;
+
+  const cuisine = CUISINES.find((item) =>
+    [item.value, slugify(item.label), slugify(item.labelEn)].includes(normalizedQuery)
+  )?.value;
+  const hotelType = HOTEL_TYPES.find((item) =>
+    [item.value, slugify(item.label)].includes(normalizedQuery)
+  )?.value;
+  const category = ATTRACTION_CATEGORIES.find((item) =>
+    [item.value, slugify(item.label)].includes(normalizedQuery)
+  )?.value;
+  const isGenericTypeQuery = Boolean(type) && [
+    "restaurants",
+    "restaurant",
+    "hotels",
+    "hotel",
+    "attractions",
+    "attraction",
+  ].includes(normalizedQuery);
+  const shouldSearchText = q.length > 0 && !isGenericTypeQuery && !cuisine && !hotelType && !category;
+
+  try {
+    return await prisma.place.findMany({
+      where: {
+        status: "published",
+        ...(area && { area: area.value }),
+        ...(type && { type }),
+        ...(cuisine && { cuisine }),
+        ...(hotelType && { hotelType }),
+        ...(category && { category }),
+        ...(shouldSearchText && {
+          OR: [
+            { name: { contains: q, mode: "insensitive" } },
+            { description: { contains: q, mode: "insensitive" } },
+            { excerpt: { contains: q, mode: "insensitive" } },
+            { tags: { contains: q, mode: "insensitive" } },
+          ],
+        }),
+      },
+      orderBy: [{ featured: "desc" }, { rating: "desc" }, { reviewCount: "desc" }, { createdAt: "desc" }],
+      take: 60,
+    });
+  } catch {
+    return [];
+  }
+};
+
+export const getCachedData = cache(searchData);
 
 export function slugify(text: string): string {
   return text.toLowerCase()
