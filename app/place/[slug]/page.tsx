@@ -3,9 +3,24 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { getPlaceBySlug, getPriceSymbol } from "@/lib/places";
+import { prisma } from "@/lib/prisma";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Star, MapPin, Phone, Clock, Globe, ExternalLink } from "lucide-react";
+
+export async function generateStaticParams() {
+  try {
+    const places = await prisma.place.findMany({
+      where: { status: "published" },
+      select: { slug: true },
+    });
+    return places.map((p) => ({ slug: p.slug }));
+  } catch {
+    return [];
+  }
+}
+
+export const revalidate = 86400;
 
 export async function generateMetadata({
   params,

@@ -8,7 +8,10 @@ const jakarta = Plus_Jakarta_Sans({
   weight: ["400", "600", "700", "800"],
 });
 
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://huahinvibes.com";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(baseUrl),
   title: {
     default: "Hua Hin Vibes — Your Premium Hua Hin Travel Guide",
     template: "%s | Hua Hin Vibes",
@@ -20,7 +23,9 @@ export const metadata: Metadata = {
     siteName: "Hua Hin Vibes",
     type: "website",
     locale: "en_US",
+    url: baseUrl,
   },
+  alternates: { canonical: baseUrl },
   robots: { index: true, follow: true },
 };
 

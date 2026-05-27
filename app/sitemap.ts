@@ -1,10 +1,10 @@
 import { MetadataRoute } from "next";
 import { prisma } from "@/lib/prisma";
-import { getActiveCuisines, getActiveAreas } from "@/lib/places";
+import { getActiveCuisines, getActiveAreas, HOTEL_TYPES, ATTRACTION_CATEGORIES, AREAS } from "@/lib/places";
 
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
 
-export const revalidate = 3600; // regenerate sitemap hourly
+export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let activeCuisines: string[] = [];
@@ -21,8 +21,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }),
     ]);
   } catch {
-    // DB not ready yet — return static pages only
+    // DB not ready — return static pages only
   }
+
+  const allAreas = AREAS.map((a) => a.value);
 
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [
@@ -32,13 +34,33 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/attractions`,  lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
   ];
 
-  // pSEO pages — only cuisine × area combinations that ACTUALLY exist in DB
-  const pSEOPages: MetadataRoute.Sitemap = activeCuisines.flatMap((cuisine) =>
+  // Restaurant pSEO: cuisine × area (only combinations that actually exist in DB)
+  const restaurantPages: MetadataRoute.Sitemap = activeCuisines.flatMap((cuisine) =>
     activeAreas.map((area) => ({
       url: `${baseUrl}/restaurants/${cuisine}/${area}`,
       lastModified: new Date(),
       changeFrequency: "weekly" as const,
       priority: 0.85,
+    }))
+  );
+
+  // Hotel pSEO: type × area (all combos — pages gracefully handle empty)
+  const hotelPages: MetadataRoute.Sitemap = HOTEL_TYPES.flatMap((t) =>
+    allAreas.map((area) => ({
+      url: `${baseUrl}/hotels/${t.value}/${area}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    }))
+  );
+
+  // Attraction pSEO: category × area (all combos)
+  const attractionPages: MetadataRoute.Sitemap = ATTRACTION_CATEGORIES.flatMap((c) =>
+    allAreas.map((area) => ({
+      url: `${baseUrl}/attractions/${c.value}/${area}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
     }))
   );
 
@@ -50,5 +72,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...pSEOPages, ...placePages];
+  return [...staticPages, ...restaurantPages, ...hotelPages, ...attractionPages, ...placePages];
 }

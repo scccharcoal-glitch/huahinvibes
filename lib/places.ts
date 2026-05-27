@@ -99,10 +99,10 @@ export async function getActiveAreas(): Promise<string[]> {
 // --- Data helpers ---
 export const getPlaces = cache(
   async ({
-    type, area, cuisine, category,
+    type, area, cuisine, category, hotelType,
     status = "published", featured, limit, offset = 0,
   }: {
-    type?: string; area?: string; cuisine?: string; category?: string;
+    type?: string; area?: string; cuisine?: string; category?: string; hotelType?: string;
     status?: string; featured?: boolean; limit?: number; offset?: number;
   } = {}) => {
     try {
@@ -112,6 +112,7 @@ export const getPlaces = cache(
           ...(area && { area }),
           ...(cuisine && { cuisine }),
           ...(category && { category }),
+          ...(hotelType && { hotelType }),
           ...(status !== "all" && { status }),
           ...(featured !== undefined && { featured }),
         },
