@@ -75,21 +75,25 @@ export function getNearestArea(lat: number, lng: number) {
 
 // --- Dynamic cuisines from DB (for sitemap) ---
 export async function getActiveCuisines(): Promise<string[]> {
-  const rows = await prisma.place.findMany({
-    where: { type: "RESTAURANT", status: "published", cuisine: { not: null } },
-    select: { cuisine: true },
-    distinct: ["cuisine"],
-  });
-  return rows.map((r) => r.cuisine!).filter(Boolean);
+  try {
+    const rows = await prisma.place.findMany({
+      where: { type: "RESTAURANT", status: "published", cuisine: { not: null } },
+      select: { cuisine: true },
+      distinct: ["cuisine"],
+    });
+    return rows.map((r) => r.cuisine!).filter(Boolean);
+  } catch { return []; }
 }
 
 export async function getActiveAreas(): Promise<string[]> {
-  const rows = await prisma.place.findMany({
-    where: { status: "published", area: { not: null } },
-    select: { area: true },
-    distinct: ["area"],
-  });
-  return rows.map((r) => r.area!).filter(Boolean);
+  try {
+    const rows = await prisma.place.findMany({
+      where: { status: "published", area: { not: null } },
+      select: { area: true },
+      distinct: ["area"],
+    });
+    return rows.map((r) => r.area!).filter(Boolean);
+  } catch { return []; }
 }
 
 // --- Data helpers ---
@@ -101,34 +105,38 @@ export const getPlaces = cache(
     type?: string; area?: string; cuisine?: string; category?: string;
     status?: string; featured?: boolean; limit?: number; offset?: number;
   } = {}) => {
-    return prisma.place.findMany({
-      where: {
-        ...(type && { type }),
-        ...(area && { area }),
-        ...(cuisine && { cuisine }),
-        ...(category && { category }),
-        ...(status !== "all" && { status }),
-        ...(featured !== undefined && { featured }),
-      },
-      orderBy: [{ featured: "desc" }, { rating: "desc" }, { createdAt: "desc" }],
-      ...(limit && { take: limit }),
-      skip: offset,
-    });
+    try {
+      return await prisma.place.findMany({
+        where: {
+          ...(type && { type }),
+          ...(area && { area }),
+          ...(cuisine && { cuisine }),
+          ...(category && { category }),
+          ...(status !== "all" && { status }),
+          ...(featured !== undefined && { featured }),
+        },
+        orderBy: [{ featured: "desc" }, { rating: "desc" }, { createdAt: "desc" }],
+        ...(limit && { take: limit }),
+        skip: offset,
+      });
+    } catch { return []; }
   }
 );
 
 export const getPlaceBySlug = cache(async (slug: string) => {
-  return prisma.place.findUnique({ where: { slug } });
+  try { return await prisma.place.findUnique({ where: { slug } }); } catch { return null; }
 });
 
 export const getPlaceById = cache(async (id: string) => {
-  return prisma.place.findUnique({ where: { id } });
+  try { return await prisma.place.findUnique({ where: { id } }); } catch { return null; }
 });
 
 export const getPlaceCount = cache(async (type?: string) => {
-  return prisma.place.count({
-    where: { status: "published", ...(type && { type }) },
-  });
+  try {
+    return await prisma.place.count({
+      where: { status: "published", ...(type && { type }) },
+    });
+  } catch { return 0; }
 });
 
 export function slugify(text: string): string {
