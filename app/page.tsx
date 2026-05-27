@@ -3,6 +3,7 @@ import { getPlaces } from "@/lib/places";
 import PlaceCard from "@/components/places/PlaceCard";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import SearchBox from "@/components/SearchBox";
 import { UtensilsCrossed, Hotel, Compass, Star, MapPin, TrendingUp } from "lucide-react";
 
 const categories = [
@@ -34,6 +35,13 @@ export default async function HomePage() {
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10">
               Your premium guide to restaurants, hotels, and experiences in Hua Hin — Thailand&apos;s most beloved coastal destination.
             </p>
+            <div className="flex justify-center mb-8">
+              <SearchBox
+                size="large"
+                placeholder="Search somtam lao, seafood, cafe, spa..."
+                className="mx-auto"
+              />
+            </div>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/restaurants" className="gradient-btn text-white px-8 py-3.5 rounded-full font-bold hover:opacity-90 transition-opacity shadow-lg shadow-primary/25">
                 Explore Restaurants

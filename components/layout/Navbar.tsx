@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Search, Menu, X, User, MapPin } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Menu, X, User } from "lucide-react";
+import SearchBox from "@/components/SearchBox";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -15,17 +15,7 @@ const navLinks = [
 
 export default function Navbar() {
   const pathname = usePathname();
-  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
-  const [search, setSearch] = useState("");
-
-  function handleSearch(e: React.FormEvent) {
-    e.preventDefault();
-    if (search.trim()) {
-      router.push(`/restaurants?q=${encodeURIComponent(search.trim())}`);
-      setSearch("");
-    }
-  }
 
   return (
     <nav className="glass-nav sticky top-0 z-50 border-b border-border shadow-sm">
@@ -53,25 +43,7 @@ export default function Navbar() {
         </div>
 
         {/* Search */}
-        <form onSubmit={handleSearch} className="hidden lg:flex items-center gap-2">
-          <div className="relative">
-            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Indian restaurant, spa..."
-              className="pl-9 pr-4 py-2 bg-card border border-border rounded-full text-sm focus:outline-none focus:border-primary w-60 transition-all"
-            />
-          </div>
-          <button
-            type="submit"
-            className="gradient-btn text-white px-4 py-2 rounded-full text-sm font-semibold flex items-center gap-1.5 hover:opacity-90 transition-opacity"
-          >
-            <Search className="w-4 h-4" />
-            Search
-          </button>
-        </form>
+        <SearchBox className="hidden lg:flex" placeholder="Somtam, seafood, spa..." />
 
         {/* Actions */}
         <div className="flex items-center gap-3">
@@ -108,18 +80,7 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
-          <form onSubmit={handleSearch} className="flex gap-2 pt-2">
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search..."
-              className="flex-1 px-4 py-2 bg-card border border-border rounded-full text-sm focus:outline-none focus:border-primary"
-            />
-            <button type="submit" className="gradient-btn text-white px-4 py-2 rounded-full text-sm font-semibold">
-              Go
-            </button>
-          </form>
+          <SearchBox placeholder="Search restaurants..." />
         </div>
       )}
     </nav>
