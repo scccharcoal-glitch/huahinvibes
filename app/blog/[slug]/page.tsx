@@ -1,26 +1,13 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { cookies } from "next/headers";
 import { getPlaceBySlug, BLOG_CATEGORIES } from "@/lib/places";
-import { prisma } from "@/lib/prisma";
+import { isPublicImageUrl } from "@/lib/image-url";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import BlogPostActions from "@/components/blog/BlogPostActions";
 import SafeImage from "@/components/SafeImage";
 import { Calendar, Tag, ArrowLeft } from "lucide-react";
-
-export async function generateStaticParams() {
-  try {
-    const posts = await prisma.place.findMany({
-      where: { type: "BLOG", status: "published" },
-      select: { slug: true },
-    });
-    return posts.map((p) => ({ slug: p.slug }));
-  } catch {
-    return [];
-  }
-}
 
 export async function generateMetadata({
   params,
@@ -30,20 +17,22 @@ export async function generateMetadata({
   const { slug } = await params;
   const post = await getPlaceBySlug(slug);
   if (!post) return {};
+  const ogImage = isPublicImageUrl(post.coverImage) ? post.coverImage : undefined;
+
   return {
     title: post.seoTitle ?? post.name,
     description: post.seoDesc ?? post.excerpt ?? post.description ?? undefined,
     openGraph: {
       title: post.seoTitle ?? post.name,
       description: post.seoDesc ?? post.excerpt ?? undefined,
-      images: post.coverImage ? [post.coverImage] : [],
+      images: ogImage ? [ogImage] : [],
       type: "article",
     },
     alternates: { canonical: `/blog/${slug}` },
   };
 }
 
-export const revalidate = 86400;
+export const dynamic = "force-dynamic";
 
 export default async function BlogPostPage({
   params,
@@ -56,15 +45,14 @@ export default async function BlogPostPage({
 
   const cat = BLOG_CATEGORIES.find((c) => c.value === post.category);
   const tags = post.tags?.split(",").map((t) => t.trim()).filter(Boolean) ?? [];
-  const cookieStore = await cookies();
-  const isAdmin = cookieStore.get("admin_session")?.value === (process.env.ADMIN_PASSWORD ?? "changeme");
+  const schemaImage = isPublicImageUrl(post.coverImage) ? post.coverImage : undefined;
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: post.name,
     description: post.excerpt ?? post.description,
-    image: post.coverImage,
+    image: schemaImage,
     datePublished: post.createdAt.toISOString(),
     dateModified: post.updatedAt.toISOString(),
     author: { "@type": "Organization", name: "Hua Hin Vibes" },
@@ -83,7 +71,7 @@ export default async function BlogPostPage({
           Back to Blog
         </Link>
 
-        {isAdmin && <BlogPostActions postId={post.id} postName={post.name} />}
+        <BlogPostActions postId={post.id} postName={post.name} />
 
         {/* Category + date */}
         <div className="flex flex-wrap items-center gap-3 mb-4">
