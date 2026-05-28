@@ -8,7 +8,7 @@ import { Calendar, Tag } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Blog — Hua Hin Travel Guide",
-  description: "คู่มือเที่ยวหัวหิน เคล็ดลับท่องเที่ยว ร้านอาหาร และโรงแรมที่ดีที่สุด อัปเดตล่าสุด",
+  description: "Hua Hin travel guides, local tips, restaurant picks, hotel reviews, and fresh things to do around Thailand's favorite beach town.",
 };
 
 export const revalidate = 3600;
@@ -31,7 +31,7 @@ export default async function BlogPage({
           <p className="text-xs font-bold uppercase tracking-widest text-primary mb-2">Blog</p>
           <h1 className="text-3xl md:text-4xl font-extrabold mb-3">Hua Hin Travel Journal</h1>
           <p className="text-muted-foreground max-w-xl">
-            คู่มือท่องเที่ยวหัวหิน เคล็ดลับ ร้านอาหาร โรงแรม และสถานที่น่าสนใจ อัปเดตสม่ำเสมอ
+            English travel guides, local tips, restaurant picks, hotel reviews, and fresh things to do around Hua Hin.
           </p>
         </div>
 
@@ -43,7 +43,7 @@ export default async function BlogPage({
               !category ? "bg-primary text-white border-primary" : "border-border text-muted-foreground hover:border-primary hover:text-primary"
             }`}
           >
-            ทั้งหมด
+            All Posts
           </Link>
           {BLOG_CATEGORIES.map((c) => (
             <Link
@@ -53,7 +53,7 @@ export default async function BlogPage({
                 category === c.value ? "bg-primary text-white border-primary" : "border-border text-muted-foreground hover:border-primary hover:text-primary"
               }`}
             >
-              {c.labelTh}
+              {c.label}
             </Link>
           ))}
         </div>
@@ -61,9 +61,8 @@ export default async function BlogPage({
         {/* Posts grid */}
         {posts.length === 0 ? (
           <div className="text-center py-24">
-            <p className="text-5xl mb-4">✍️</p>
-            <p className="text-xl font-bold">ยังไม่มีบทความในหมวดนี้</p>
-            <Link href="/blog" className="text-primary hover:underline text-sm mt-2 inline-block">ดูทั้งหมด</Link>
+            <p className="text-xl font-bold">No posts in this category yet</p>
+            <Link href="/blog" className="text-primary hover:underline text-sm mt-2 inline-block">View all posts</Link>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -86,7 +85,7 @@ export default async function BlogPage({
                     )}
                     {cat && (
                       <span className="absolute top-3 left-3 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">
-                        {cat.labelTh}
+                        {cat.label}
                       </span>
                     )}
                   </div>
@@ -103,7 +102,7 @@ export default async function BlogPage({
                   <div className="flex items-center gap-3 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1">
                       <Calendar className="w-3 h-3" />
-                      {new Date(post.createdAt).toLocaleDateString("th-TH", { year: "numeric", month: "long", day: "numeric" })}
+                      {new Date(post.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
                     </span>
                     {post.tags && (
                       <span className="flex items-center gap-1">

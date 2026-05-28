@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { Plus, Edit, Eye, Trash2, Star } from "lucide-react";
+import { Plus, Edit, Eye, Star } from "lucide-react";
 
 export const metadata = { title: "All Places — Admin" };
 
@@ -46,7 +46,7 @@ export default async function AdminPlacesPage({
 
       {/* Filter tabs */}
       <div className="flex gap-2 mb-6 flex-wrap">
-        {["", "RESTAURANT", "HOTEL", "ATTRACTION"].map((t) => (
+        {["", "RESTAURANT", "HOTEL", "ATTRACTION", "BLOG"].map((t) => (
           <Link
             key={t}
             href={t ? `/admin/places?type=${t}` : "/admin/places"}
@@ -119,7 +119,7 @@ export default async function AdminPlacesPage({
                           <Edit className="w-3.5 h-3.5" /> Edit
                         </Link>
                         <a
-                          href={`/place/${place.slug}`}
+                          href={place.type === "BLOG" ? `/blog/${place.slug}` : `/place/${place.slug}`}
                           target="_blank"
                           className="text-muted-foreground hover:text-secondary flex items-center gap-1 text-xs"
                         >

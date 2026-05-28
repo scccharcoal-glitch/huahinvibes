@@ -2,10 +2,12 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { getPlaceBySlug, BLOG_CATEGORIES } from "@/lib/places";
 import { prisma } from "@/lib/prisma";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import BlogPostActions from "@/components/blog/BlogPostActions";
 import { Calendar, Tag, ArrowLeft } from "lucide-react";
 
 export async function generateStaticParams() {
@@ -54,6 +56,8 @@ export default async function BlogPostPage({
 
   const cat = BLOG_CATEGORIES.find((c) => c.value === post.category);
   const tags = post.tags?.split(",").map((t) => t.trim()).filter(Boolean) ?? [];
+  const cookieStore = await cookies();
+  const isAdmin = cookieStore.get("admin_session")?.value === (process.env.ADMIN_PASSWORD ?? "changeme");
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -76,19 +80,21 @@ export default async function BlogPostPage({
         {/* Back */}
         <Link href="/blog" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary mb-6 transition-colors w-fit">
           <ArrowLeft className="w-4 h-4" />
-          กลับไปหน้า Blog
+          Back to Blog
         </Link>
+
+        {isAdmin && <BlogPostActions postId={post.id} postName={post.name} />}
 
         {/* Category + date */}
         <div className="flex flex-wrap items-center gap-3 mb-4">
           {cat && (
             <Link href={`/blog?category=${cat.value}`} className="bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-full hover:bg-primary hover:text-white transition-all">
-              {cat.labelTh}
+              {cat.label}
             </Link>
           )}
           <span className="flex items-center gap-1 text-xs text-muted-foreground">
             <Calendar className="w-3 h-3" />
-            {new Date(post.createdAt).toLocaleDateString("th-TH", { year: "numeric", month: "long", day: "numeric" })}
+            {new Date(post.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
           </span>
         </div>
 
@@ -142,14 +148,14 @@ export default async function BlogPostPage({
 
         {/* CTA */}
         <div className="mt-12 p-6 bg-primary/5 border border-primary/20 rounded-2xl text-center">
-          <p className="font-bold text-lg mb-2">ค้นพบร้านอาหารและโรงแรมในหัวหิน</p>
-          <p className="text-muted-foreground text-sm mb-4">รวมสถานที่ดีที่สุด คัดสรรโดยทีมงาน Hua Hin Vibes</p>
+          <p className="font-bold text-lg mb-2">Discover restaurants and hotels in Hua Hin</p>
+          <p className="text-muted-foreground text-sm mb-4">Explore curated local places from Hua Hin Vibes.</p>
           <div className="flex gap-3 justify-center">
             <Link href="/restaurants" className="gradient-btn text-white px-5 py-2 rounded-full text-sm font-bold hover:opacity-90 transition-opacity">
-              ร้านอาหาร
+              Restaurants
             </Link>
             <Link href="/hotels" className="border-2 border-primary text-primary px-5 py-2 rounded-full text-sm font-bold hover:bg-primary hover:text-white transition-all">
-              โรงแรม
+              Hotels
             </Link>
           </div>
         </div>

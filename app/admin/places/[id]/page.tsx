@@ -15,7 +15,7 @@ export default async function EditPlacePage({ params }: { params: Promise<{ id: 
   const place = await getPlaceById(id);
   if (!place) notFound();
 
-  const viewUrl = `/place/${place.slug}`;
+  const viewUrl = place.type === "BLOG" ? `/blog/${place.slug}` : `/place/${place.slug}`;
 
   return (
     <div className="p-8 max-w-4xl">
