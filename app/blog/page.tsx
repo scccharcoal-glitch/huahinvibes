@@ -1,9 +1,9 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import { getPlaces, BLOG_CATEGORIES } from "@/lib/places";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import SafeImage from "@/components/SafeImage";
 import { Calendar, Tag } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -73,7 +73,7 @@ export default async function BlogPage({
                   {/* Cover */}
                   <div className="relative h-52 rounded-2xl overflow-hidden mb-4 bg-accent">
                     {post.coverImage ? (
-                      <Image
+                      <SafeImage
                         src={post.coverImage}
                         alt={post.name}
                         fill

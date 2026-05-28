@@ -1,6 +1,5 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { getPlaceBySlug, BLOG_CATEGORIES } from "@/lib/places";
@@ -8,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import BlogPostActions from "@/components/blog/BlogPostActions";
+import SafeImage from "@/components/SafeImage";
 import { Calendar, Tag, ArrowLeft } from "lucide-react";
 
 export async function generateStaticParams() {
@@ -111,7 +111,7 @@ export default async function BlogPostPage({
         {/* Cover image */}
         {post.coverImage && (
           <div className="relative h-72 md:h-[420px] rounded-2xl overflow-hidden mb-10">
-            <Image
+            <SafeImage
               src={post.coverImage}
               alt={post.name}
               fill

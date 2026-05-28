@@ -1,8 +1,8 @@
 import Link from "next/link";
-import Image from "next/image";
 import { Star, MapPin, Phone, Clock } from "lucide-react";
 import { type Place } from "@prisma/client";
 import { getPriceSymbol } from "@/lib/places";
+import SafeImage from "@/components/SafeImage";
 
 function routeForPlace(place: Place): string {
   return `/place/${place.slug}`;
@@ -25,7 +25,7 @@ export default function PlaceCard({ place }: { place: Place }) {
         {/* Image */}
         <div className="relative h-52 overflow-hidden bg-muted">
           {place.coverImage ? (
-            <Image
+            <SafeImage
               src={place.coverImage}
               alt={place.name}
               fill

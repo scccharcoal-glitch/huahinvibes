@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { type Place } from "@prisma/client";
 import { AREAS, CUISINES, HOTEL_TYPES, ATTRACTION_CATEGORIES, BLOG_CATEGORIES, PRICE_RANGES } from "@/lib/places";
+import { imageFileToDataUrl } from "@/lib/image-file";
 import RichTextEditor from "./RichTextEditor";
 
 type PlaceInput = Partial<Omit<Place, "id" | "createdAt" | "updatedAt">>;
@@ -137,6 +138,18 @@ export default function PlaceForm({ place, mode }: Props) {
       router.refresh();
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleCoverUpload(file?: File) {
+    if (!file) return;
+    setError("");
+
+    try {
+      const dataUrl = await imageFileToDataUrl(file);
+      set("coverImage", dataUrl);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not upload this cover image.");
     }
   }
 
@@ -368,6 +381,17 @@ export default function PlaceForm({ place, mode }: Props) {
           <div>
             <label className={labelCls}>Cover Image URL</label>
             <input value={form.coverImage ?? ""} onChange={(e) => set("coverImage", e.target.value)} className={inputCls} placeholder="https://images.unsplash.com/..." />
+            <div className="mt-2">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleCoverUpload(e.target.files?.[0])}
+                className="w-full text-sm text-muted-foreground file:mr-3 file:rounded-lg file:border-0 file:bg-primary file:px-3 file:py-2 file:text-xs file:font-bold file:text-white hover:file:opacity-90"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Upload from your computer or paste an image URL above.
+              </p>
+            </div>
           </div>
           {form.coverImage && (
             // eslint-disable-next-line @next/next/no-img-element

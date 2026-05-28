@@ -1,11 +1,11 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import { getPlaceBySlug, getPriceSymbol } from "@/lib/places";
 import { prisma } from "@/lib/prisma";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import SafeImage from "@/components/SafeImage";
 import { Star, MapPin, Phone, Clock, Globe, ExternalLink } from "lucide-react";
 
 export async function generateStaticParams() {
@@ -85,7 +85,7 @@ export default async function PlaceDetailPage({
         {/* Cover image */}
         {place.coverImage && (
           <div className="relative h-72 md:h-96 rounded-2xl overflow-hidden mb-8">
-            <Image src={place.coverImage} alt={place.name} fill className="object-cover" sizes="100vw" priority />
+            <SafeImage src={place.coverImage} alt={place.name} fill className="object-cover" sizes="100vw" priority />
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
             <div className="absolute bottom-6 left-6 flex flex-wrap gap-2">
               {tags.slice(0, 3).map((tag) => (

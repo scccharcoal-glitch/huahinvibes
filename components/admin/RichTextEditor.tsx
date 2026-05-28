@@ -15,11 +15,12 @@ import { TableRow } from "@tiptap/extension-table-row";
 import { TableCell } from "@tiptap/extension-table-cell";
 import { TableHeader } from "@tiptap/extension-table-header";
 import { useState, useCallback, useEffect } from "react";
+import { imageFileToDataUrl } from "@/lib/image-file";
 import {
   Bold, Italic, Underline as UnderlineIcon, Strikethrough,
   List, ListOrdered, Quote, AlignLeft, AlignCenter, AlignRight,
   Link as LinkIcon, Image as ImageIcon, Table as TableIcon,
-  Undo, Redo, Code, Minus, Highlighter, Type, Eye, FileCode,
+  Undo, Redo, Code, Minus, Highlighter, Eye, FileCode,
 } from "lucide-react";
 
 interface Props {
@@ -36,10 +37,38 @@ const HEADING_OPTIONS = [
   { label: "หัวข้อ 4", value: "h4" },
 ];
 
+function ToolBtn({
+  onClick,
+  active = false,
+  title,
+  children,
+}: {
+  onClick: () => void;
+  active?: boolean;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={title}
+      className={`w-8 h-8 flex items-center justify-center rounded text-sm transition-all flex-shrink-0 ${
+        active
+          ? "bg-primary text-white"
+          : "text-muted-foreground hover:bg-accent hover:text-foreground"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
 export default function RichTextEditor({ value, onChange, placeholder = "เขียนเนื้อหาที่นี่..." }: Props) {
   const [activeTab, setActiveTab] = useState<"visual" | "code">("visual");
   const [rawHtml, setRawHtml] = useState(value ?? "");
   const [imageUrl, setImageUrl] = useState("");
+  const [imageError, setImageError] = useState("");
   const [showImageInput, setShowImageInput] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const [showLinkInput, setShowLinkInput] = useState(false);
@@ -103,9 +132,23 @@ export default function RichTextEditor({ value, onChange, placeholder = "เข�
     if (editor && imageUrl) {
       editor.chain().focus().setImage({ src: imageUrl }).run();
       setImageUrl("");
+      setImageError("");
       setShowImageInput(false);
     }
   };
+
+  async function addImageFile(file?: File) {
+    if (!editor || !file) return;
+
+    try {
+      setImageError("");
+      const dataUrl = await imageFileToDataUrl(file);
+      editor.chain().focus().setImage({ src: dataUrl }).run();
+      setShowImageInput(false);
+    } catch (err) {
+      setImageError(err instanceof Error ? err.message : "Could not add this image.");
+    }
+  }
 
   const setLink = () => {
     if (!editor) return;
@@ -126,23 +169,6 @@ export default function RichTextEditor({ value, onChange, placeholder = "เข�
   const wordCount = editor?.storage.characterCount?.words() ?? 0;
 
   if (!editor) return null;
-
-  const ToolBtn = ({
-    onClick, active = false, title, children,
-  }: { onClick: () => void; active?: boolean; title: string; children: React.ReactNode }) => (
-    <button
-      type="button"
-      onClick={onClick}
-      title={title}
-      className={`w-8 h-8 flex items-center justify-center rounded text-sm transition-all flex-shrink-0 ${
-        active
-          ? "bg-primary text-white"
-          : "text-muted-foreground hover:bg-accent hover:text-foreground"
-      }`}
-    >
-      {children}
-    </button>
-  );
 
   return (
     <div className="border border-border rounded-2xl overflow-hidden bg-card shadow-sm">
@@ -180,7 +206,18 @@ export default function RichTextEditor({ value, onChange, placeholder = "เข�
 
       {/* Image URL input */}
       {showImageInput && (
-        <div className="flex items-center gap-2 px-4 py-2 border-b border-border bg-blue-50">
+        <div className="space-y-2 px-4 py-3 border-b border-border bg-blue-50">
+          <div className="flex items-center gap-2">
+            <ImageIcon className="w-4 h-4 text-blue-500 flex-shrink-0" />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => addImageFile(e.target.files?.[0])}
+              className="flex-1 text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-primary file:px-3 file:py-1.5 file:text-xs file:font-bold file:text-white"
+            />
+            <span className="text-xs text-muted-foreground">or paste URL</span>
+          </div>
+          <div className="flex items-center gap-2">
           <ImageIcon className="w-4 h-4 text-blue-500 flex-shrink-0" />
           <input
             type="url"
@@ -191,6 +228,8 @@ export default function RichTextEditor({ value, onChange, placeholder = "เข�
           />
           <button type="button" onClick={addImage} className="gradient-btn text-white text-xs font-bold px-3 py-1.5 rounded-lg">แทรก</button>
           <button type="button" onClick={() => setShowImageInput(false)} className="text-xs text-muted-foreground hover:text-foreground px-2">ยกเลิก</button>
+          </div>
+          {imageError && <p className="text-xs font-medium text-red-600">{imageError}</p>}
         </div>
       )}
 

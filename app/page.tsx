@@ -1,10 +1,10 @@
 import Link from "next/link";
-import Image from "next/image";
 import { getPlaces, BLOG_CATEGORIES } from "@/lib/places";
 import PlaceCard from "@/components/places/PlaceCard";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import SearchBox from "@/components/SearchBox";
+import SafeImage from "@/components/SafeImage";
 import { UtensilsCrossed, Hotel, Compass, Star, MapPin, TrendingUp, Calendar } from "lucide-react";
 
 const categories = [
@@ -130,7 +130,7 @@ export default async function HomePage() {
                   <Link key={post.id} href={`/blog/${post.slug}`} className="group block">
                     <div className="relative h-48 rounded-2xl overflow-hidden mb-3 bg-accent">
                       {post.coverImage ? (
-                        <Image
+                        <SafeImage
                           src={post.coverImage}
                           alt={post.name}
                           fill
