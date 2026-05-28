@@ -11,7 +11,9 @@ import {
 } from "@/lib/places";
 
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
+const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL ?? "https://www.huahinvibes.com")
+  .replace("https://huahinvibes.com", "https://www.huahinvibes.com")
+  .replace(/\/$/, "");
 
 export const revalidate = 3600;
 

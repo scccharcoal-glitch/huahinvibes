@@ -8,7 +8,9 @@ const jakarta = Plus_Jakarta_Sans({
   weight: ["400", "600", "700", "800"],
 });
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://huahinvibes.com";
+const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL ?? "https://www.huahinvibes.com")
+  .replace("https://huahinvibes.com", "https://www.huahinvibes.com")
+  .replace(/\/$/, "");
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),

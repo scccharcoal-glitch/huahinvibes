@@ -6,10 +6,7 @@ import Footer from "@/components/layout/Footer";
 import Link from "next/link";
 import { type Place } from "@prisma/client";
 
-export const metadata: Metadata = {
-  title: "Restaurants in Hua Hin — Best Dining Guide",
-  description: "Discover the best restaurants in Hua Hin. From Thai seafood to Indian, Italian, and Japanese cuisine. Updated reviews and ratings.",
-};
+type RestaurantSearchParams = Promise<{ cuisine?: string; area?: string; q?: string }>;
 
 function areaLabel(area?: string) {
   if (!area) return "หัวหิน";
@@ -84,10 +81,66 @@ function buildSearchRecommendation({
   };
 }
 
+function filterRestaurants(places: Place[], q?: string) {
+  if (!q) return places;
+  const normalizedQuery = q.toLowerCase();
+
+  return places.filter(
+    (place) =>
+      place.name.toLowerCase().includes(normalizedQuery) ||
+      place.description?.toLowerCase().includes(normalizedQuery) ||
+      place.cuisine?.toLowerCase().includes(normalizedQuery) ||
+      place.tags?.toLowerCase().includes(normalizedQuery) ||
+      place.area?.toLowerCase().includes(normalizedQuery)
+  );
+}
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: RestaurantSearchParams;
+}): Promise<Metadata> {
+  const { cuisine, area, q } = await searchParams;
+  const areaName = area ? areaLabelEn(area) : "Hua Hin";
+  const cuisineName = cuisine
+    ? CUISINES.find((item) => item.value === cuisine)?.labelEn ?? CUISINES.find((item) => item.value === cuisine)?.label ?? cuisine
+    : "Restaurants";
+  const places = await getPlaces({
+    type: "RESTAURANT",
+    ...(cuisine && { cuisine }),
+    ...(area && { area }),
+  });
+  const filtered = filterRestaurants(places, q);
+  const year = new Date().getFullYear();
+  const title = q
+    ? `Top ${filtered.length} ${q} Restaurants in ${areaName} - Updated ${year}`
+    : `${cuisineName} in ${areaName} - Best Dining Guide ${year}`;
+  const description = q
+    ? `Find ${filtered.length} ${q} restaurants in ${areaName}. Compare ratings, reviews, locations, and local Hua Hin Vibes recommendations. Updated ${year}.`
+    : `Discover the best ${cuisineName.toLowerCase()} in ${areaName}. Browse ratings, reviews, locations, and dining recommendations from Hua Hin Vibes.`;
+  const queryParams = new URLSearchParams();
+  if (cuisine) queryParams.set("cuisine", cuisine);
+  if (area) queryParams.set("area", area);
+  if (q) queryParams.set("q", q);
+  const queryString = queryParams.toString();
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+    },
+    alternates: {
+      canonical: queryString ? `/restaurants?${queryString}` : "/restaurants",
+    },
+  };
+}
+
 export default async function RestaurantsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ cuisine?: string; area?: string; q?: string }>;
+  searchParams: RestaurantSearchParams;
 }) {
   const { cuisine, area, q } = await searchParams;
 
@@ -97,15 +150,7 @@ export default async function RestaurantsPage({
     ...(area && { area }),
   });
 
-  const filtered = q
-    ? places.filter(
-        (p) =>
-          p.name.toLowerCase().includes(q.toLowerCase()) ||
-          p.cuisine?.includes(q.toLowerCase()) ||
-          p.tags?.includes(q.toLowerCase()) ||
-          p.area?.includes(q.toLowerCase())
-      )
-    : places;
+  const filtered = filterRestaurants(places, q);
   const recommendation = q && filtered.length > 0
     ? buildSearchRecommendation({ q, area, places: filtered })
     : null;
