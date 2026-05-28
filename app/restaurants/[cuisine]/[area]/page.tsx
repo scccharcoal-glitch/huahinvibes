@@ -9,7 +9,7 @@ import Link from "next/link";
 import { MapPin, UtensilsCrossed, Star, MessageCircle } from "lucide-react";
 
 function cuisineDisplay(cuisine: { label: string; labelEn: string }) {
-  return `${cuisine.label} / ${cuisine.labelEn} food`;
+  return `${cuisine.labelEn} food`;
 }
 
 // Build params — falls back to constants if DB unavailable at build time

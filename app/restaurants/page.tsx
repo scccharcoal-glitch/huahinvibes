@@ -19,7 +19,7 @@ function areaLabelEn(area?: string) {
 }
 
 function cuisineDisplay(cuisine: { label: string; labelEn: string }) {
-  return `${cuisine.label} / ${cuisine.labelEn} food`;
+  return `${cuisine.labelEn} food`;
 }
 
 function buildSearchRecommendation({
