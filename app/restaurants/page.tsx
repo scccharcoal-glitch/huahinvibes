@@ -18,6 +18,10 @@ function areaLabelEn(area?: string) {
   return AREAS.find((a) => a.value === area)?.label ?? area;
 }
 
+function cuisineDisplay(cuisine: { label: string; labelEn: string }) {
+  return `${cuisine.label} / ${cuisine.labelEn} food`;
+}
+
 function buildSearchRecommendation({
   q,
   area,
@@ -224,7 +228,7 @@ export default async function RestaurantsPage({
                       href={`/restaurants?cuisine=${c.value}${area ? `&area=${area}` : ""}`}
                       className={`block text-sm py-1.5 px-3 rounded-lg transition-colors ${cuisine === c.value ? "bg-primary/10 text-primary font-semibold" : "text-muted-foreground hover:text-primary hover:bg-accent"}`}
                     >
-                      {c.label}
+                      {cuisineDisplay(c)}
                     </Link>
                   ))}
                 </div>
