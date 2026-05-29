@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin-auth";
+import { submitPlaceToIndexNow } from "@/lib/indexnow";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
@@ -75,6 +76,8 @@ export async function POST(req: NextRequest) {
         reviewCount: body.reviewCount ?? null,
       },
     });
+
+    await submitPlaceToIndexNow(place);
 
     return NextResponse.json(place, { status: 201 });
   } catch (err) {
