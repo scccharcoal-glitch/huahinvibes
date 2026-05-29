@@ -99,7 +99,7 @@ export default function AdvertisePage() {
               Put your business in front of the right audience at exactly the right moment.
             </p>
             <a
-              href="mailto:advertise@huahinvibes.com"
+              href="mailto:phetagency@gmail.com"
               className="gradient-btn text-white px-8 py-3.5 rounded-full font-bold hover:opacity-90 transition-opacity shadow-lg shadow-primary/25 inline-flex items-center gap-2"
             >
               <Mail className="w-4 h-4" />
@@ -191,11 +191,11 @@ export default function AdvertisePage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href="mailto:advertise@huahinvibes.com"
+                href="mailto:phetagency@gmail.com"
                 className="bg-white text-primary px-8 py-3.5 rounded-full font-bold hover:bg-white/90 transition-colors inline-flex items-center justify-center gap-2"
               >
                 <Mail className="w-4 h-4" />
-                advertise@huahinvibes.com
+                phetagency@gmail.com
               </a>
               <Link
                 href="/blog"
