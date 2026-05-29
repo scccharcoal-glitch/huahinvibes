@@ -186,6 +186,18 @@ export const getPlaces = cache(
   }
 );
 
+export const getLatestBlogPosts = cache(async (limit = 6) => {
+  try {
+    return await prisma.place.findMany({
+      where: { type: "BLOG", status: "published" },
+      orderBy: { createdAt: "desc" },
+      take: limit,
+    });
+  } catch {
+    return [];
+  }
+});
+
 export const getPlaceBySlug = cache(async (slug: string) => {
   try { return await prisma.place.findUnique({ where: { slug } }); } catch { return null; }
 });

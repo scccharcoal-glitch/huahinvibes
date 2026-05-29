@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getPlaces, BLOG_CATEGORIES } from "@/lib/places";
+import { getLatestBlogPosts, getPlaces, BLOG_CATEGORIES } from "@/lib/places";
 import PlaceCard from "@/components/places/PlaceCard";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -16,7 +16,7 @@ const categories = [
 export default async function HomePage() {
   const [featured, latestPosts] = await Promise.all([
     getPlaces({ featured: true, limit: 6 }),
-    getPlaces({ type: "BLOG", status: "published", limit: 6 }),
+    getLatestBlogPosts(6),
   ]);
 
   return (

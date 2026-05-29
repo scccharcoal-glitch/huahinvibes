@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Edit, Trash2 } from "lucide-react";
 
 export default function BlogPostActions({
@@ -12,6 +13,26 @@ export default function BlogPostActions({
   postName: string;
 }) {
   const router = useRouter();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+
+    fetch("/api/admin/session", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : { isAdmin: false }))
+      .then((data) => {
+        if (active) setIsAdmin(Boolean(data.isAdmin));
+      })
+      .catch(() => {
+        if (active) setIsAdmin(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  if (!isAdmin) return null;
 
   async function handleDelete() {
     if (!confirm(`Delete "${postName}"? This cannot be undone.`)) return;

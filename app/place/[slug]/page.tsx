@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getPlaceBySlug, getPriceSymbol } from "@/lib/places";
+import { isPublicImageUrl } from "@/lib/image-url";
 import { prisma } from "@/lib/prisma";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -48,6 +49,7 @@ export default async function PlaceDetailPage({
   const tags = place.tags?.split(",").filter(Boolean) ?? [];
   const typeLabel = place.type === "RESTAURANT" ? "Restaurant" : place.type === "HOTEL" ? "Hotel" : "Attraction";
   const listingHref = `/${place.type.toLowerCase()}s`;
+  const schemaImage = isPublicImageUrl(place.coverImage) ? place.coverImage : undefined;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -65,7 +67,7 @@ export default async function PlaceDetailPage({
     aggregateRating: place.rating && place.rating > 0
       ? { "@type": "AggregateRating", ratingValue: place.rating, reviewCount: place.reviewCount }
       : undefined,
-    image: place.coverImage,
+    image: schemaImage,
   };
 
   return (
