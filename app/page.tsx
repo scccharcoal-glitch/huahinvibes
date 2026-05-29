@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getLatestBlogPosts, getPlaces, BLOG_CATEGORIES } from "@/lib/places";
+import { getFeaturedDirectoryPlaces, getLatestBlogPosts, BLOG_CATEGORIES } from "@/lib/places";
 import PlaceCard from "@/components/places/PlaceCard";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -15,7 +15,7 @@ const categories = [
 
 export default async function HomePage() {
   const [featured, latestPosts] = await Promise.all([
-    getPlaces({ featured: true, limit: 6 }),
+    getFeaturedDirectoryPlaces(6),
     getLatestBlogPosts(6),
   ]);
 
@@ -117,10 +117,10 @@ export default async function HomePage() {
             <div className="flex items-center justify-between mb-8">
               <div>
                 <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">Travel Journal</p>
-                <h2 className="text-2xl font-bold">บทความล่าสุด</h2>
+                <h2 className="text-2xl font-bold">Latest Articles</h2>
               </div>
               <Link href="/blog" className="text-sm font-semibold text-primary hover:underline">
-                ดูทั้งหมด →
+                View all →
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -142,7 +142,7 @@ export default async function HomePage() {
                       )}
                       {cat && (
                         <span className="absolute top-3 left-3 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">
-                          {cat.labelTh}
+                          {cat.label}
                         </span>
                       )}
                     </div>
@@ -156,7 +156,7 @@ export default async function HomePage() {
                     )}
                     <span className="flex items-center gap-1 text-xs text-muted-foreground">
                       <Calendar className="w-3 h-3" />
-                      {new Date(post.createdAt).toLocaleDateString("th-TH", { year: "numeric", month: "long", day: "numeric" })}
+                      {new Date(post.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
                     </span>
                   </Link>
                 );

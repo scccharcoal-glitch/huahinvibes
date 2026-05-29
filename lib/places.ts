@@ -198,6 +198,22 @@ export const getLatestBlogPosts = cache(async (limit = 6) => {
   }
 });
 
+export const getFeaturedDirectoryPlaces = cache(async (limit = 6) => {
+  try {
+    return await prisma.place.findMany({
+      where: {
+        status: "published",
+        featured: true,
+        type: { in: ["RESTAURANT", "HOTEL", "ATTRACTION"] },
+      },
+      orderBy: [{ rating: "desc" }, { createdAt: "desc" }],
+      take: limit,
+    });
+  } catch {
+    return [];
+  }
+});
+
 export const getPlaceBySlug = cache(async (slug: string) => {
   try { return await prisma.place.findUnique({ where: { slug } }); } catch { return null; }
 });
