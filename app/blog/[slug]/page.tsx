@@ -87,11 +87,11 @@ export default async function BlogPostPage({
         </div>
 
         {/* Title */}
-        <h1 className="text-3xl md:text-4xl font-extrabold mb-4 leading-tight">{post.name}</h1>
+        <h1 className="text-2xl md:text-4xl font-extrabold mb-4 leading-tight">{post.name}</h1>
 
         {/* Excerpt */}
         {post.excerpt && (
-          <p className="text-lg text-muted-foreground leading-relaxed mb-6 border-l-4 border-primary pl-4">
+          <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-6 border-l-4 border-primary pl-4">
             {post.excerpt}
           </p>
         )}
@@ -112,10 +112,12 @@ export default async function BlogPostPage({
 
         {/* Rich text content */}
         {post.content ? (
-          <div
-            className="prose prose-sm md:prose-base max-w-none prose-headings:font-extrabold prose-a:text-primary prose-img:rounded-xl"
-            dangerouslySetInnerHTML={{ __html: post.content }}
-          />
+          <div className="overflow-x-hidden w-full">
+            <div
+              className="prose prose-sm md:prose-base max-w-none prose-headings:font-extrabold prose-a:text-primary prose-img:rounded-xl"
+              dangerouslySetInnerHTML={{ __html: post.content }}
+            />
+          </div>
         ) : post.description ? (
           <div className="prose prose-sm md:prose-base max-w-none">
             <p>{post.description}</p>
