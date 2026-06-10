@@ -58,24 +58,10 @@ export default function PlaceForm({ place, mode }: Props) {
     reviewCount: place?.reviewCount ?? undefined,
   });
 
-  type ReviewInput = { author: string; text: string; rating: string };
-  const emptyReview = (): ReviewInput => ({ author: "", text: "", rating: "" });
-  const parseInitialReviews = (): ReviewInput[] => {
-    try {
-      const parsed = JSON.parse((place as any)?.reviewsJson ?? "[]");
-      if (Array.isArray(parsed)) {
-        const arr = parsed.slice(0, 5).map((r: any) => ({
-          author: r.author ?? "",
-          text: r.text ?? "",
-          rating: r.rating != null ? String(r.rating) : "",
-        }));
-        while (arr.length < 5) arr.push(emptyReview());
-        return arr;
-      }
-    } catch { /* ignore */ }
-    return Array.from({ length: 5 }, emptyReview);
-  };
-  const [reviews, setReviews] = useState<ReviewInput[]>(parseInitialReviews);
+  const [reviewsRaw, setReviewsRaw] = useState<string>((place as any)?.reviewsJson ?? "");
+  const reviewsPreviewCount = (() => {
+    try { const p = JSON.parse(reviewsRaw); return Array.isArray(p) ? Math.min(p.length, 5) : 0; } catch { return 0; }
+  })();
 
   function set(key: keyof PlaceInput, value: unknown) {
     setForm((prev) => {
@@ -128,14 +114,13 @@ export default function PlaceForm({ place, mode }: Props) {
       const url = mode === "create" ? "/api/places" : `/api/places/${place?.id}`;
       const method = mode === "create" ? "POST" : "PUT";
 
-      const validReviews = reviews.filter((r) => r.text.trim());
-      const reviewsJson = validReviews.length > 0
-        ? JSON.stringify(validReviews.map((r) => ({
-            author: r.author.trim() || undefined,
-            text: r.text.trim(),
-            rating: r.rating ? parseFloat(r.rating) : undefined,
-          })))
-        : null;
+      let reviewsJson: string | null = null;
+      if (reviewsRaw.trim()) {
+        try {
+          const parsed = JSON.parse(reviewsRaw);
+          if (Array.isArray(parsed)) reviewsJson = JSON.stringify(parsed.slice(0, 5));
+        } catch { /* invalid JSON — skip */ }
+      }
 
       const res = await fetch(url, {
         method,
@@ -469,45 +454,26 @@ export default function PlaceForm({ place, mode }: Props) {
       {form.type !== "BLOG" && (
       <section className="bg-card border border-border rounded-2xl p-6">
         <h2 className="font-bold text-base mb-1 pb-3 border-b border-border">Reviews (จาก Google Maps)</h2>
-        <p className="text-xs text-muted-foreground mb-5">ใส่สูงสุด 5 รีวิว จาก Google Maps — แสดงในกล่องข้อมูลด้านข้าง</p>
-        <div className="space-y-4">
-          {reviews.map((rv, i) => (
-            <div key={i} className="border border-border rounded-xl p-4 space-y-2">
-              <p className="text-xs font-bold text-muted-foreground">Review {i + 1}</p>
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className={labelCls}>ชื่อผู้รีวิว (ไม่บังคับ)</label>
-                  <input
-                    value={rv.author}
-                    onChange={(e) => setReviews((prev) => prev.map((r, j) => j === i ? { ...r, author: e.target.value } : r))}
-                    className={inputCls}
-                    placeholder="John D."
-                  />
-                </div>
-                <div>
-                  <label className={labelCls}>คะแนน (1–5)</label>
-                  <input
-                    type="number" min="1" max="5" step="1"
-                    value={rv.rating}
-                    onChange={(e) => setReviews((prev) => prev.map((r, j) => j === i ? { ...r, rating: e.target.value } : r))}
-                    className={inputCls}
-                    placeholder="5"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className={labelCls}>ข้อความรีวิว</label>
-                <textarea
-                  rows={2}
-                  value={rv.text}
-                  onChange={(e) => setReviews((prev) => prev.map((r, j) => j === i ? { ...r, text: e.target.value } : r))}
-                  className={inputCls}
-                  placeholder="So delicious, great atmosphere and wonderful service!"
-                />
-              </div>
-            </div>
-          ))}
+        <p className="text-xs text-muted-foreground mb-4">
+          วาง JSON array ของรีวิวจาก Google Maps ลงตรงนี้ — รองรับทั้ง array of strings และ array of objects
+        </p>
+        <div className="bg-accent/50 rounded-xl p-3 mb-3 text-xs text-muted-foreground font-mono">
+          {`["รีวิวที่ 1", "รีวิวที่ 2", "รีวิวที่ 3"]`}
         </div>
+        <textarea
+          rows={6}
+          value={reviewsRaw}
+          onChange={(e) => setReviewsRaw(e.target.value)}
+          className={inputCls + " font-mono text-xs"}
+          placeholder={'["Great food!", "Amazing service...", "Will come back!"]'}
+        />
+        <p className={`text-xs mt-1.5 font-medium ${reviewsPreviewCount > 0 ? "text-primary" : "text-muted-foreground"}`}>
+          {reviewsRaw.trim()
+            ? reviewsPreviewCount > 0
+              ? `✓ พบ ${reviewsPreviewCount} รีวิว (จะแสดงสูงสุด 5 รายการ)`
+              : "⚠️ JSON ไม่ถูกต้อง — ตรวจสอบรูปแบบใหม่"
+            : "ยังไม่มีรีวิว"}
+        </p>
       </section>
       )}
 

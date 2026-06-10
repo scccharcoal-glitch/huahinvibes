@@ -43,8 +43,19 @@ function parseReviews(json?: string | null): Review[] {
   if (!json) return [];
   try {
     const parsed = JSON.parse(json);
-    if (Array.isArray(parsed)) return parsed.slice(0, 5);
-    return [];
+    if (!Array.isArray(parsed)) return [];
+    return parsed.slice(0, 5).map((item: unknown) => {
+      if (typeof item === "string") return { text: item };
+      if (typeof item === "object" && item !== null) {
+        const r = item as Record<string, unknown>;
+        return {
+          text: String(r.text ?? ""),
+          author: r.author ? String(r.author) : undefined,
+          rating: typeof r.rating === "number" ? r.rating : undefined,
+        };
+      }
+      return { text: String(item) };
+    }).filter((r) => r.text.trim());
   } catch {
     return [];
   }
