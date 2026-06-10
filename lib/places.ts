@@ -50,11 +50,17 @@ export const BLOG_CATEGORIES = [
 ];
 
 export const PRICE_RANGES = [
-  { value: "cheap",     label: "฿ Cheap",    symbol: "฿"    },
-  { value: "moderate",  label: "฿฿ Moderate", symbol: "฿฿"   },
-  { value: "expensive", label: "฿฿฿ Expensive",symbol: "฿฿฿"  },
-  { value: "luxury",    label: "฿฿฿฿ Luxury", symbol: "฿฿฿฿" },
+  { value: "cheap",     label: "฿ Budget",    symbol: "฿",    numericLabel: "< 150 ฿" },
+  { value: "moderate",  label: "฿฿ Moderate",  symbol: "฿฿",   numericLabel: "150–400 ฿" },
+  { value: "expensive", label: "฿฿฿ Expensive", symbol: "฿฿฿",  numericLabel: "400–1,000 ฿" },
+  { value: "luxury",    label: "฿฿฿฿ Luxury",  symbol: "฿฿฿฿", numericLabel: "1,000+ ฿" },
 ];
+
+export function getPriceNumeric(priceRange?: string | null): string {
+  // If it looks like a free-text number e.g. "200-400", prefix ฿
+  if (priceRange && /^\d/.test(priceRange)) return `฿${priceRange}`;
+  return PRICE_RANGES.find((p) => p.value === priceRange)?.numericLabel ?? "";
+}
 
 // --- Social proof headline generator ---
 export function buildSocialProofH1(

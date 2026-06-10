@@ -58,6 +58,25 @@ export default function PlaceForm({ place, mode }: Props) {
     reviewCount: place?.reviewCount ?? undefined,
   });
 
+  type ReviewInput = { author: string; text: string; rating: string };
+  const emptyReview = (): ReviewInput => ({ author: "", text: "", rating: "" });
+  const parseInitialReviews = (): ReviewInput[] => {
+    try {
+      const parsed = JSON.parse((place as any)?.reviewsJson ?? "[]");
+      if (Array.isArray(parsed)) {
+        const arr = parsed.slice(0, 5).map((r: any) => ({
+          author: r.author ?? "",
+          text: r.text ?? "",
+          rating: r.rating != null ? String(r.rating) : "",
+        }));
+        while (arr.length < 5) arr.push(emptyReview());
+        return arr;
+      }
+    } catch { /* ignore */ }
+    return Array.from({ length: 5 }, emptyReview);
+  };
+  const [reviews, setReviews] = useState<ReviewInput[]>(parseInitialReviews);
+
   function set(key: keyof PlaceInput, value: unknown) {
     setForm((prev) => {
       const next = { ...prev, [key]: value };
@@ -109,10 +128,19 @@ export default function PlaceForm({ place, mode }: Props) {
       const url = mode === "create" ? "/api/places" : `/api/places/${place?.id}`;
       const method = mode === "create" ? "POST" : "PUT";
 
+      const validReviews = reviews.filter((r) => r.text.trim());
+      const reviewsJson = validReviews.length > 0
+        ? JSON.stringify(validReviews.map((r) => ({
+            author: r.author.trim() || undefined,
+            text: r.text.trim(),
+            rating: r.rating ? parseFloat(r.rating) : undefined,
+          })))
+        : null;
+
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, reviewsJson }),
       });
 
       if (!res.ok) {
@@ -268,11 +296,19 @@ export default function PlaceForm({ place, mode }: Props) {
               </datalist>
             </div>
             <div>
-              <label className={labelCls}>Price Range</label>
-              <select value={form.priceRange ?? ""} onChange={(e) => set("priceRange", e.target.value)} className={inputCls}>
-                <option value="">Select price range</option>
-                {PRICE_RANGES.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
-              </select>
+              <label className={labelCls}>Price Range (฿/person)</label>
+              <input
+                list="price-suggestions"
+                value={form.priceRange ?? ""}
+                onChange={(e) => set("priceRange", e.target.value)}
+                className={inputCls}
+                placeholder="เช่น 200-400 หรือ 1,000+"
+              />
+              <datalist id="price-suggestions">
+                {PRICE_RANGES.map((p) => (
+                  <option key={p.value} value={p.numericLabel}>{p.label}</option>
+                ))}
+              </datalist>
             </div>
             <div>
               <label className={labelCls}>Opening Hours</label>
@@ -301,11 +337,19 @@ export default function PlaceForm({ place, mode }: Props) {
               </select>
             </div>
             <div>
-              <label className={labelCls}>Price Range</label>
-              <select value={form.priceRange ?? ""} onChange={(e) => set("priceRange", e.target.value)} className={inputCls}>
-                <option value="">Select price range</option>
-                {PRICE_RANGES.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
-              </select>
+              <label className={labelCls}>Price Range (฿/night)</label>
+              <input
+                list="price-suggestions-hotel"
+                value={form.priceRange ?? ""}
+                onChange={(e) => set("priceRange", e.target.value)}
+                className={inputCls}
+                placeholder="เช่น 2,000-5,000 หรือ 10,000+"
+              />
+              <datalist id="price-suggestions-hotel">
+                {PRICE_RANGES.map((p) => (
+                  <option key={p.value} value={p.numericLabel}>{p.label}</option>
+                ))}
+              </datalist>
             </div>
           </div>
         </section>
@@ -417,6 +461,52 @@ export default function PlaceForm({ place, mode }: Props) {
             <label className={labelCls}>Review Count</label>
             <input type="number" value={form.reviewCount ?? ""} onChange={(e) => set("reviewCount", parseInt(e.target.value))} className={inputCls} placeholder="312" />
           </div>
+        </div>
+      </section>
+      )}
+
+      {/* Reviews from Google Maps — hide for Blog */}
+      {form.type !== "BLOG" && (
+      <section className="bg-card border border-border rounded-2xl p-6">
+        <h2 className="font-bold text-base mb-1 pb-3 border-b border-border">Reviews (จาก Google Maps)</h2>
+        <p className="text-xs text-muted-foreground mb-5">ใส่สูงสุด 5 รีวิว จาก Google Maps — แสดงในกล่องข้อมูลด้านข้าง</p>
+        <div className="space-y-4">
+          {reviews.map((rv, i) => (
+            <div key={i} className="border border-border rounded-xl p-4 space-y-2">
+              <p className="text-xs font-bold text-muted-foreground">Review {i + 1}</p>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className={labelCls}>ชื่อผู้รีวิว (ไม่บังคับ)</label>
+                  <input
+                    value={rv.author}
+                    onChange={(e) => setReviews((prev) => prev.map((r, j) => j === i ? { ...r, author: e.target.value } : r))}
+                    className={inputCls}
+                    placeholder="John D."
+                  />
+                </div>
+                <div>
+                  <label className={labelCls}>คะแนน (1–5)</label>
+                  <input
+                    type="number" min="1" max="5" step="1"
+                    value={rv.rating}
+                    onChange={(e) => setReviews((prev) => prev.map((r, j) => j === i ? { ...r, rating: e.target.value } : r))}
+                    className={inputCls}
+                    placeholder="5"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className={labelCls}>ข้อความรีวิว</label>
+                <textarea
+                  rows={2}
+                  value={rv.text}
+                  onChange={(e) => setReviews((prev) => prev.map((r, j) => j === i ? { ...r, text: e.target.value } : r))}
+                  className={inputCls}
+                  placeholder="So delicious, great atmosphere and wonderful service!"
+                />
+              </div>
+            </div>
+          ))}
         </div>
       </section>
       )}

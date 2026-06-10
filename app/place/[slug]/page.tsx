@@ -1,13 +1,13 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getPlaceBySlug, getPriceSymbol } from "@/lib/places";
+import { getPlaceBySlug, getPriceNumeric } from "@/lib/places";
 import { isPublicImageUrl } from "@/lib/image-url";
 import { prisma } from "@/lib/prisma";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import SafeImage from "@/components/SafeImage";
-import { Star, MapPin, Phone, Clock, Globe, ExternalLink } from "lucide-react";
+import { Star, MapPin, Phone, Clock, Globe, ExternalLink, MessageSquareQuote } from "lucide-react";
 
 export async function generateStaticParams() {
   try {
@@ -37,6 +37,19 @@ export async function generateMetadata({
   };
 }
 
+type Review = { author?: string; text: string; rating?: number };
+
+function parseReviews(json?: string | null): Review[] {
+  if (!json) return [];
+  try {
+    const parsed = JSON.parse(json);
+    if (Array.isArray(parsed)) return parsed.slice(0, 5);
+    return [];
+  } catch {
+    return [];
+  }
+}
+
 export default async function PlaceDetailPage({
   params,
 }: {
@@ -50,6 +63,8 @@ export default async function PlaceDetailPage({
   const typeLabel = place.type === "RESTAURANT" ? "Restaurant" : place.type === "HOTEL" ? "Hotel" : "Attraction";
   const listingHref = `/${place.type.toLowerCase()}s`;
   const schemaImage = isPublicImageUrl(place.coverImage) ? place.coverImage : undefined;
+  const priceText = getPriceNumeric(place.priceRange);
+  const reviews = parseReviews((place as any).reviewsJson);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -108,20 +123,28 @@ export default async function PlaceDetailPage({
                 <span className="bg-primary/10 text-primary text-xs font-semibold px-2 py-0.5 rounded-full">⭐ Featured</span>
               )}
             </div>
-            <h1 className="text-3xl md:text-4xl font-extrabold mb-3">{place.name}</h1>
+            <h1 className="text-2xl md:text-4xl font-extrabold mb-3">{place.name}</h1>
 
-            {place.rating && place.rating > 0 && (
-              <div className="flex items-center gap-2 mb-5">
-                <div className="flex items-center gap-1">
-                  {[1, 2, 3, 4, 5].map((s) => (
-                    <Star key={s} className={`w-4 h-4 ${s <= Math.round(place.rating!) ? "fill-amber-400 text-amber-400" : "text-muted"}`} />
-                  ))}
-                </div>
-                <span className="font-bold text-sm">{place.rating.toFixed(1)}</span>
-                <span className="text-muted-foreground text-sm">({place.reviewCount?.toLocaleString()} reviews)</span>
-              </div>
-            )}
+            {/* Rating · Reviews · Price — one line like Google Maps */}
+            <div className="flex flex-wrap items-center gap-2 mb-6 text-sm">
+              {place.rating && place.rating > 0 && (
+                <>
+                  <span className="font-bold text-amber-500">{place.rating.toFixed(1)}</span>
+                  <div className="flex items-center gap-0.5">
+                    {[1, 2, 3, 4, 5].map((s) => (
+                      <Star key={s} className={`w-4 h-4 ${s <= Math.round(place.rating!) ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"}`} />
+                    ))}
+                  </div>
+                  <span className="text-muted-foreground">({place.reviewCount?.toLocaleString()})</span>
+                  {priceText && <span className="text-muted-foreground">·</span>}
+                </>
+              )}
+              {priceText && (
+                <span className="font-semibold text-primary">{priceText}</span>
+              )}
+            </div>
 
+            {/* Description */}
             {place.description && (
               /^</.test(place.description.trim()) ? (
                 <div
@@ -133,11 +156,14 @@ export default async function PlaceDetailPage({
               )
             )}
 
+            {/* Long-form content */}
             {place.content && (
-              <div
-                className="prose prose-sm md:prose-base max-w-none prose-headings:font-extrabold prose-a:text-primary prose-img:rounded-xl"
-                dangerouslySetInnerHTML={{ __html: place.content }}
-              />
+              <div className="overflow-x-hidden w-full">
+                <div
+                  className="prose prose-sm md:prose-base max-w-none prose-headings:font-extrabold prose-a:text-primary prose-img:rounded-xl"
+                  dangerouslySetInnerHTML={{ __html: place.content }}
+                />
+              </div>
             )}
 
             {/* Tags */}
@@ -154,14 +180,17 @@ export default async function PlaceDetailPage({
 
           {/* Info sidebar */}
           <aside>
-            <div className="bg-card border border-border rounded-2xl p-6 space-y-4 sticky top-24">
-              {place.priceRange && (
+            <div className="bg-card border border-border rounded-2xl p-5 space-y-4 sticky top-24">
+
+              {/* Price */}
+              {priceText && (
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1">Price</p>
-                  <p className="text-2xl font-bold text-primary">{getPriceSymbol(place.priceRange)}<span className="text-sm font-normal text-muted-foreground"> / person</span></p>
+                  <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1">Price per person</p>
+                  <p className="text-xl font-bold text-primary">{priceText}</p>
                 </div>
               )}
 
+              {/* Address */}
               {place.address && (
                 <div className="flex items-start gap-2 text-sm">
                   <MapPin className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
@@ -169,6 +198,7 @@ export default async function PlaceDetailPage({
                 </div>
               )}
 
+              {/* Phone */}
               {place.phone && (
                 <div className="flex items-center gap-2 text-sm">
                   <Phone className="w-4 h-4 text-primary flex-shrink-0" />
@@ -176,13 +206,15 @@ export default async function PlaceDetailPage({
                 </div>
               )}
 
+              {/* Hours */}
               {place.openingHours && (
-                <div className="flex items-center gap-2 text-sm">
-                  <Clock className="w-4 h-4 text-primary flex-shrink-0" />
-                  <span className="text-muted-foreground">{place.openingHours}</span>
+                <div className="flex items-start gap-2 text-sm">
+                  <Clock className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                  <span className="text-muted-foreground whitespace-pre-line">{place.openingHours}</span>
                 </div>
               )}
 
+              {/* Website */}
               {place.website && (
                 <div className="flex items-center gap-2 text-sm">
                   <Globe className="w-4 h-4 text-primary flex-shrink-0" />
@@ -192,28 +224,53 @@ export default async function PlaceDetailPage({
                 </div>
               )}
 
-              {/* Map */}
+              {/* Google Maps button */}
               {place.lat && place.lng && (
                 <a
                   href={`https://www.google.com/maps?q=${place.lat},${place.lng}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="gradient-btn text-white w-full py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity mt-2"
+                  className="gradient-btn text-white w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
                 >
                   <MapPin className="w-4 h-4" /> View on Google Maps
                 </a>
               )}
 
+              {/* Booking */}
               {place.bookingUrl && (
                 <a
                   href={place.bookingUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-center border-2 border-primary text-primary w-full py-3 rounded-xl text-sm font-bold hover:bg-primary hover:text-white transition-all"
+                  className="block text-center border-2 border-primary text-primary w-full py-2.5 rounded-xl text-sm font-bold hover:bg-primary hover:text-white transition-all"
                 >
                   {place.type === "HOTEL" ? "Book Now" : "Reserve a Table"}
                 </a>
               )}
+
+              {/* Reviews from Google Maps */}
+              {reviews.length > 0 && (
+                <div className="border-t border-border pt-4 space-y-3">
+                  <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    <MessageSquareQuote className="w-3.5 h-3.5" />
+                    Reviews
+                  </div>
+                  {reviews.map((rv, i) => (
+                    <div key={i} className="bg-accent/60 rounded-xl p-3 text-xs space-y-1">
+                      {rv.rating && (
+                        <div className="flex gap-0.5">
+                          {[1,2,3,4,5].map((s) => (
+                            <Star key={s} className={`w-3 h-3 ${s <= rv.rating! ? "fill-amber-400 text-amber-400" : "text-muted-foreground/20"}`} />
+                          ))}
+                        </div>
+                      )}
+                      <p className="text-muted-foreground leading-relaxed italic">&ldquo;{rv.text}&rdquo;</p>
+                      {rv.author && <p className="font-semibold text-foreground/70">— {rv.author}</p>}
+                    </div>
+                  ))}
+                </div>
+              )}
+
             </div>
           </aside>
         </div>

@@ -74,6 +74,7 @@ export async function POST(req: NextRequest) {
         seoDesc: body.seoDesc || null,
         rating: body.rating ?? null,
         reviewCount: body.reviewCount ?? null,
+        reviewsJson: body.reviewsJson ?? null,
       },
     });
 

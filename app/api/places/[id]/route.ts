@@ -49,6 +49,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         seoDesc: body.seoDesc || null,
         rating: body.rating ?? null,
         reviewCount: body.reviewCount ?? null,
+        reviewsJson: body.reviewsJson ?? null,
       },
     });
 
