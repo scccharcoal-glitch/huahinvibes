@@ -1,7 +1,8 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getPlaceBySlug, BLOG_CATEGORIES } from "@/lib/places";
+import { getPlaceBySlug, BLOG_CATEGORIES, getPriceNumeric } from "@/lib/places";
+import { prisma } from "@/lib/prisma";
 import { isPublicImageUrl } from "@/lib/image-url";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -46,6 +47,22 @@ export default async function BlogPostPage({
   const cat = BLOG_CATEGORIES.find((c) => c.value === post.category);
   const tags = post.tags?.split(",").map((t) => t.trim()).filter(Boolean) ?? [];
   const schemaImage = isPublicImageUrl(post.coverImage) ? post.coverImage : undefined;
+
+  // Ranked Places (listicle)
+  type LinkedItem = { slug: string; review: string };
+  let rankedPlaces: (Awaited<ReturnType<typeof prisma.place.findUnique>> & { review: string })[] = [];
+  if (post.linkedPlaces) {
+    try {
+      const items: LinkedItem[] = JSON.parse(post.linkedPlaces);
+      const fetched = await Promise.all(
+        items.map(async (item) => {
+          const place = await prisma.place.findUnique({ where: { slug: item.slug } });
+          return place ? { ...place, review: item.review } : null;
+        })
+      );
+      rankedPlaces = fetched.filter(Boolean) as typeof rankedPlaces;
+    } catch { /* invalid JSON */ }
+  }
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -123,6 +140,55 @@ export default async function BlogPostPage({
             <p>{post.description}</p>
           </div>
         ) : null}
+
+        {/* Ranked Places */}
+        {rankedPlaces.length > 0 && (
+          <div className="mt-10 space-y-8">
+            <h2 className="text-2xl font-extrabold border-b border-border pb-3">จัดอันดับ</h2>
+            {rankedPlaces.map((place, i) => (
+              <div key={place.id} className="flex flex-col md:flex-row gap-5 bg-card border border-border rounded-2xl overflow-hidden hover:shadow-md transition-shadow">
+                {/* Rank badge */}
+                <div className="relative md:w-64 h-48 md:h-auto flex-shrink-0">
+                  {place.coverImage && isPublicImageUrl(place.coverImage) ? (
+                    <SafeImage src={place.coverImage} alt={place.name} fill className="object-cover" sizes="(max-width: 768px) 100vw, 256px" />
+                  ) : (
+                    <div className="w-full h-full bg-accent flex items-center justify-center text-4xl">🏨</div>
+                  )}
+                  <span className="absolute top-3 left-3 w-9 h-9 rounded-full bg-primary text-white text-base font-extrabold flex items-center justify-center shadow-lg">
+                    {i + 1}
+                  </span>
+                </div>
+                {/* Info */}
+                <div className="p-5 flex flex-col justify-between flex-1">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{place.type}</span>
+                      {place.rating && place.rating > 0 && (
+                        <span className="flex items-center gap-1 text-amber-500 text-xs font-bold">⭐ {place.rating.toFixed(1)}</span>
+                      )}
+                      {place.priceRange && (
+                        <span className="text-xs text-primary font-semibold">{getPriceNumeric(place.priceRange)}</span>
+                      )}
+                    </div>
+                    <h3 className="text-lg font-extrabold mb-2 leading-snug">{place.name}</h3>
+                    {place.review && (
+                      <p className="text-sm text-muted-foreground leading-relaxed mb-3">{place.review}</p>
+                    )}
+                    {place.description && !place.review && (
+                      <p className="text-sm text-muted-foreground leading-relaxed mb-3 line-clamp-2">{place.description}</p>
+                    )}
+                  </div>
+                  <a
+                    href={`/place/${place.slug}`}
+                    className="gradient-btn text-white text-sm font-bold px-5 py-2 rounded-xl hover:opacity-90 transition-opacity w-fit"
+                  >
+                    ดูรายละเอียด →
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Tags */}
         {tags.length > 0 && (

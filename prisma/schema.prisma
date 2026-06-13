@@ -52,6 +52,8 @@ model Place {
   reviewsJson String?
   viewCount   Int?      @default(0)
 
+  linkedPlaces String?   // JSON: [{slug, review}] for listicle blog posts
+
   publishedAt DateTime?
 
   createdAt   DateTime  @default(now())

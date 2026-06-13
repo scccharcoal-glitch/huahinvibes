@@ -7,9 +7,11 @@ import { AREAS, CUISINES, HOTEL_TYPES, ATTRACTION_CATEGORIES, BLOG_CATEGORIES, P
 import { imageFileToDataUrl } from "@/lib/image-file";
 import RichTextEditor from "./RichTextEditor";
 
-type PlaceInput = Partial<Omit<Place, "id" | "createdAt" | "updatedAt" | "publishedAt">> & {
+type PlaceInput = Partial<Omit<Place, "id" | "createdAt" | "updatedAt" | "publishedAt" | "linkedPlaces">> & {
   publishedAt?: string; // ISO string from datetime-local input
 };
+
+type LinkedPlaceItem = { slug: string; review: string };
 
 interface Props {
   place?: Place;
@@ -63,6 +65,29 @@ export default function PlaceForm({ place, mode }: Props) {
       ? new Date(place.publishedAt).toISOString().slice(0, 16)
       : "",
   });
+
+  // Ranked Places (listicle)
+  const [linkedItems, setLinkedItems] = useState<LinkedPlaceItem[]>(() => {
+    try {
+      const parsed = JSON.parse((place as any)?.linkedPlaces ?? "[]");
+      return Array.isArray(parsed) ? parsed : [];
+    } catch { return []; }
+  });
+
+  function addLinkedItem() {
+    setLinkedItems((prev) => [...prev, { slug: "", review: "" }]);
+  }
+  function removeLinkedItem(i: number) {
+    setLinkedItems((prev) => prev.filter((_, idx) => idx !== i));
+  }
+  function updateLinkedItem(i: number, key: keyof LinkedPlaceItem, value: string) {
+    setLinkedItems((prev) => prev.map((item, idx) => idx === i ? { ...item, [key]: value } : item));
+  }
+  function extractSlug(urlOrSlug: string): string {
+    // handles https://huahinvibes.com/place/some-slug or just some-slug
+    const match = urlOrSlug.match(/\/place\/([^/?#]+)/);
+    return match ? match[1] : urlOrSlug.trim();
+  }
 
   const [reviewsRaw, setReviewsRaw] = useState<string>((place as any)?.reviewsJson ?? "");
   const reviewsPreviewCount = (() => {
@@ -131,10 +156,14 @@ export default function PlaceForm({ place, mode }: Props) {
       // publishedAt: send ISO string or null
       const publishedAt = form.publishedAt ? new Date(form.publishedAt).toISOString() : null;
 
+      // linkedPlaces: serialize ranked items (filter empty slugs)
+      const validItems = linkedItems.map((item) => ({ slug: extractSlug(item.slug), review: item.review })).filter((item) => item.slug);
+      const linkedPlaces = validItems.length > 0 ? JSON.stringify(validItems) : null;
+
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, reviewsJson, publishedAt }),
+        body: JSON.stringify({ ...form, reviewsJson, publishedAt, linkedPlaces }),
       });
 
       if (!res.ok) {
@@ -350,6 +379,7 @@ export default function PlaceForm({ place, mode }: Props) {
       )}
 
       {form.type === "BLOG" && (
+        <>
         <section className="bg-card border border-border rounded-2xl p-6">
           <h2 className="font-bold text-base mb-5 pb-3 border-b border-border">Blog Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -388,6 +418,62 @@ export default function PlaceForm({ place, mode }: Props) {
             </div>
           </div>
         </section>
+
+        {/* Ranked Places — listicle template */}
+        <section className="bg-card border border-border rounded-2xl p-6">
+          <div className="flex items-center justify-between mb-5 pb-3 border-b border-border">
+            <div>
+              <h2 className="font-bold text-base">📋 Ranked Places</h2>
+              <p className="text-xs text-muted-foreground mt-0.5">วาง URL หรือ slug ของสถานที่ — ระบบดึงรูปและข้อมูลมาแสดงอัตโนมัติ</p>
+            </div>
+            <button
+              type="button"
+              onClick={addLinkedItem}
+              className="gradient-btn text-white px-4 py-2 rounded-xl text-sm font-bold hover:opacity-90 transition-opacity flex items-center gap-1.5"
+            >
+              + เพิ่มสถานที่
+            </button>
+          </div>
+
+          {linkedItems.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground text-sm border-2 border-dashed border-border rounded-xl">
+              ยังไม่มีรายการ — กด <strong>+ เพิ่มสถานที่</strong> เพื่อเริ่มสร้าง Top 10
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {linkedItems.map((item, i) => (
+                <div key={i} className="flex gap-3 items-start bg-accent/30 rounded-xl p-4">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-white text-sm font-extrabold flex items-center justify-center mt-1">
+                    {i + 1}
+                  </div>
+                  <div className="flex-1 space-y-2">
+                    <input
+                      value={item.slug}
+                      onChange={(e) => updateLinkedItem(i, "slug", e.target.value)}
+                      className={inputCls}
+                      placeholder="https://huahinvibes.com/place/barai-hyatt-regency หรือแค่ slug เช่น barai-hyatt-regency"
+                    />
+                    <textarea
+                      rows={2}
+                      value={item.review}
+                      onChange={(e) => updateLinkedItem(i, "review", e.target.value)}
+                      className={inputCls}
+                      placeholder="เหตุผลที่ติดอันดับนี้ / รีวิวสั้นๆ..."
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeLinkedItem(i)}
+                    className="flex-shrink-0 text-red-400 hover:text-red-600 text-xs font-medium mt-1 px-2 py-1 rounded-lg hover:bg-red-50 transition-colors"
+                  >
+                    ลบ
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+        </>
       )}
 
       {form.type === "ATTRACTION" && (
