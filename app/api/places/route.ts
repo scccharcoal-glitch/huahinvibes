@@ -75,6 +75,7 @@ export async function POST(req: NextRequest) {
         rating: body.rating ?? null,
         reviewCount: body.reviewCount ?? null,
         reviewsJson: body.reviewsJson ?? null,
+        publishedAt: body.publishedAt ? new Date(body.publishedAt) : null,
       },
     });
 

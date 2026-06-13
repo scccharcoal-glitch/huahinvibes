@@ -174,6 +174,7 @@ export const getPlaces = cache(
     status?: string; featured?: boolean; limit?: number; offset?: number;
   } = {}) => {
     try {
+      const now = new Date();
       return await prisma.place.findMany({
         where: {
           ...(type && { type }),
@@ -183,8 +184,12 @@ export const getPlaces = cache(
           ...(hotelType && { hotelType }),
           ...(status !== "all" && { status }),
           ...(featured !== undefined && { featured }),
+          // For public queries (status=published), hide future-scheduled posts
+          ...(status === "published" && {
+            OR: [{ publishedAt: null }, { publishedAt: { lte: now } }],
+          }),
         },
-        orderBy: [{ featured: "desc" }, { rating: "desc" }, { createdAt: "desc" }],
+        orderBy: [{ featured: "desc" }, { rating: "desc" }, { publishedAt: "desc" }, { createdAt: "desc" }],
         ...(limit && { take: limit }),
         skip: offset,
       });
@@ -194,9 +199,14 @@ export const getPlaces = cache(
 
 export const getLatestBlogPosts = cache(async (limit = 6) => {
   try {
+    const now = new Date();
     return await prisma.place.findMany({
-      where: { type: "BLOG", status: "published" },
-      orderBy: { createdAt: "desc" },
+      where: {
+        type: "BLOG",
+        status: "published",
+        OR: [{ publishedAt: null }, { publishedAt: { lte: now } }],
+      },
+      orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
       take: limit,
     });
   } catch {

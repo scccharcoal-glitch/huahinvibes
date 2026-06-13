@@ -7,7 +7,9 @@ import { AREAS, CUISINES, HOTEL_TYPES, ATTRACTION_CATEGORIES, BLOG_CATEGORIES, P
 import { imageFileToDataUrl } from "@/lib/image-file";
 import RichTextEditor from "./RichTextEditor";
 
-type PlaceInput = Partial<Omit<Place, "id" | "createdAt" | "updatedAt">>;
+type PlaceInput = Partial<Omit<Place, "id" | "createdAt" | "updatedAt" | "publishedAt">> & {
+  publishedAt?: string; // ISO string from datetime-local input
+};
 
 interface Props {
   place?: Place;
@@ -56,6 +58,10 @@ export default function PlaceForm({ place, mode }: Props) {
     seoDesc: place?.seoDesc ?? "",
     rating: place?.rating ?? undefined,
     reviewCount: place?.reviewCount ?? undefined,
+    // Convert stored DateTime → "YYYY-MM-DDTHH:mm" for datetime-local input
+    publishedAt: place?.publishedAt
+      ? new Date(place.publishedAt).toISOString().slice(0, 16)
+      : "",
   });
 
   const [reviewsRaw, setReviewsRaw] = useState<string>((place as any)?.reviewsJson ?? "");
@@ -122,10 +128,13 @@ export default function PlaceForm({ place, mode }: Props) {
         } catch { /* invalid JSON — skip */ }
       }
 
+      // publishedAt: send ISO string or null
+      const publishedAt = form.publishedAt ? new Date(form.publishedAt).toISOString() : null;
+
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, reviewsJson }),
+        body: JSON.stringify({ ...form, reviewsJson, publishedAt }),
       });
 
       if (!res.ok) {
@@ -354,6 +363,28 @@ export default function PlaceForm({ place, mode }: Props) {
             <div>
               <label className={labelCls}>Excerpt (สรุปสั้น)</label>
               <input value={form.excerpt ?? ""} onChange={(e) => set("excerpt", e.target.value)} className={inputCls} placeholder="สรุปบทความสั้นๆ สำหรับ listing..." />
+            </div>
+            {/* Scheduled publish date */}
+            <div className="md:col-span-2">
+              <label className={labelCls}>
+                📅 วันที่เผยแพร่ <span className="font-normal normal-case text-muted-foreground">(ปล่อยว่างเพื่อเผยแพร่ทันทีเมื่อ status = Published)</span>
+              </label>
+              <input
+                type="datetime-local"
+                value={form.publishedAt ?? ""}
+                onChange={(e) => set("publishedAt", e.target.value)}
+                className={inputCls}
+              />
+              {form.publishedAt && new Date(form.publishedAt) > new Date() && (
+                <p className="text-xs text-amber-600 font-semibold mt-1.5 flex items-center gap-1">
+                  ⏰ Scheduled — จะแสดงบนเว็บวันที่ {new Date(form.publishedAt).toLocaleDateString("th-TH", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+                </p>
+              )}
+              {form.publishedAt && new Date(form.publishedAt) <= new Date() && (
+                <p className="text-xs text-green-600 font-semibold mt-1.5 flex items-center gap-1">
+                  ✅ วันที่นี้ผ่านแล้ว — จะแสดงทันทีเมื่อ status = Published
+                </p>
+              )}
             </div>
           </div>
         </section>

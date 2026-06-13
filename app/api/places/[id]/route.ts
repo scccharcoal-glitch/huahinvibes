@@ -50,6 +50,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         rating: body.rating ?? null,
         reviewCount: body.reviewCount ?? null,
         reviewsJson: body.reviewsJson ?? null,
+        publishedAt: body.publishedAt ? new Date(body.publishedAt) : null,
       },
     });
 

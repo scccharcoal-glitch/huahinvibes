@@ -105,13 +105,33 @@ export default async function AdminPlacesPage({
                       ) : "—"}
                     </td>
                     <td className="px-5 py-4">
-                      <span className={`text-xs px-2.5 py-0.5 rounded-full font-semibold ${
-                        place.status === "published"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-muted text-muted-foreground"
-                      }`}>
-                        {place.status}
-                      </span>
+                      {(() => {
+                        const isScheduled =
+                          place.status === "published" &&
+                          place.publishedAt &&
+                          new Date(place.publishedAt) > new Date();
+                        return (
+                          <div className="flex flex-col gap-1">
+                            <span className={`text-xs px-2.5 py-0.5 rounded-full font-semibold w-fit ${
+                              isScheduled
+                                ? "bg-amber-100 text-amber-700"
+                                : place.status === "published"
+                                  ? "bg-green-100 text-green-700"
+                                  : "bg-muted text-muted-foreground"
+                            }`}>
+                              {isScheduled ? "⏰ scheduled" : place.status}
+                            </span>
+                            {isScheduled && (
+                              <span className="text-xs text-amber-600">
+                                {new Date(place.publishedAt!).toLocaleDateString("th-TH", {
+                                  day: "numeric", month: "short", year: "numeric",
+                                  hour: "2-digit", minute: "2-digit",
+                                })}
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })()}
                     </td>
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-3">
