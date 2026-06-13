@@ -36,7 +36,7 @@ export default async function BlogPage({
         </div>
 
         {/* Category filter */}
-        <div className="flex flex-wrap gap-2 mb-10">
+        <div className="flex flex-wrap gap-2 mb-10 -mx-4 px-4 md:mx-0 md:px-0">
           <Link
             href="/blog"
             className={`text-sm font-semibold px-4 py-1.5 rounded-full border transition-all ${

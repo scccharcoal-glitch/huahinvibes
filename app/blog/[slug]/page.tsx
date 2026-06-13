@@ -129,14 +129,24 @@ export default async function BlogPostPage({
 
         {/* Rich text content */}
         {post.content ? (
-          <div className="overflow-x-hidden w-full">
+          <div className="w-full min-w-0">
             <div
-              className="prose prose-sm md:prose-base max-w-none prose-headings:font-extrabold prose-a:text-primary prose-img:rounded-xl"
+              className="prose prose-sm md:prose-base max-w-none
+                prose-headings:font-extrabold prose-headings:leading-tight
+                prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+                prose-img:rounded-xl prose-img:w-full prose-img:h-auto
+                prose-table:block prose-table:w-full prose-table:overflow-x-auto
+                prose-pre:overflow-x-auto prose-pre:text-xs md:prose-pre:text-sm
+                prose-code:text-xs md:prose-code:text-sm prose-code:break-words
+                [&_table]:block [&_table]:overflow-x-auto [&_table]:w-full
+                [&_img]:max-w-full [&_img]:h-auto
+                [&_iframe]:w-full [&_iframe]:max-w-full
+                [&_*]:max-w-full break-words"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
           </div>
         ) : post.description ? (
-          <div className="prose prose-sm md:prose-base max-w-none">
+          <div className="prose prose-sm md:prose-base max-w-none break-words">
             <p>{post.description}</p>
           </div>
         ) : null}
