@@ -102,12 +102,12 @@ export default async function PlaceDetailPage({
       <Navbar />
       <main className="flex-1 max-w-5xl mx-auto px-4 md:px-8 py-10">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-xs text-muted-foreground mb-6">
-          <Link href="/" className="hover:text-primary">Home</Link>
+        <nav className="flex items-center gap-2 text-xs text-muted-foreground mb-6 flex-wrap">
+          <Link href="/" className="hover:text-primary flex-shrink-0">Home</Link>
           <span>/</span>
-          <Link href={listingHref} className="hover:text-primary capitalize">{typeLabel}s</Link>
+          <Link href={listingHref} className="hover:text-primary capitalize flex-shrink-0">{typeLabel}s</Link>
           <span>/</span>
-          <span className="text-foreground font-medium">{place.name}</span>
+          <span className="text-foreground font-medium truncate">{place.name}</span>
         </nav>
 
         {/* Cover image */}
@@ -159,19 +159,19 @@ export default async function PlaceDetailPage({
             {place.description && (
               /^</.test(place.description.trim()) ? (
                 <div
-                  className="prose prose-sm md:prose-base max-w-none prose-headings:font-extrabold prose-a:text-primary prose-img:rounded-xl mb-6"
+                  className="prose prose-sm md:prose-base max-w-none prose-headings:font-extrabold prose-a:text-primary prose-img:rounded-xl prose-img:w-full [&_table]:block [&_table]:overflow-x-auto [&_img]:max-w-full [&_*]:max-w-full break-words mb-6"
                   dangerouslySetInnerHTML={{ __html: place.description }}
                 />
               ) : (
-                <p className="text-muted-foreground leading-relaxed text-base mb-6">{place.description}</p>
+                <p className="text-muted-foreground leading-relaxed text-base mb-6 break-words">{place.description}</p>
               )
             )}
 
             {/* Long-form content */}
             {place.content && (
-              <div className="overflow-x-hidden w-full">
+              <div className="w-full min-w-0">
                 <div
-                  className="prose prose-sm md:prose-base max-w-none prose-headings:font-extrabold prose-a:text-primary prose-img:rounded-xl"
+                  className="prose prose-sm md:prose-base max-w-none prose-headings:font-extrabold prose-a:text-primary prose-img:rounded-xl prose-img:w-full prose-table:block prose-table:overflow-x-auto prose-pre:overflow-x-auto [&_table]:block [&_table]:overflow-x-auto [&_img]:max-w-full [&_iframe]:w-full [&_*]:max-w-full break-words"
                   dangerouslySetInnerHTML={{ __html: place.content }}
                 />
               </div>
@@ -191,7 +191,7 @@ export default async function PlaceDetailPage({
 
           {/* Info sidebar */}
           <aside>
-            <div className="bg-card border border-border rounded-2xl p-5 space-y-4 sticky top-24">
+            <div className="bg-card border border-border rounded-2xl p-5 space-y-4 md:sticky md:top-24">
 
               {/* Price */}
               {priceText && (
