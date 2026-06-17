@@ -9,8 +9,7 @@ import Footer from "@/components/layout/Footer";
 import BlogPostActions from "@/components/blog/BlogPostActions";
 import SafeImage from "@/components/SafeImage";
 import { Calendar, Tag, ArrowLeft } from "lucide-react";
-import dynamicImport from "next/dynamic";
-const RankedPlacesMap = dynamicImport(() => import("@/components/blog/RankedPlacesMap"), { ssr: false });
+import RankedPlacesMap from "@/components/blog/RankedPlacesMapClient";
 
 export async function generateMetadata({
   params,
