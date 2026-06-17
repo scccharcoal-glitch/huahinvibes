@@ -9,6 +9,8 @@ import Footer from "@/components/layout/Footer";
 import BlogPostActions from "@/components/blog/BlogPostActions";
 import SafeImage from "@/components/SafeImage";
 import { Calendar, Tag, ArrowLeft } from "lucide-react";
+import dynamicImport from "next/dynamic";
+const RankedPlacesMap = dynamicImport(() => import("@/components/blog/RankedPlacesMap"), { ssr: false });
 
 export async function generateMetadata({
   params,
@@ -155,6 +157,23 @@ export default async function BlogPostPage({
         {rankedPlaces.length > 0 && (
           <div className="mt-10 space-y-8">
             <h2 className="text-2xl font-extrabold border-b border-border pb-3">Rankings</h2>
+
+            {/* Map — show only if places have coordinates */}
+            {rankedPlaces.some((p) => p.lat && p.lng) && (
+              <RankedPlacesMap
+                places={rankedPlaces
+                  .filter((p) => p.lat && p.lng)
+                  .map((p, i) => ({
+                    id: p.id,
+                    name: p.name,
+                    slug: p.slug,
+                    lat: p.lat!,
+                    lng: p.lng!,
+                    rank: i + 1,
+                    rating: p.rating,
+                  }))}
+              />
+            )}
             {rankedPlaces.map((place, i) => (
               <div key={place.id} className="flex flex-col md:flex-row gap-5 bg-card border border-border rounded-2xl overflow-hidden hover:shadow-md transition-shadow">
                 {/* Rank badge */}
