@@ -154,7 +154,7 @@ export default async function BlogPostPage({
         {/* Ranked Places */}
         {rankedPlaces.length > 0 && (
           <div className="mt-10 space-y-8">
-            <h2 className="text-2xl font-extrabold border-b border-border pb-3">จัดอันดับ</h2>
+            <h2 className="text-2xl font-extrabold border-b border-border pb-3">Rankings</h2>
             {rankedPlaces.map((place, i) => (
               <div key={place.id} className="flex flex-col md:flex-row gap-5 bg-card border border-border rounded-2xl overflow-hidden hover:shadow-md transition-shadow">
                 {/* Rank badge */}
@@ -192,7 +192,7 @@ export default async function BlogPostPage({
                     href={`/place/${place.slug}`}
                     className="gradient-btn text-white text-sm font-bold px-5 py-2 rounded-xl hover:opacity-90 transition-opacity w-fit"
                   >
-                    ดูรายละเอียด →
+                    View Details →
                   </a>
                 </div>
               </div>
