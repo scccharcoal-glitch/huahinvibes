@@ -86,7 +86,7 @@ const cities = [
 <h2>Key Benefits for Buyers</h2>
 <p>Bangkok property is attractive because it offers scale, convenience, and flexibility. Investors can target rental income, owner-occupiers can choose walkable neighborhoods near transit, and overseas buyers can focus on established condo buildings with proven demand.</p>
 <p>For long-term value, the strongest opportunities are usually near mass transit, international schools, hospitals, office districts, lifestyle malls, and neighborhoods with limited future land supply.</p>
-<p><a href="https://www.fazwaz.com/property-for-sale/thailand/bangkok" target="_blank" rel="noopener sponsored" style="display:inline-block;background:linear-gradient(135deg,#b50062,#7f45a1);color:#fff;padding:12px 24px;border-radius:50px;font-weight:700;text-decoration:none;margin:8px 0;">View Bangkok properties for sale →</a></p>`,
+<p><a href="/real-estate" style="display:inline-block;background:linear-gradient(135deg,#b50062,#7f45a1);color:#fff;padding:12px 24px;border-radius:50px;font-weight:700;text-decoration:none;margin:8px 0;">View Bangkok properties for sale →</a></p>`,
   },
   {
     slug: "real-estate-koh-samui",
