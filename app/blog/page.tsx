@@ -19,7 +19,8 @@ export default async function BlogPage({
   searchParams: Promise<{ category?: string }>;
 }) {
   const { category } = await searchParams;
-  const posts = await getPlaces({ type: "BLOG", ...(category && { category }) });
+  const rawPosts = await getPlaces({ type: "BLOG", ...(category && { category }) });
+  const posts = category ? rawPosts : rawPosts.filter((p) => !p.category?.endsWith("-th"));
 
   return (
     <>
