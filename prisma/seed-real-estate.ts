@@ -45,21 +45,32 @@ const cities = [
   },
   {
     slug: "real-estate-pranburi",
-    name: "อสังหาริมทรัพย์ปราณบุรี — สวรรค์ของนักลงทุนผู้ชื่นชอบธรรมชาติ",
-    excerpt: "ปราณบุรีมีชายหาดที่เงียบสงบที่สุดของอ่าวไทย เหมาะสำหรับผู้ที่ต้องการบ้านพักตากอากาศหรือรีสอร์ทส่วนตัว",
+    name: "Pranburi Real Estate Guide — Peaceful Beach Homes Near Hua Hin",
+    excerpt: "Pranburi is a quiet coastal alternative to Hua Hin, ideal for buyers who want nature, privacy, beach access, and a slower lifestyle within reach of Bangkok.",
     coverImage: "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=1200&q=80",
     tags: "real-estate,pranburi,property,invest",
     city: "Pranburi", cityTh: "ปราณบุรี", fazwazSlug: "pranburi",
-    content: `<p>ปราณบุรีตั้งอยู่ห่างจากหัวหินไปทางใต้ประมาณ 30 กม. มีชายหาดเงียบสงบ น้ำทะเลใส และระบบนิเวศป่าชายเลนที่สมบูรณ์ เป็นที่นิยมของชาวต่างชาติที่ต้องการบ้านพักตากอากาศส่วนตัว</p>
-<h2>ราคาอสังหาริมทรัพย์ปราณบุรี</h2>
+    content: `<p>Pranburi sits just south of Hua Hin and offers a calmer, more nature-focused lifestyle than the busier resort towns nearby. It is known for quiet beaches, mountain views, mangrove forests, local seafood communities, and a more relaxed pace of living.</p>
+<h2>Why Buy Property in Pranburi?</h2>
 <ul>
-  <li>วิลล่าริมหาด: 8–30 ล้านบาท</li>
-  <li>บ้านเดี่ยว: 3–10 ล้านบาท</li>
-  <li>ที่ดิน: 3,000–30,000 บาท/ตร.ว.</li>
+  <li><strong>Peace and privacy:</strong> Pranburi is less crowded than central Hua Hin, making it attractive for buyers who want space, calm surroundings, and a more private home environment.</li>
+  <li><strong>Nature-led lifestyle:</strong> Beaches, mangroves, mountains, and Sam Roi Yot National Park are all close by, giving residents easy access to outdoor living.</li>
+  <li><strong>Better value than prime Hua Hin:</strong> Property prices can be more approachable than the most central Hua Hin beach zones, especially for villas, land, and larger homes.</li>
+  <li><strong>Long-term potential:</strong> As buyers look beyond crowded resort areas, Pranburi has room to grow while still keeping its quiet coastal identity.</li>
 </ul>
-<h2>ไฮไลต์ปราณบุรี</h2>
-<p>หาดปราณบุรี, อุทยานแห่งชาติเขาสามร้อยยอด, และตลาดชุมชนชาวประมง — ทำให้ปราณบุรีเป็นทางเลือกยอดนิยมสำหรับผู้ที่ต้องการความเป็นส่วนตัวสูงสุด</p>
-<p><a href="https://www.fazwaz.com/property-for-sale/thailand/pranburi" target="_blank" rel="noopener sponsored" style="display:inline-block;background:linear-gradient(135deg,#b50062,#7f45a1);color:#fff;padding:12px 24px;border-radius:50px;font-weight:700;text-decoration:none;margin:8px 0;">ดูอสังหาริมทรัพย์ในปราณบุรี →</a></p>`,
+<h2>What Makes Pranburi a Good Place to Live?</h2>
+<p>Living in Pranburi suits people who prefer slower days, open space, and a stronger connection to nature. It is close enough to Hua Hin for hospitals, shopping, restaurants, golf, and international-standard services, but far enough away to feel more peaceful.</p>
+<p>For retirees, remote workers, families, and second-home buyers, Pranburi can offer a balanced lifestyle: quiet beaches in the morning, local seafood markets, cycling routes, national parks, and weekend access to Hua Hin without living in the middle of the busiest areas.</p>
+<h2>Best Property Types in Pranburi</h2>
+<ul>
+  <li><strong>Pool villas:</strong> Popular with lifestyle buyers who want privacy, outdoor space, and a holiday-home feel.</li>
+  <li><strong>Beach-area homes:</strong> Attractive for buyers who want easy access to the coast without the density of central resort zones.</li>
+  <li><strong>Land plots:</strong> Interesting for long-term buyers who want to build custom homes or boutique hospitality projects.</li>
+  <li><strong>Retirement homes:</strong> A strong fit for people who value calm neighborhoods, nature, and proximity to Hua Hin services.</li>
+</ul>
+<h2>Key Highlights of Pranburi</h2>
+<p>Pranburi Beach, Pak Nam Pran, the mangrove forest, Khao Kalok, and Sam Roi Yot National Park are the major lifestyle anchors. Together they make Pranburi one of the best choices near Hua Hin for buyers who want natural surroundings and a quieter coastal community.</p>
+<p><a href="/real-estate" style="display:inline-block;background:linear-gradient(135deg,#b50062,#7f45a1);color:#fff;padding:12px 24px;border-radius:50px;font-weight:700;text-decoration:none;margin:8px 0;">View Pranburi properties for sale →</a></p>`,
   },
   {
     slug: "real-estate-bangkok",
