@@ -27,21 +27,32 @@ const cities = [
   },
   {
     slug: "real-estate-cha-am",
-    name: "อสังหาริมทรัพย์ชะอำ — บ้าน คอนโด และที่ดิน ใกล้หาดชะอำ",
-    excerpt: "ชะอำยังมีราคาที่ดินต่ำกว่าหัวหิน แต่มีศักยภาพการเติบโตสูง เหมาะสำหรับนักลงทุนระยะยาว",
+    name: "Cha-Am Real Estate Guide — Beach Condos, Homes and Land Near Hua Hin",
+    excerpt: "Cha-Am offers relaxed beach living, better-value property prices, and long-term growth potential between Bangkok and Hua Hin.",
     coverImage: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80",
     tags: "real-estate,cha-am,property,invest",
     city: "Cha-Am", cityTh: "ชะอำ", fazwazSlug: "cha-am",
-    content: `<p>ชะอำเป็นเมืองชายทะเลที่อยู่ระหว่างกรุงเทพฯ และหัวหิน มีหาดทรายยาวกว่า 10 กิโลเมตร และสภาพแวดล้อมที่เงียบสงบกว่าหัวหิน ทำให้ราคาอสังหาฯ ยังไม่พุ่งสูงเท่า</p>
-<h2>ราคาอสังหาริมทรัพย์ชะอำ</h2>
+    content: `<p>Cha-Am is a relaxed beach town located between Bangkok and Hua Hin, known for its long coastline, family-friendly atmosphere, and more accessible property prices compared with the busiest parts of Hua Hin.</p>
+<h2>Why Buy Property in Cha-Am?</h2>
 <ul>
-  <li>คอนโดริมหาด: 1–3 ล้านบาท</li>
-  <li>บ้านเดี่ยว: 2.5–8 ล้านบาท</li>
-  <li>ที่ดิน: 2,000–20,000 บาท/ตร.ว.</li>
+  <li><strong>Good value near the beach:</strong> Cha-Am often offers more space and lower entry prices than prime Hua Hin beach locations.</li>
+  <li><strong>Easy weekend access:</strong> The town is convenient for Bangkok buyers who want a second home or weekend escape by the sea.</li>
+  <li><strong>Long coastline:</strong> Cha-Am has wide beaches, beachfront condos, family resorts, seafood restaurants, and quiet residential pockets.</li>
+  <li><strong>Growth potential:</strong> As the Bangkok-Hua Hin corridor improves, Cha-Am is well positioned for long-term property interest.</li>
 </ul>
-<h2>ทำไมต้องลงทุนที่ชะอำ?</h2>
-<p>ชะอำอยู่ไม่ไกลจากโครงการรถไฟความเร็วสูงที่จะเชื่อมกรุงเทพฯ-หัวหิน ทำให้นักวิเคราะห์คาดว่าราคาที่ดินในพื้นที่จะปรับขึ้น 15–25% ในช่วง 3–5 ปีนี้</p>
-<p><a href="https://www.fazwaz.com/property-for-sale/thailand/cha-am" target="_blank" rel="noopener sponsored" style="display:inline-block;background:linear-gradient(135deg,#b50062,#7f45a1);color:#fff;padding:12px 24px;border-radius:50px;font-weight:700;text-decoration:none;margin:8px 0;">ดูอสังหาริมทรัพย์ในชะอำ →</a></p>`,
+<h2>What Makes Cha-Am a Good Place to Live?</h2>
+<p>Cha-Am is ideal for people who want a slower seaside lifestyle without being too far from city convenience. It is quieter than central Hua Hin, but residents can still reach Hua Hin's hospitals, shopping centers, golf courses, restaurants, and international services within a short drive.</p>
+<p>For families, retirees, remote workers, and weekend-home buyers, Cha-Am offers an easy rhythm: morning beach walks, local seafood, calm neighborhoods, and enough everyday services for comfortable long-term living.</p>
+<h2>Best Property Types in Cha-Am</h2>
+<ul>
+  <li><strong>Beachfront condos:</strong> Popular for weekend stays, rental potential, and easy lock-and-leave ownership.</li>
+  <li><strong>Pool villas:</strong> A good fit for families or retirees who want privacy and outdoor living.</li>
+  <li><strong>Land plots:</strong> Interesting for custom homes, boutique villas, or long-term development opportunities.</li>
+  <li><strong>Affordable houses:</strong> Useful for buyers who want more space than a condo at a lower budget than central Hua Hin.</li>
+</ul>
+<h2>Key Highlights of Cha-Am</h2>
+<p>Cha-Am Beach, seafood restaurants, family resorts, easy road access from Bangkok, and proximity to Hua Hin make Cha-Am one of the most practical coastal property markets in the region. It is a strong choice for buyers who want beach access, everyday comfort, and value for money.</p>
+<p><a href="/real-estate" style="display:inline-block;background:linear-gradient(135deg,#b50062,#7f45a1);color:#fff;padding:12px 24px;border-radius:50px;font-weight:700;text-decoration:none;margin:8px 0;">View Cha-Am properties for sale →</a></p>`,
   },
   {
     slug: "real-estate-pranburi",
