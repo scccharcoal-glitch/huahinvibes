@@ -39,6 +39,29 @@ export async function generateMetadata({
 
 type Review = { author?: string; text: string; rating?: number };
 
+function getTypeLabel(type: string) {
+  if (type === "RESTAURANT") return "Restaurant";
+  if (type === "HOTEL") return "Hotel";
+  if (type === "ATTRACTION") return "Attraction";
+  if (type === "REAL_ESTATE") return "Real Estate";
+  return type.replace(/_/g, " ").toLowerCase();
+}
+
+function getListingHref(type: string) {
+  if (type === "RESTAURANT") return "/restaurants";
+  if (type === "HOTEL") return "/hotels";
+  if (type === "ATTRACTION") return "/attractions";
+  if (type === "REAL_ESTATE") return "/real-estate";
+  return "/";
+}
+
+function getSchemaType(type: string) {
+  if (type === "RESTAURANT") return "Restaurant";
+  if (type === "HOTEL") return "Hotel";
+  if (type === "REAL_ESTATE") return "RealEstateAgent";
+  return "TouristAttraction";
+}
+
 function parseReviews(json?: string | null): Review[] {
   if (!json) return [];
   try {
@@ -71,15 +94,15 @@ export default async function PlaceDetailPage({
   if (!place) notFound();
 
   const tags = place.tags?.split(",").filter(Boolean) ?? [];
-  const typeLabel = place.type === "RESTAURANT" ? "Restaurant" : place.type === "HOTEL" ? "Hotel" : "Attraction";
-  const listingHref = `/${place.type.toLowerCase()}s`;
+  const typeLabel = getTypeLabel(place.type);
+  const listingHref = getListingHref(place.type);
   const schemaImage = isPublicImageUrl(place.coverImage) ? place.coverImage : undefined;
   const priceText = getPriceNumeric(place.priceRange);
-  const reviews = parseReviews((place as any).reviewsJson);
+  const reviews = parseReviews(place.reviewsJson);
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": place.type === "RESTAURANT" ? "Restaurant" : place.type === "HOTEL" ? "Hotel" : "TouristAttraction",
+    "@type": getSchemaType(place.type),
     name: place.name,
     description: place.description,
     address: {
