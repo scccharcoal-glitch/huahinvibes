@@ -179,23 +179,39 @@ const cities = [
   },
   {
     slug: "real-estate-pattaya",
-    name: "อสังหาริมทรัพย์พัทยา — ตลาดคอนโดใหญ่อันดับ 2 ของไทย",
-    excerpt: "พัทยามีคอนโดให้เลือกมากที่สุดในไทยรองจากกรุงเทพฯ ด้วยราคาเข้าถึงได้และ yield จากการเช่าระยะสั้นที่น่าสนใจ",
+    name: "Pattaya Real Estate Guide — Beach Condos, Investment Homes and City Living",
+    excerpt: "Pattaya is one of Thailand's most active coastal property markets, offering affordable condos, rental demand, beach lifestyle, and easy access from Bangkok.",
     coverImage: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1200&q=80",
     tags: "real-estate,pattaya,property,condo,invest",
     city: "Pattaya", cityTh: "พัทยา", fazwazSlug: "pattaya",
-    content: `<p>พัทยาเป็นตลาดคอนโดที่ใหญ่เป็นอันดับสองของประเทศไทย รองจากกรุงเทพฯ โดยมีโครงการแล้วเสร็จและกำลังสร้างกว่า 50,000 ยูนิตในปัจจุบัน</p>
-<h2>ราคาคอนโดในพัทยา</h2>
+    content: `<p>Pattaya is one of Thailand's largest and most active coastal property markets, with a deep condo supply, strong tourism demand, international residents, and improving transport links to Bangkok and the Eastern Economic Corridor.</p>
+<h2>Why Buy Property in Pattaya?</h2>
 <ul>
-  <li>คอนโดระดับกลาง: 1.5–4 ล้านบาท</li>
-  <li>คอนโดริมหาด: 3–10 ล้านบาท</li>
-  <li>คอนโด luxury: 8–30 ล้านบาทขึ้นไป</li>
+  <li><strong>Large condo market:</strong> Pattaya has one of the widest selections of condos in Thailand, from affordable studios to luxury beachfront residences.</li>
+  <li><strong>Strong rental appeal:</strong> Tourism, expats, digital nomads, retirees, and EEC professionals create demand for both short-stay and long-stay rentals.</li>
+  <li><strong>Easy Bangkok access:</strong> Pattaya is reachable from Bangkok by road and is supported by nearby U-Tapao Airport and regional infrastructure upgrades.</li>
+  <li><strong>Good entry prices:</strong> Compared with prime Bangkok or Phuket, Pattaya can offer lower entry points for buyers who want coastal property.</li>
 </ul>
-<h2>ทำเลแนะนำ</h2>
-<p><strong>จอมเทียน</strong> — หาดสวย เงียบกว่าพัทยากลาง เหมาะสำหรับผู้เกษียณ</p>
-<p><strong>พัทยาเหนือ</strong> — ย่านใหม่ โครงการ luxury กำลังขยายตัว</p>
-<p><strong>วงศ์อมาตย์</strong> — พื้นที่พรีเมียมสุดของพัทยา วิลล่าและคอนโดระดับสูง</p>
-<p><a href="https://www.fazwaz.com/property-for-sale/thailand/pattaya" target="_blank" rel="noopener sponsored" style="display:inline-block;background:linear-gradient(135deg,#b50062,#7f45a1);color:#fff;padding:12px 24px;border-radius:50px;font-weight:700;text-decoration:none;margin:8px 0;">ดูอสังหาริมทรัพย์ในพัทยา →</a></p>`,
+<h2>What Makes Pattaya a Good Place to Live?</h2>
+<p>Pattaya offers a more urban coastal lifestyle than many Thai beach towns. Residents have access to international restaurants, shopping malls, hospitals, marinas, golf courses, beach clubs, fitness centers, and nightlife, while still being close enough to Bangkok for weekend travel.</p>
+<p>For retirees, remote workers, investors, and second-home buyers, Pattaya is practical because it combines everyday convenience with beach access. It is busier than Hua Hin or Pranburi, but that activity also supports services, transport, entertainment, and rental demand.</p>
+<h2>Best Areas to Consider in Pattaya</h2>
+<ul>
+  <li><strong>Jomtien:</strong> Popular for beach condos, a calmer atmosphere, family living, and long-stay rentals.</li>
+  <li><strong>Wong Amat:</strong> One of Pattaya's premium coastal zones, known for high-end condos and quieter beachfront living.</li>
+  <li><strong>Central Pattaya:</strong> Best for nightlife, shopping, restaurants, and high convenience, especially for short-stay demand.</li>
+  <li><strong>Pratumnak:</strong> A balanced hillside area between Pattaya and Jomtien, popular with expats and condo buyers.</li>
+</ul>
+<h2>Best Property Types in Pattaya</h2>
+<ul>
+  <li><strong>Affordable condos:</strong> Good for first-time investors and buyers seeking lower entry prices.</li>
+  <li><strong>Beachfront condos:</strong> Attractive for lifestyle buyers and rental-focused investors.</li>
+  <li><strong>Pool villas:</strong> Popular with families, retirees, and buyers who want privacy and space.</li>
+  <li><strong>Luxury residences:</strong> Best in premium areas such as Wong Amat, Pratumnak, and select beachfront projects.</li>
+</ul>
+<h2>Key Highlights of Pattaya</h2>
+<p>Pattaya Beach, Jomtien Beach, Terminal 21, Central Pattaya, marinas, golf courses, international hospitals, and the Eastern Economic Corridor make Pattaya one of Thailand's most dynamic property markets. It is a strong choice for buyers who want coastal living with city-level convenience.</p>
+<p><a href="/real-estate" style="display:inline-block;background:linear-gradient(135deg,#b50062,#7f45a1);color:#fff;padding:12px 24px;border-radius:50px;font-weight:700;text-decoration:none;margin:8px 0;">View Pattaya properties for sale →</a></p>`,
   },
   {
     slug: "real-estate-chonburi",
