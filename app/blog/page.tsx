@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: "Hua Hin travel guides, local tips, restaurant picks, hotel reviews, and fresh things to do around Thailand's favorite beach town.",
 };
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 export default async function BlogPage({
   searchParams,
