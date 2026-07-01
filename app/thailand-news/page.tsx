@@ -28,7 +28,7 @@ export default async function ThailandNewsPage() {
           <p className="text-muted-foreground">Up-to-date news from Thailand — travel, lifestyle, property & more.</p>
           <div className="flex gap-3 mt-4 flex-wrap">
             <Link href="/th" className="text-sm font-semibold border border-border px-4 py-1.5 rounded-full hover:border-primary hover:text-primary transition-all">
-              🇹🇭 อ่านภาษาไทย
+              🇹🇭 Read in Thai
             </Link>
             <Link href="/real-estate"
               className="text-sm font-semibold border border-border px-4 py-1.5 rounded-full hover:border-primary hover:text-primary transition-all"

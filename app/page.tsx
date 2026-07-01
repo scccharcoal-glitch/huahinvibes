@@ -232,12 +232,12 @@ export default async function HomePage() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">
-                <Home className="w-3 h-3 inline mr-1" />อสังหาริมทรัพย์
+                <Home className="w-3 h-3 inline mr-1" />Real Estate
               </p>
               <h2 className="text-2xl font-bold">Real Estate in Thailand</h2>
             </div>
             <Link href="/real-estate" className="text-sm font-semibold text-primary hover:underline">
-              คู่มือทั้งหมด →
+              View all →
             </Link>
           </div>
           {/* 9 city cards — 3 cols on lg, scroll on mobile */}
@@ -251,13 +251,13 @@ export default async function HomePage() {
                 <div className="relative rounded-xl overflow-hidden aspect-[3/4]">
                   <img
                     src={c.img}
-                    alt={c.cityTh}
+                    alt={c.city}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-1.5 text-center">
-                    <p className="text-white font-extrabold text-[11px] leading-tight drop-shadow">{c.cityTh}</p>
+                    <p className="text-white font-extrabold text-[11px] leading-tight drop-shadow">{c.city}</p>
                   </div>
                 </div>
               </Link>
@@ -268,7 +268,7 @@ export default async function HomePage() {
               href="/real-estate"
               className="inline-block gradient-btn text-white px-8 py-3 rounded-full font-bold hover:opacity-90 transition-opacity"
             >
-              ดูคู่มืออสังหาฯ ทุกจังหวัด ({RE_CITIES.length} จังหวัด) →
+              Browse All {RE_CITIES.length} Provinces →
             </Link>
           </div>
         </section>
