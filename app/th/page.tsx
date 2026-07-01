@@ -4,6 +4,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import SafeImage from "@/components/SafeImage";
 import { getPlaces } from "@/lib/places";
+import { getHomepageConfig } from "@/lib/site-config";
 import { Calendar } from "lucide-react";
 import { RE_CITIES } from "@/lib/real-estate-cities";
 
@@ -15,14 +16,18 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function ThaiHomePage() {
-  const [newsEn, newsTh] = await Promise.all([
-    getPlaces({ type: "BLOG", category: "thailand-news" }),
-    getPlaces({ type: "BLOG", category: "thailand-news-th" }),
-  ]);
+  const cfg = await getHomepageConfig();
 
-  const allNews = [...newsTh, ...newsEn];
-  const featured = allNews[0];
-  const latest = allNews.slice(1, 9);
+  const thRowsData = cfg.thRows.length > 0
+    ? await Promise.all(
+        cfg.thRows.map((row, i) =>
+          getPlaces({ type: "BLOG", category: row.category, limit: i === 0 ? Math.max(row.limit, 6) : row.limit })
+        )
+      )
+    : [];
+
+  const featured = thRowsData[0]?.[0];
+  const side = thRowsData[0]?.slice(1, 5) ?? [];
 
   return (
     <>
@@ -59,18 +64,16 @@ export default async function ThaiHomePage() {
           </div>
         </section>
 
-        {/* Featured Thai News */}
-        <section className="max-w-7xl mx-auto px-4 md:px-8 py-10">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">ข่าวสาร</p>
-              <h2 className="text-2xl font-bold">ข่าวล่าสุด</h2>
+        {/* Featured News Hero (from thRows[0]) */}
+        {featured && (
+          <section className="max-w-7xl mx-auto px-4 md:px-8 py-10">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">ข่าวสาร</p>
+                <h2 className="text-2xl font-bold">{cfg.thRows[0]?.label ?? "ข่าวล่าสุด"}</h2>
+              </div>
             </div>
-          </div>
-
-          {featured ? (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Featured big */}
               <Link href={`/blog/${featured.slug}`}
                 className="lg:col-span-2 group relative block rounded-2xl overflow-hidden bg-accent min-h-[300px]"
               >
@@ -89,10 +92,8 @@ export default async function ThaiHomePage() {
                   </p>
                 </div>
               </Link>
-
-              {/* Side */}
               <div className="flex flex-col gap-3">
-                {latest.slice(0, 5).map((item) => (
+                {side.map((item) => (
                   <Link key={item.id} href={`/blog/${item.slug}`}
                     className="group flex gap-3 hover:bg-accent/50 rounded-xl p-2 transition-colors"
                   >
@@ -114,47 +115,42 @@ export default async function ThaiHomePage() {
                 ))}
               </div>
             </div>
-          ) : (
-            <div className="text-center py-16 border border-dashed border-border rounded-2xl text-muted-foreground">
-              <p className="text-4xl mb-4">📰</p>
-              <p className="font-bold">ยังไม่มีข่าว</p>
-              <p className="text-sm mt-1">เพิ่มโพสต์ที่มี category <b>ข่าวภาษาไทย</b> หรือ <b>Thailand News</b> ในแอดมิน</p>
-              <Link href="/admin" className="mt-4 inline-block gradient-btn text-white px-6 py-2 rounded-full text-sm font-bold">
-                ไปหน้าแอดมิน →
-              </Link>
-            </div>
-          )}
-        </section>
-
-        {/* Horizontal scroll */}
-        {latest.length > 0 && (
-          <section className="py-8 pb-16 bg-accent/30">
-            <div className="max-w-7xl mx-auto px-4 md:px-8">
-              <h2 className="text-2xl font-bold mb-6">ข่าวทั้งหมด</h2>
-              <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 md:mx-0 md:px-0 snap-x snap-mandatory">
-                {allNews.map((item) => (
-                  <Link key={item.id} href={`/blog/${item.slug}`}
-                    className="group flex-shrink-0 w-52 snap-start block"
-                  >
-                    <div className="relative h-36 rounded-xl overflow-hidden bg-accent mb-2">
-                      {item.coverImage ? (
-                        <SafeImage src={item.coverImage} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform duration-200" sizes="208px" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-3xl">📰</div>
-                      )}
-                      <span className="absolute bottom-2 left-2 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full">ข่าว</span>
-                    </div>
-                    <p className="text-sm font-bold line-clamp-2 leading-snug group-hover:text-primary transition-colors mb-1">{item.name}</p>
-                    <p className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Calendar className="w-3 h-3" />
-                      {new Date(item.publishedAt ?? item.createdAt).toLocaleDateString("th-TH", { month: "short", day: "numeric" })}
-                    </p>
-                  </Link>
-                ))}
-              </div>
-            </div>
           </section>
         )}
+
+        {/* Grid rows — one per thRows entry */}
+        {cfg.thRows.map((row, i) => {
+          const items = thRowsData[i]?.slice(0, row.limit) ?? [];
+          if (!items.length) return null;
+          return (
+            <section key={`${row.category}-${i}`} className="py-8 pb-14 bg-accent/30">
+              <div className="max-w-7xl mx-auto px-4 md:px-8">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold">{row.label}</h2>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  {items.map((item) => (
+                    <Link key={item.id} href={`/blog/${item.slug}`} className="group block">
+                      <div className="relative h-36 rounded-xl overflow-hidden bg-accent mb-2">
+                        {item.coverImage ? (
+                          <SafeImage src={item.coverImage} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform duration-200" sizes="(max-width: 640px) 50vw, 25vw" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-3xl">📰</div>
+                        )}
+                        <span className="absolute bottom-1.5 left-1.5 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full">ข่าว</span>
+                      </div>
+                      <p className="text-xs font-bold line-clamp-2 leading-snug group-hover:text-primary transition-colors mb-1">{item.name}</p>
+                      <p className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+                        <Calendar className="w-2.5 h-2.5" />
+                        {new Date(item.publishedAt ?? item.createdAt).toLocaleDateString("th-TH", { month: "short", day: "numeric" })}
+                      </p>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </section>
+          );
+        })}
 
         {/* Real Estate */}
         <section className="max-w-7xl mx-auto px-4 md:px-8 py-12 pb-16">

@@ -1,6 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { cache } from "react";
 
+export type NewsRow = {
+  category: string;
+  label: string;
+  limit: number;
+};
+
 export type HomepageConfig = {
   showNews: boolean;
   showRealestate: boolean;
@@ -12,7 +18,18 @@ export type HomepageConfig = {
   newsLimit: number;
   blogLimit: number;
   featuredLimit: number;
+  newsRows: NewsRow[];
+  thRows: NewsRow[];
 };
+
+const DEFAULT_NEWS_ROWS: NewsRow[] = [
+  { category: "thailand-news", label: "Latest Thailand News", limit: 4 },
+];
+
+const DEFAULT_TH_ROWS: NewsRow[] = [
+  { category: "thailand-news-th", label: "ข่าวล่าสุด", limit: 4 },
+  { category: "thailand-news", label: "Thailand News", limit: 4 },
+];
 
 const DEFAULTS: HomepageConfig = {
   showNews: true,
@@ -25,7 +42,14 @@ const DEFAULTS: HomepageConfig = {
   newsLimit: 10,
   blogLimit: 6,
   featuredLimit: 6,
+  newsRows: DEFAULT_NEWS_ROWS,
+  thRows: DEFAULT_TH_ROWS,
 };
+
+function parseRows(raw: string | undefined, fallback: NewsRow[]): NewsRow[] {
+  if (!raw) return fallback;
+  try { return JSON.parse(raw); } catch { return fallback; }
+}
 
 export const getHomepageConfig = cache(async (): Promise<HomepageConfig> => {
   try {
@@ -44,6 +68,8 @@ export const getHomepageConfig = cache(async (): Promise<HomepageConfig> => {
       newsLimit:       parseInt(map["hp_news_limit"]     ?? "10"),
       blogLimit:       parseInt(map["hp_blog_limit"]     ?? "6"),
       featuredLimit:   parseInt(map["hp_featured_limit"] ?? "6"),
+      newsRows:        parseRows(map["hp_news_rows"], DEFAULT_NEWS_ROWS),
+      thRows:          parseRows(map["hp_th_rows"],   DEFAULT_TH_ROWS),
     };
   } catch {
     return DEFAULTS;
@@ -62,6 +88,8 @@ export async function saveHomepageConfig(config: Partial<HomepageConfig>) {
   if (config.newsLimit       !== undefined) updates.push({ key: "hp_news_limit",       value: String(config.newsLimit) });
   if (config.blogLimit       !== undefined) updates.push({ key: "hp_blog_limit",       value: String(config.blogLimit) });
   if (config.featuredLimit   !== undefined) updates.push({ key: "hp_featured_limit",   value: String(config.featuredLimit) });
+  if (config.newsRows        !== undefined) updates.push({ key: "hp_news_rows",        value: JSON.stringify(config.newsRows) });
+  if (config.thRows          !== undefined) updates.push({ key: "hp_th_rows",          value: JSON.stringify(config.thRows) });
 
   await Promise.all(
     updates.map((u) =>

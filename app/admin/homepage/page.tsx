@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { LayoutDashboard, Eye, EyeOff, Save, Loader2, CheckCircle } from "lucide-react";
+import { LayoutDashboard, Eye, EyeOff, Save, Loader2, CheckCircle, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
+import type { NewsRow } from "@/lib/site-config";
 
 type Config = {
   showNews: boolean;
@@ -15,30 +16,108 @@ type Config = {
   newsLimit: number;
   blogLimit: number;
   featuredLimit: number;
+  newsRows: NewsRow[];
+  thRows: NewsRow[];
 };
 
-const NEWS_CATEGORIES = [
-  { value: "thailand-news", label: "Thailand News (EN)" },
+const ALL_CATEGORIES = [
+  { value: "thailand-news",    label: "Thailand News (EN)" },
+  { value: "thailand-news-th", label: "ข่าวไทย (TH)" },
+  { value: "food-guide",       label: "Food Guide" },
+  { value: "travel-tips",      label: "Travel Tips" },
+  { value: "hidden-gems",      label: "Hidden Gems" },
+  { value: "lifestyle",        label: "Lifestyle" },
+  { value: "events",           label: "Events" },
+  { value: "hotel-review",     label: "Hotel Review" },
+  { value: "real-estate",      label: "Real Estate" },
 ];
 
 const BLOG_CATEGORIES = [
   { value: "", label: "All Blog Posts" },
-  { value: "food-guide", label: "Food Guide" },
-  { value: "travel-tips", label: "Travel Tips" },
-  { value: "hidden-gems", label: "Hidden Gems" },
-  { value: "lifestyle", label: "Lifestyle" },
-  { value: "events", label: "Events" },
-  { value: "hotel-review", label: "Hotel Review" },
-  { value: "real-estate", label: "Real Estate" },
+  ...ALL_CATEGORIES.filter((c) => !c.value.startsWith("thailand-news")),
 ];
 
 const SECTIONS = [
-  { key: "showNews",        label: "Thailand News",           desc: "Featured article + latest news grid" },
-  { key: "showRealestate",  label: "Real Estate",             desc: "17-province city grid" },
-  { key: "showBlog",        label: "Travel Journal",          desc: "Latest blog articles" },
+  { key: "showNews",        label: "Thailand News",             desc: "Featured hero + category grid rows" },
+  { key: "showRealestate",  label: "Real Estate",               desc: "17-province city grid" },
+  { key: "showBlog",        label: "Travel Journal",            desc: "Latest blog articles" },
   { key: "showCategories",  label: "What are you looking for?", desc: "Restaurants / Hotels / Attractions" },
-  { key: "showFeatured",    label: "Featured in Hua Hin",     desc: "Editor's Pick places" },
+  { key: "showFeatured",    label: "Featured in Hua Hin",       desc: "Editor's Pick places" },
 ] as const;
+
+function RowEditor({
+  rows,
+  onChange,
+  locale,
+}: {
+  rows: NewsRow[];
+  onChange: (rows: NewsRow[]) => void;
+  locale: "en" | "th";
+}) {
+  function update(i: number, field: keyof NewsRow, val: string | number) {
+    const next = rows.map((r, idx) => idx === i ? { ...r, [field]: val } : r);
+    onChange(next);
+  }
+  function remove(i: number) {
+    onChange(rows.filter((_, idx) => idx !== i));
+  }
+  function add() {
+    onChange([...rows, { category: locale === "th" ? "thailand-news-th" : "thailand-news", label: "New Section", limit: 4 }]);
+  }
+
+  return (
+    <div className="space-y-2">
+      {rows.map((row, i) => (
+        <div key={i} className="flex items-center gap-2 p-3 rounded-xl border border-border bg-card">
+          <div className="flex-1 grid grid-cols-3 gap-2">
+            <div>
+              <label className="text-[10px] text-muted-foreground block mb-0.5">Label (ชื่อหัวข้อ)</label>
+              <input
+                value={row.label}
+                onChange={(e) => update(i, "label", e.target.value)}
+                className="w-full text-sm border border-border rounded-lg px-2 py-1.5 bg-background"
+                placeholder="Section label"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] text-muted-foreground block mb-0.5">Category</label>
+              <select
+                value={row.category}
+                onChange={(e) => update(i, "category", e.target.value)}
+                className="w-full text-sm border border-border rounded-lg px-2 py-1.5 bg-background"
+              >
+                {ALL_CATEGORIES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="text-[10px] text-muted-foreground block mb-0.5">จำนวน</label>
+              <select
+                value={row.limit}
+                onChange={(e) => update(i, "limit", parseInt(e.target.value))}
+                className="w-full text-sm border border-border rounded-lg px-2 py-1.5 bg-background"
+              >
+                {[2, 3, 4, 6, 8].map((n) => <option key={n} value={n}>{n} items</option>)}
+              </select>
+            </div>
+          </div>
+          <button
+            onClick={() => remove(i)}
+            className="p-1.5 text-muted-foreground hover:text-red-500 transition-colors flex-shrink-0"
+            title="Remove"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+      ))}
+      <button
+        onClick={add}
+        className="flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline py-1"
+      >
+        <Plus className="w-3.5 h-3.5" /> Add Row
+      </button>
+    </div>
+  );
+}
 
 export default function HomepageConfigPage() {
   const [config, setConfig] = useState<Config>({
@@ -46,6 +125,11 @@ export default function HomepageConfigPage() {
     showFeatured: true, showCategories: true,
     newsCategory: "thailand-news", blogCategory: "",
     newsLimit: 10, blogLimit: 6, featuredLimit: 6,
+    newsRows: [{ category: "thailand-news", label: "Latest Thailand News", limit: 4 }],
+    thRows: [
+      { category: "thailand-news-th", label: "ข่าวล่าสุด", limit: 4 },
+      { category: "thailand-news", label: "Thailand News", limit: 4 },
+    ],
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -81,7 +165,7 @@ export default function HomepageConfigPage() {
   );
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto p-6 pb-20">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
@@ -119,7 +203,6 @@ export default function HomepageConfigPage() {
                   <p className="text-xs text-muted-foreground">{desc}</p>
                 </div>
               </div>
-              {/* Toggle pill */}
               <div className={`w-11 h-6 rounded-full transition-colors flex-shrink-0 flex items-center px-0.5 ${isOn ? "bg-primary" : "bg-muted"}`}>
                 <div className={`w-5 h-5 rounded-full bg-white shadow transition-transform ${isOn ? "translate-x-5" : "translate-x-0"}`} />
               </div>
@@ -129,37 +212,32 @@ export default function HomepageConfigPage() {
       </div>
 
       {/* Settings per section */}
-      <div className="space-y-5 mb-8">
+      <div className="space-y-6 mb-8">
         <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">ตั้งค่าแต่ละ Section</p>
 
-        {/* News settings */}
+        {/* EN News rows */}
         {config.showNews && (
           <div className="p-4 rounded-xl border border-border bg-card space-y-3">
-            <p className="font-semibold text-sm">📰 Thailand News</p>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs text-muted-foreground mb-1 block">Category</label>
-                <select
-                  value={config.newsCategory}
-                  onChange={(e) => setConfig((c) => ({ ...c, newsCategory: e.target.value }))}
-                  className="w-full text-sm border border-border rounded-lg px-3 py-2 bg-background"
-                >
-                  {NEWS_CATEGORIES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="text-xs text-muted-foreground mb-1 block">จำนวนข่าว (grid)</label>
-                <select
-                  value={config.newsLimit}
-                  onChange={(e) => setConfig((c) => ({ ...c, newsLimit: parseInt(e.target.value) }))}
-                  className="w-full text-sm border border-border rounded-lg px-3 py-2 bg-background"
-                >
-                  {[5, 10, 15, 20].map((n) => <option key={n} value={n}>{n} ข่าว</option>)}
-                </select>
-              </div>
-            </div>
+            <p className="font-semibold text-sm">📰 EN Homepage — News Rows</p>
+            <p className="text-xs text-muted-foreground">แต่ละ row จะแสดงเป็น grid section ต่อกันลงมา</p>
+            <RowEditor
+              rows={config.newsRows}
+              onChange={(rows) => setConfig((c) => ({ ...c, newsRows: rows }))}
+              locale="en"
+            />
           </div>
         )}
+
+        {/* TH page rows */}
+        <div className="p-4 rounded-xl border border-primary/20 bg-primary/5 space-y-3">
+          <p className="font-semibold text-sm">🇹🇭 /th Page — News Rows</p>
+          <p className="text-xs text-muted-foreground">หน้า /th มี config แยกต่างหาก</p>
+          <RowEditor
+            rows={config.thRows}
+            onChange={(rows) => setConfig((c) => ({ ...c, thRows: rows }))}
+            locale="th"
+          />
+        </div>
 
         {/* Blog settings */}
         {config.showBlog && (

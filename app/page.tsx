@@ -18,19 +18,27 @@ const categories = [
 export default async function HomePage() {
   const cfg = await getHomepageConfig();
 
-  const [featured, latestPosts, thNewsEn] = await Promise.all([
+  const newsRowsPromise: Promise<Awaited<ReturnType<typeof getPlaces>>[]> =
+    cfg.showNews && cfg.newsRows.length > 0
+      ? Promise.all(
+          cfg.newsRows.map((row, i) =>
+            getPlaces({ type: "BLOG", category: row.category, limit: i === 0 ? Math.max(row.limit, 6) : row.limit })
+          )
+        )
+      : Promise.resolve([]);
+
+  const [featured, latestPosts, newsRowsData] = await Promise.all([
     cfg.showFeatured ? getFeaturedDirectoryPlaces(cfg.featuredLimit) : Promise.resolve([]),
     cfg.showBlog
       ? cfg.blogCategory
         ? getPlaces({ type: "BLOG", category: cfg.blogCategory, limit: cfg.blogLimit })
         : getLatestBlogPosts(cfg.blogLimit)
       : Promise.resolve([]),
-    cfg.showNews ? getPlaces({ type: "BLOG", category: cfg.newsCategory }) : Promise.resolve([]),
+    newsRowsPromise,
   ]);
 
-  const featuredNews = thNewsEn[0];
-  const sideNews = thNewsEn.slice(1, 5);
-  const gridNews = thNewsEn.slice(0, cfg.newsLimit);
+  const featuredNews = newsRowsData[0]?.[0];
+  const sideNews = newsRowsData[0]?.slice(1, 5) ?? [];
 
   return (
     <>
@@ -130,36 +138,40 @@ export default async function HomePage() {
           </section>
         )}
 
-        {/* ─── Latest Thailand News — 5×2 grid ─── */}
-        {cfg.showNews && gridNews.length > 0 && (
-          <section className="py-8 pb-14 bg-accent/30">
-            <div className="max-w-7xl mx-auto px-4 md:px-8">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold">Latest Thailand News</h2>
-                <Link href="/thailand-news" className="text-sm font-semibold text-primary hover:underline">View all →</Link>
+        {/* ─── News Grid Rows (one section per configured category) ─── */}
+        {cfg.showNews && cfg.newsRows.map((row, i) => {
+          const items = newsRowsData[i]?.slice(0, row.limit) ?? [];
+          if (!items.length) return null;
+          return (
+            <section key={`${row.category}-${i}`} className="py-8 pb-14 bg-accent/30">
+              <div className="max-w-7xl mx-auto px-4 md:px-8">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold">{row.label}</h2>
+                  <Link href="/thailand-news" className="text-sm font-semibold text-primary hover:underline">View all →</Link>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  {items.map((item) => (
+                    <Link key={item.id} href={`/blog/${item.slug}`} className="group block">
+                      <div className="relative h-36 rounded-xl overflow-hidden bg-accent mb-2">
+                        {item.coverImage ? (
+                          <SafeImage src={item.coverImage} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform duration-200" sizes="(max-width: 640px) 50vw, 25vw" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-3xl">📰</div>
+                        )}
+                        <span className="absolute bottom-1.5 left-1.5 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full">News</span>
+                      </div>
+                      <p className="text-xs font-bold line-clamp-2 leading-snug group-hover:text-primary transition-colors mb-1">{item.name}</p>
+                      <p className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+                        <Clock className="w-2.5 h-2.5" />
+                        {new Date(item.publishedAt ?? item.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                      </p>
+                    </Link>
+                  ))}
+                </div>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-                {gridNews.map((item) => (
-                  <Link key={item.id} href={`/blog/${item.slug}`} className="group block">
-                    <div className="relative h-32 rounded-xl overflow-hidden bg-accent mb-2">
-                      {item.coverImage ? (
-                        <SafeImage src={item.coverImage} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform duration-200" sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 20vw" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-3xl">📰</div>
-                      )}
-                      <span className="absolute bottom-1.5 left-1.5 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full">News</span>
-                    </div>
-                    <p className="text-xs font-bold line-clamp-2 leading-snug group-hover:text-primary transition-colors mb-1">{item.name}</p>
-                    <p className="text-[10px] text-muted-foreground flex items-center gap-0.5">
-                      <Clock className="w-2.5 h-2.5" />
-                      {new Date(item.publishedAt ?? item.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                    </p>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
+            </section>
+          );
+        })}
 
         {/* ─── 2. Real Estate ─── */}
         {cfg.showRealestate && (
