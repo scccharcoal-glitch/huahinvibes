@@ -28,12 +28,20 @@ const TYPE_OPTIONS = [
   { value: "ATTRACTION", label: "Attraction" },
   { value: "BLOG", label: "Blog Post" },
 ];
+const TYPE_VALUES = TYPE_OPTIONS.map((type) => type.value);
+
+function normalizeType(value: string) {
+  return value.trim().toUpperCase().replace(/\s+/g, "_");
+}
 
 export default function PlaceForm({ place, mode }: Props) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [customType, setCustomType] = useState(() =>
+    place?.type && !TYPE_VALUES.includes(place.type) ? place.type : ""
+  );
 
   const [form, setForm] = useState<PlaceInput>({
     name: place?.name ?? "",
@@ -210,6 +218,7 @@ export default function PlaceForm({ place, mode }: Props) {
 
   const inputCls = "w-full border border-border rounded-xl px-4 py-2.5 text-sm bg-background focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all";
   const labelCls = "block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1.5";
+  const selectedType = TYPE_VALUES.includes(form.type ?? "") ? form.type : "CUSTOM";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
@@ -230,20 +239,37 @@ export default function PlaceForm({ place, mode }: Props) {
             <input value={form.slug ?? ""} onChange={(e) => set("slug", e.target.value)} className={inputCls} placeholder="baan-itsara-indian-restaurant" />
           </div>
           <div>
-            <label className={labelCls}>Type * <span className="font-normal text-muted-foreground normal-case">(choose or type a new one)</span></label>
-            <input
+            <label className={labelCls}>Type *</label>
+            <select
               required
-              list="type-suggestions"
-              value={form.type ?? "RESTAURANT"}
-              onChange={(e) => set("type", e.target.value.trim().toUpperCase().replace(/\s+/g, "_"))}
+              value={selectedType}
+              onChange={(e) => {
+                if (e.target.value === "CUSTOM") {
+                  set("type", customType || "");
+                  return;
+                }
+                set("type", e.target.value);
+              }}
               className={inputCls}
-              placeholder="RESTAURANT, HOTEL, ATTRACTION, BLOG..."
-            />
-            <datalist id="type-suggestions">
+            >
               {TYPE_OPTIONS.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
-            </datalist>
+              <option value="CUSTOM">Custom type...</option>
+            </select>
+            {selectedType === "CUSTOM" && (
+              <input
+                required
+                value={customType}
+                onChange={(e) => {
+                  const nextType = normalizeType(e.target.value);
+                  setCustomType(nextType);
+                  set("type", nextType);
+                }}
+                className={`${inputCls} mt-2`}
+                placeholder="SHOP, CAFE, REAL_ESTATE..."
+              />
+            )}
             <p className="text-xs text-muted-foreground mt-1.5">
-              New custom types will use the basic fields, media, contact, and SEO sections.
+              Choose Blog Post for blog articles. Use Custom type only when adding a new section.
             </p>
           </div>
           <div>
