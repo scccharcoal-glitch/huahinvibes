@@ -4,26 +4,39 @@ const prisma = new PrismaClient();
 const cities = [
   {
     slug: "real-estate-hua-hin",
-    name: "คู่มือซื้ออสังหาริมทรัพย์หัวหิน — ราคา ทำเล และโครงการแนะนำ",
-    excerpt: "หัวหินคือทางเลือกยอดนิยมสำหรับนักลงทุนอสังหาฯ ทั้งชาวไทยและต่างชาติ ด้วยชายหาด ราคาที่จับต้องได้ และตลาดที่เติบโตต่อเนื่อง",
+    name: "Hua Hin Real Estate Guide — Beach Condos, Pool Villas and Retirement Homes",
+    excerpt: "Hua Hin is one of Thailand's most popular coastal property markets, offering beach living, strong lifestyle appeal, Bangkok access, and long-term residential demand.",
     coverImage: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=1200&q=80",
     tags: "real-estate,hua-hin,property,invest",
     city: "Hua Hin", cityTh: "หัวหิน", fazwazSlug: "hua-hin",
-    content: `<p>หัวหินเป็นหนึ่งในตลาดอสังหาริมทรัพย์ที่ได้รับความนิยมมากที่สุดในประเทศไทย ด้วยความเป็นเมืองชายทะเลที่สงบ ใกล้กรุงเทพฯ เพียง 3.5 ชั่วโมง และมีสาธารณูปโภคครบครัน</p>
-<h2>ราคาอสังหาริมทรัพย์หัวหิน</h2>
+    content: `<p>Hua Hin is one of Thailand's most established coastal property markets, combining beach-town charm with practical everyday services. It is popular with Thai buyers, expats, retirees, remote workers, and Bangkok residents looking for a second home by the sea.</p>
+<h2>Why Buy Property in Hua Hin?</h2>
 <ul>
-  <li>คอนโดมิเนียม: ราคาเริ่มต้น 1.5–5 ล้านบาท</li>
-  <li>บ้านเดี่ยว: 4–20 ล้านบาทขึ้นไป</li>
-  <li>วิลล่าริมหาด: 15–100 ล้านบาท</li>
-  <li>ที่ดิน: 5,000–50,000 บาท/ตร.ว. ขึ้นอยู่กับทำเล</li>
+  <li><strong>Established coastal market:</strong> Hua Hin has a long track record as a trusted beach destination, which helps support both lifestyle demand and resale confidence.</li>
+  <li><strong>Close to Bangkok:</strong> The city is reachable by road and rail, making it practical for weekend homes, retirement plans, and hybrid work lifestyles.</li>
+  <li><strong>Strong lifestyle infrastructure:</strong> Hospitals, shopping malls, international schools, golf courses, restaurants, beach clubs, and local markets make daily living convenient.</li>
+  <li><strong>Wide property choice:</strong> Buyers can choose from beachfront condos, pool villas, gated communities, land plots, and luxury sea-view homes.</li>
 </ul>
-<h2>ทำเลแนะนำในหัวหิน</h2>
-<p><strong>ย่านใจกลางเมือง</strong> — เหมาะสำหรับนักลงทุนที่ต้องการ yield จากการปล่อยเช่าระยะสั้น ใกล้ตลาดนัด ร้านอาหาร และชายหาด</p>
-<p><strong>โซน Bypass (ถนนเลี่ยงเมือง)</strong> — ราคาที่ดินยังไม่สูงมาก เหมาะสำหรับโครงการหมู่บ้านจัดสรร</p>
-<p><strong>เขาตะเกียบ-ขาม</strong> — ธรรมชาติสวยงาม เหมาะสำหรับวิลล่าส่วนตัว</p>
-<h2>ค้นหาอสังหาริมทรัพย์หัวหิน</h2>
-<p>เรียกดูโครงการคอนโด บ้าน วิลล่า และที่ดินในหัวหินได้ที่ FazWaz — แพลตฟอร์มอสังหาฯ ชั้นนำของไทยที่มีรายการให้เลือกกว่า 10,000 โครงการ</p>
-<p><a href="https://www.fazwaz.com/property-for-sale/thailand/hua-hin" target="_blank" rel="noopener sponsored" style="display:inline-block;background:linear-gradient(135deg,#b50062,#7f45a1);color:#fff;padding:12px 24px;border-radius:50px;font-weight:700;text-decoration:none;margin:8px 0;">ดูอสังหาริมทรัพย์ในหัวหิน →</a></p>`,
+<h2>What Makes Hua Hin a Good Place to Live?</h2>
+<p>Hua Hin is quieter than Bangkok and less hectic than many island destinations, but it still has enough infrastructure for comfortable year-round living. Residents can enjoy morning beach walks, international dining, golf, fitness clubs, fresh markets, hospitals, and easy day trips along the Gulf Coast.</p>
+<p>For retirees and families, Hua Hin offers a balanced lifestyle: coastal calm, reliable services, and an active international community. For Bangkok-based buyers, it works well as a weekend home or future retirement base without feeling isolated.</p>
+<h2>Best Areas to Consider in Hua Hin</h2>
+<ul>
+  <li><strong>Central Hua Hin:</strong> Best for convenience, restaurants, shopping, beach access, and short-term rental appeal.</li>
+  <li><strong>Khao Takiab:</strong> Popular for condos, sea views, cafes, and a more relaxed beach neighborhood feel.</li>
+  <li><strong>Hua Hin West and bypass areas:</strong> Good for pool villas, gated communities, larger homes, and better land value.</li>
+  <li><strong>Black Mountain and golf zones:</strong> Attractive for buyers who want space, views, golf access, and quiet residential living.</li>
+</ul>
+<h2>Best Property Types in Hua Hin</h2>
+<ul>
+  <li><strong>Beach condos:</strong> Easy to maintain and popular with weekend buyers and rental-focused investors.</li>
+  <li><strong>Pool villas:</strong> A strong choice for families, retirees, and buyers who want privacy and outdoor living.</li>
+  <li><strong>Luxury villas:</strong> Best suited to buyers looking for larger plots, mountain views, sea views, or premium lifestyle homes.</li>
+  <li><strong>Land plots:</strong> Useful for custom homes and long-term development in expanding residential areas.</li>
+</ul>
+<h2>Key Highlights of Hua Hin</h2>
+<p>Hua Hin Beach, Khao Takiab, Cicada Market, Bluport, Market Village, golf courses, international restaurants, hospitals, and easy Bangkok access are the main reasons buyers continue to choose Hua Hin. It is one of Thailand's strongest lifestyle property markets for people who want comfort, convenience, and a coastal setting.</p>
+<p><a href="/real-estate" style="display:inline-block;background:linear-gradient(135deg,#b50062,#7f45a1);color:#fff;padding:12px 24px;border-radius:50px;font-weight:700;text-decoration:none;margin:8px 0;">View Hua Hin properties for sale →</a></p>`,
   },
   {
     slug: "real-estate-cha-am",
