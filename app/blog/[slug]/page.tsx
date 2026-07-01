@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import Link from "next/link";
 import { getPlaceBySlug, BLOG_CATEGORIES, getPriceNumeric } from "@/lib/places";
 import { prisma } from "@/lib/prisma";
@@ -11,13 +11,30 @@ import SafeImage from "@/components/SafeImage";
 import { Calendar, Tag, ArrowLeft } from "lucide-react";
 import RankedPlacesMap from "@/components/blog/RankedPlacesMapClient";
 
+const BLOG_SLUG_REDIRECTS: Record<string, string> = {
+  "ตลาดโต้รุ่ง-หัวหิน": "talad-to-rung-hua-hin",
+};
+
+function getDecodedSlug(slug: string) {
+  try {
+    return decodeURIComponent(slug);
+  } catch {
+    return slug;
+  }
+}
+
+function getCanonicalBlogSlug(slug: string) {
+  return BLOG_SLUG_REDIRECTS[getDecodedSlug(slug)] ?? slug;
+}
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPlaceBySlug(slug);
+  const canonicalSlug = getCanonicalBlogSlug(slug);
+  const post = await getPlaceBySlug(canonicalSlug);
   if (!post) return {};
   const ogImage = isPublicImageUrl(post.coverImage) ? post.coverImage : undefined;
 
@@ -30,7 +47,7 @@ export async function generateMetadata({
       images: ogImage ? [ogImage] : [],
       type: "article",
     },
-    alternates: { canonical: `/blog/${slug}` },
+    alternates: { canonical: `/blog/${canonicalSlug}` },
   };
 }
 
@@ -42,7 +59,10 @@ export default async function BlogPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = await getPlaceBySlug(slug);
+  const canonicalSlug = getCanonicalBlogSlug(slug);
+  if (canonicalSlug !== slug) permanentRedirect(`/blog/${canonicalSlug}`);
+
+  const post = await getPlaceBySlug(canonicalSlug);
   if (!post || post.type !== "BLOG") notFound();
 
   const cat = BLOG_CATEGORIES.find((c) => c.value === post.category);
