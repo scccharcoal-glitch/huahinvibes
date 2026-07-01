@@ -15,12 +15,12 @@ const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL ?? "https://www.huahinvibes.co
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: "Hua Hin Vibes — Your Premium Hua Hin Travel Guide",
+    default: "Hua Hin Vibes — Hua Hin Travel Guide, Restaurants, Hotels & Real Estate",
     template: "%s | Hua Hin Vibes",
   },
   description:
-    "Discover the best restaurants, hotels, and attractions in Hua Hin. Your ultimate luxury travel guide to Thailand's premier coastal destination.",
-  keywords: ["hua hin", "travel", "restaurant", "hotel", "thailand", "beach"],
+    "Explore Hua Hin with local guides to restaurants, hotels, attractions, Thailand news, travel tips, and real estate across Thailand's favorite coastal destination.",
+  keywords: ["hua hin", "travel guide", "restaurant", "hotel", "thailand", "beach", "real estate"],
   openGraph: {
     siteName: "Hua Hin Vibes",
     type: "website",

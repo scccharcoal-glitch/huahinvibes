@@ -224,13 +224,13 @@ export default async function HomePage() {
               Thailand&apos;s Coastal Gem
             </span>
             <h1 className="text-4xl md:text-6xl font-extrabold text-foreground leading-tight mb-6">
-              Discover the Best of<br />
+              Hua Hin Travel Guide for<br />
               <span className="text-transparent bg-clip-text" style={{ backgroundImage: "linear-gradient(135deg,#b50062,#7f45a1)" }}>
-                Hua Hin
+                Food, Hotels & Living
               </span>
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10">
-              Your premium guide to restaurants, hotels, and experiences in Hua Hin — Thailand&apos;s most beloved coastal destination.
+              Find restaurants, hotels, attractions, Thailand travel news, and real estate guides curated for visitors, expats, and locals in Hua Hin.
             </p>
             <div className="flex justify-center mb-8">
               <SearchBox size="large" placeholder="Search somtam lao, seafood, cafe, spa..." className="mx-auto" />
