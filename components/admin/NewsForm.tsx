@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { type Place } from "@prisma/client";
+import { imageFileToDataUrl } from "@/lib/image-file";
 import RichTextEditor from "./RichTextEditor";
 
 type NewsInput = {
@@ -139,6 +140,18 @@ export default function NewsForm({ place, mode }: Props) {
       router.refresh();
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleCoverUpload(file?: File) {
+    if (!file) return;
+    setError("");
+
+    try {
+      const dataUrl = await imageFileToDataUrl(file);
+      set("coverImage", dataUrl);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "ไม่สามารถอัปโหลดรูปนี้ได้");
     }
   }
 
@@ -332,6 +345,17 @@ export default function NewsForm({ place, mode }: Props) {
               className={inputCls}
               placeholder="https://images.unsplash.com/..."
             />
+            <div className="mt-2">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleCoverUpload(e.target.files?.[0])}
+                className="w-full text-sm text-muted-foreground file:mr-3 file:rounded-lg file:border-0 file:bg-primary file:px-3 file:py-2 file:text-xs file:font-bold file:text-white hover:file:opacity-90"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                แนบรูปจากเครื่อง หรือวาง URL รูปภาพด้านบน
+              </p>
+            </div>
           </div>
           {form.coverImage && (
             // eslint-disable-next-line @next/next/no-img-element
