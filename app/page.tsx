@@ -83,6 +83,46 @@ export default async function HomePage() {
           </section>
         )}
 
+        {/* ─── 2. Travel Journal ─── */}
+        {latestPosts.length > 0 && (
+          <section className="max-w-7xl mx-auto px-4 md:px-8 py-8 pb-16 bg-accent/20">
+            <div className="max-w-7xl mx-auto">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">Travel Journal</p>
+                  <h2 className="text-2xl font-bold">Latest Articles</h2>
+                </div>
+                <Link href="/blog" className="text-sm font-semibold text-primary hover:underline">View all →</Link>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {latestPosts.map((post) => {
+                  const cat = BLOG_CATEGORIES.find((c) => c.value === post.category);
+                  return (
+                    <Link key={post.id} href={`/blog/${post.slug}`} className="group block">
+                      <div className="relative h-48 rounded-2xl overflow-hidden mb-3 bg-accent">
+                        {post.coverImage ? (
+                          <SafeImage src={post.coverImage} alt={post.name} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="(max-width: 768px) 100vw, 33vw" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-4xl">📝</div>
+                        )}
+                        {cat && <span className="absolute top-3 left-3 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">{cat.label}</span>}
+                      </div>
+                      <h3 className="font-bold text-base leading-snug mb-1 group-hover:text-primary transition-colors line-clamp-2">{post.name}</h3>
+                      {(post.excerpt ?? post.description) && (
+                        <p className="text-muted-foreground text-sm line-clamp-2 mb-2">{post.excerpt ?? post.description}</p>
+                      )}
+                      <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <Calendar className="w-3 h-3" />
+                        {new Date(post.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+                      </span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* ─── Latest Thailand News — 5×2 grid ─── */}
         {gridNews.length > 0 && (
           <section className="py-8 pb-14 bg-accent/30">
@@ -154,46 +194,6 @@ export default async function HomePage() {
             </Link>
           </div>
         </section>
-
-        {/* ─── 3. Travel Journal ─── */}
-        {latestPosts.length > 0 && (
-          <section className="max-w-7xl mx-auto px-4 md:px-8 py-8 pb-16 bg-accent/20">
-            <div className="max-w-7xl mx-auto">
-              <div className="flex items-center justify-between mb-8">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">Travel Journal</p>
-                  <h2 className="text-2xl font-bold">Latest Articles</h2>
-                </div>
-                <Link href="/blog" className="text-sm font-semibold text-primary hover:underline">View all →</Link>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {latestPosts.map((post) => {
-                  const cat = BLOG_CATEGORIES.find((c) => c.value === post.category);
-                  return (
-                    <Link key={post.id} href={`/blog/${post.slug}`} className="group block">
-                      <div className="relative h-48 rounded-2xl overflow-hidden mb-3 bg-accent">
-                        {post.coverImage ? (
-                          <SafeImage src={post.coverImage} alt={post.name} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="(max-width: 768px) 100vw, 33vw" />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-4xl">📝</div>
-                        )}
-                        {cat && <span className="absolute top-3 left-3 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">{cat.label}</span>}
-                      </div>
-                      <h3 className="font-bold text-base leading-snug mb-1 group-hover:text-primary transition-colors line-clamp-2">{post.name}</h3>
-                      {(post.excerpt ?? post.description) && (
-                        <p className="text-muted-foreground text-sm line-clamp-2 mb-2">{post.excerpt ?? post.description}</p>
-                      )}
-                      <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                        <Calendar className="w-3 h-3" />
-                        {new Date(post.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
-                      </span>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          </section>
-        )}
 
         {/* ─── 4. Hero ─── */}
         <section className="relative overflow-hidden">
