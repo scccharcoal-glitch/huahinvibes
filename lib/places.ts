@@ -213,6 +213,7 @@ export const getLatestBlogPosts = cache(async (limit = 6) => {
         type: "BLOG",
         status: "published",
         OR: [{ publishedAt: null }, { publishedAt: { lte: now } }],
+        NOT: { category: { endsWith: "-th" } },
       },
       orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
       take: limit,
