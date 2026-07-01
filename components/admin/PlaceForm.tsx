@@ -12,9 +12,13 @@ type PlaceInput = Partial<Omit<Place, "id" | "createdAt" | "updatedAt" | "publis
 };
 
 type LinkedPlaceItem = { slug: string; review: string };
+type PlaceWithAdminExtras = Place & {
+  linkedPlaces?: string | null;
+  reviewsJson?: string | null;
+};
 
 interface Props {
-  place?: Place;
+  place?: PlaceWithAdminExtras;
   mode: "create" | "edit";
 }
 
@@ -69,7 +73,7 @@ export default function PlaceForm({ place, mode }: Props) {
   // Ranked Places (listicle)
   const [linkedItems, setLinkedItems] = useState<LinkedPlaceItem[]>(() => {
     try {
-      const parsed = JSON.parse((place as any)?.linkedPlaces ?? "[]");
+      const parsed = JSON.parse(place?.linkedPlaces ?? "[]");
       return Array.isArray(parsed) ? parsed : [];
     } catch { return []; }
   });
@@ -89,7 +93,7 @@ export default function PlaceForm({ place, mode }: Props) {
     return match ? match[1] : urlOrSlug.trim();
   }
 
-  const [reviewsRaw, setReviewsRaw] = useState<string>((place as any)?.reviewsJson ?? "");
+  const [reviewsRaw, setReviewsRaw] = useState<string>(place?.reviewsJson ?? "");
   const reviewsPreviewCount = (() => {
     try { const p = JSON.parse(reviewsRaw); return Array.isArray(p) ? Math.min(p.length, 5) : 0; } catch { return 0; }
   })();
@@ -226,10 +230,21 @@ export default function PlaceForm({ place, mode }: Props) {
             <input value={form.slug ?? ""} onChange={(e) => set("slug", e.target.value)} className={inputCls} placeholder="baan-itsara-indian-restaurant" />
           </div>
           <div>
-            <label className={labelCls}>Type *</label>
-            <select required value={form.type ?? "RESTAURANT"} onChange={(e) => set("type", e.target.value)} className={inputCls}>
+            <label className={labelCls}>Type * <span className="font-normal text-muted-foreground normal-case">(choose or type a new one)</span></label>
+            <input
+              required
+              list="type-suggestions"
+              value={form.type ?? "RESTAURANT"}
+              onChange={(e) => set("type", e.target.value.trim().toUpperCase().replace(/\s+/g, "_"))}
+              className={inputCls}
+              placeholder="RESTAURANT, HOTEL, ATTRACTION, BLOG..."
+            />
+            <datalist id="type-suggestions">
               {TYPE_OPTIONS.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
-            </select>
+            </datalist>
+            <p className="text-xs text-muted-foreground mt-1.5">
+              New custom types will use the basic fields, media, contact, and SEO sections.
+            </p>
           </div>
           <div>
             <label className={labelCls}>Status</label>

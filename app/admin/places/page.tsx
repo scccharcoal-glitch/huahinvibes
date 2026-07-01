@@ -25,6 +25,21 @@ export default async function AdminPlacesPage({
     },
     orderBy: { createdAt: "desc" },
   });
+  const typeRows = await prisma.place.findMany({
+    select: { type: true },
+    distinct: ["type"],
+    orderBy: { type: "asc" },
+  });
+  const types = [
+    "",
+    ...new Set([
+      "RESTAURANT",
+      "HOTEL",
+      "ATTRACTION",
+      "BLOG",
+      ...typeRows.map((row) => row.type).filter(Boolean),
+    ]),
+  ];
 
   return (
     <div className="p-8">
@@ -46,7 +61,7 @@ export default async function AdminPlacesPage({
 
       {/* Filter tabs */}
       <div className="flex gap-2 mb-6 flex-wrap">
-        {["", "RESTAURANT", "HOTEL", "ATTRACTION", "BLOG"].map((t) => (
+        {types.map((t) => (
           <Link
             key={t}
             href={t ? `/admin/places?type=${t}` : "/admin/places"}
