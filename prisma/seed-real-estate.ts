@@ -63,20 +63,30 @@ const cities = [
   },
   {
     slug: "real-estate-bangkok",
-    name: "อสังหาริมทรัพย์กรุงเทพมหานคร — คอนโดย่านสุขุมวิท สาทร อโศก",
-    excerpt: "กรุงเทพฯ ยังคงเป็นตลาดอสังหาฯ ที่ใหญ่ที่สุดในไทย มีผู้ซื้อจากทั่วโลกและ yield สูงในย่านใจกลางเมือง",
+    name: "Bangkok Real Estate Guide — Condos in Sukhumvit, Sathorn and Asoke",
+    excerpt: "Bangkok remains Thailand's largest and most liquid property market, with strong rental demand, global buyer interest, and prime condo opportunities across the city.",
     coverImage: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=1200&q=80",
     tags: "real-estate,bangkok,property,invest,condo",
     city: "Bangkok", cityTh: "กรุงเทพฯ", fazwazSlug: "bangkok",
-    content: `<p>กรุงเทพมหานครเป็นศูนย์กลางธุรกิจและตลาดอสังหาริมทรัพย์ที่ใหญ่ที่สุดในเอเชียตะวันออกเฉียงใต้ มี rental yield เฉลี่ย 4–7% ต่อปีในย่านใจกลางเมือง</p>
-<h2>ย่านแนะนำในกรุงเทพฯ</h2>
+    content: `<p>Bangkok is Thailand's most important real estate market and one of Southeast Asia's most active urban property hubs. The city combines deep rental demand, international business activity, excellent transport links, and a wide range of condo choices from entry-level units to luxury residences.</p>
+<h2>Why Bangkok Property Stands Out</h2>
 <ul>
-  <li><strong>สุขุมวิท</strong> — ย่านธุรกิจและไลฟ์สไตล์ คอนโดสูง เริ่ม 3–15 ล้านบาท</li>
-  <li><strong>สาทร-สีลม</strong> — CBD ใจกลาง เหมาะสำหรับนักลงทุนปล่อยเช่า</li>
-  <li><strong>ลาดพร้าว-รัชดา</strong> — ราคาเข้าถึงได้ เดินทางสะดวกด้วย BTS/MRT</li>
-  <li><strong>พระราม 9-เพชรบุรี</strong> — กำลังพัฒนา ราคาน่าจับตามอง</li>
+  <li><strong>High liquidity:</strong> Bangkok has a large pool of local and foreign buyers, making quality condos easier to rent, resell, and compare.</li>
+  <li><strong>Strong rental demand:</strong> Business travelers, expats, students, medical tourists, and long-stay visitors keep demand steady in central districts.</li>
+  <li><strong>Excellent transport:</strong> BTS, MRT, Airport Rail Link, expressways, and expanding rail lines make transit-connected condos especially attractive.</li>
+  <li><strong>Wide price range:</strong> Buyers can choose from affordable city-fringe condos to luxury branded residences in prime CBD locations.</li>
 </ul>
-<p><a href="https://www.fazwaz.com/property-for-sale/thailand/bangkok" target="_blank" rel="noopener sponsored" style="display:inline-block;background:linear-gradient(135deg,#b50062,#7f45a1);color:#fff;padding:12px 24px;border-radius:50px;font-weight:700;text-decoration:none;margin:8px 0;">ดูอสังหาริมทรัพย์ในกรุงเทพฯ →</a></p>`,
+<h2>Best Bangkok Areas to Consider</h2>
+<ul>
+  <li><strong>Sukhumvit:</strong> A lifestyle and expat corridor with strong condo demand around Asoke, Phrom Phong, Thong Lo, and Ekkamai.</li>
+  <li><strong>Sathorn and Silom:</strong> Bangkok's classic CBD, popular with professionals and investors focused on long-term rental tenants.</li>
+  <li><strong>Rama 9 and Phetchaburi:</strong> A fast-growing business zone with newer condos, offices, malls, and improving connectivity.</li>
+  <li><strong>Lat Phrao and Ratchada:</strong> More accessible pricing, strong MRT access, and good appeal for local renters and first-time buyers.</li>
+</ul>
+<h2>Key Benefits for Buyers</h2>
+<p>Bangkok property is attractive because it offers scale, convenience, and flexibility. Investors can target rental income, owner-occupiers can choose walkable neighborhoods near transit, and overseas buyers can focus on established condo buildings with proven demand.</p>
+<p>For long-term value, the strongest opportunities are usually near mass transit, international schools, hospitals, office districts, lifestyle malls, and neighborhoods with limited future land supply.</p>
+<p><a href="https://www.fazwaz.com/property-for-sale/thailand/bangkok" target="_blank" rel="noopener sponsored" style="display:inline-block;background:linear-gradient(135deg,#b50062,#7f45a1);color:#fff;padding:12px 24px;border-radius:50px;font-weight:700;text-decoration:none;margin:8px 0;">View Bangkok properties for sale →</a></p>`,
   },
   {
     slug: "real-estate-koh-samui",
