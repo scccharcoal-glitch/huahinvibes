@@ -63,3 +63,9 @@ model Place {
   @@index([area])
   @@index([slug])
 }
+
+model SiteConfig {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}

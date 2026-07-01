@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LayoutDashboard, UtensilsCrossed, Hotel, Compass, BookOpen, Newspaper, Plus, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, UtensilsCrossed, Hotel, Compass, BookOpen, Newspaper, Plus, Settings, LogOut, Home } from "lucide-react";
 
 const sideNav = [
   { href: "/admin", icon: LayoutDashboard, label: "Dashboard" },
+  { href: "/admin/homepage", icon: Home, label: "Homepage" },
   { href: "/admin/places?type=RESTAURANT", icon: UtensilsCrossed, label: "Restaurants" },
   { href: "/admin/places?type=HOTEL", icon: Hotel, label: "Hotels" },
   { href: "/admin/places?type=ATTRACTION", icon: Compass, label: "Attractions" },

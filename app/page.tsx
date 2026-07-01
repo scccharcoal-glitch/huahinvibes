@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getFeaturedDirectoryPlaces, getLatestBlogPosts, getPlaces, BLOG_CATEGORIES } from "@/lib/places";
+import { getHomepageConfig } from "@/lib/site-config";
 import PlaceCard from "@/components/places/PlaceCard";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -15,15 +16,21 @@ const categories = [
 ];
 
 export default async function HomePage() {
+  const cfg = await getHomepageConfig();
+
   const [featured, latestPosts, thNewsEn] = await Promise.all([
-    getFeaturedDirectoryPlaces(6),
-    getLatestBlogPosts(6),
-    getPlaces({ type: "BLOG", category: "thailand-news" }),
+    cfg.showFeatured ? getFeaturedDirectoryPlaces(cfg.featuredLimit) : Promise.resolve([]),
+    cfg.showBlog
+      ? cfg.blogCategory
+        ? getPlaces({ type: "BLOG", category: cfg.blogCategory, limit: cfg.blogLimit })
+        : getLatestBlogPosts(cfg.blogLimit)
+      : Promise.resolve([]),
+    cfg.showNews ? getPlaces({ type: "BLOG", category: cfg.newsCategory }) : Promise.resolve([]),
   ]);
 
   const featuredNews = thNewsEn[0];
   const sideNews = thNewsEn.slice(1, 5);
-  const gridNews = thNewsEn.slice(0, 10);
+  const gridNews = thNewsEn.slice(0, cfg.newsLimit);
 
   return (
     <>
@@ -31,7 +38,7 @@ export default async function HomePage() {
       <main className="flex-1">
 
         {/* ─── 1. Thailand News — Featured ─── */}
-        {featuredNews && (
+        {cfg.showNews && featuredNews && (
           <section className="max-w-7xl mx-auto px-4 md:px-8 py-8 pt-10 pb-10">
             <div className="flex items-center justify-between mb-8">
               <div>
@@ -84,7 +91,7 @@ export default async function HomePage() {
         )}
 
         {/* ─── 2. Travel Journal ─── */}
-        {latestPosts.length > 0 && (
+        {cfg.showBlog && latestPosts.length > 0 && (
           <section className="max-w-7xl mx-auto px-4 md:px-8 py-8 pb-16 bg-accent/20">
             <div className="max-w-7xl mx-auto">
               <div className="flex items-center justify-between mb-8">
@@ -124,7 +131,7 @@ export default async function HomePage() {
         )}
 
         {/* ─── Latest Thailand News — 5×2 grid ─── */}
-        {gridNews.length > 0 && (
+        {cfg.showNews && gridNews.length > 0 && (
           <section className="py-8 pb-14 bg-accent/30">
             <div className="max-w-7xl mx-auto px-4 md:px-8">
               <div className="flex items-center justify-between mb-6">
@@ -155,45 +162,47 @@ export default async function HomePage() {
         )}
 
         {/* ─── 2. Real Estate ─── */}
-        <section className="max-w-7xl mx-auto px-4 md:px-8 py-12 pb-16">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">
-                <Home className="w-3 h-3 inline mr-1" />Real Estate
-              </p>
-              <h2 className="text-2xl font-bold">Real Estate in Thailand</h2>
-            </div>
-            <Link href="/real-estate" className="text-sm font-semibold text-primary hover:underline">
-              View all →
-            </Link>
-          </div>
-          <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-9 gap-2.5">
-            {RE_CITIES.map((c) => (
-              <Link key={c.slug} href="/real-estate" className="group block">
-                <div className="relative rounded-xl overflow-hidden aspect-[3/4]">
-                  <img
-                    src={c.img}
-                    alt={c.city}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-1.5 text-center">
-                    <p className="text-white font-extrabold text-[11px] leading-tight drop-shadow">{c.city}</p>
-                  </div>
-                </div>
+        {cfg.showRealestate && (
+          <section className="max-w-7xl mx-auto px-4 md:px-8 py-12 pb-16">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">
+                  <Home className="w-3 h-3 inline mr-1" />Real Estate
+                </p>
+                <h2 className="text-2xl font-bold">Real Estate in Thailand</h2>
+              </div>
+              <Link href="/real-estate" className="text-sm font-semibold text-primary hover:underline">
+                View all →
               </Link>
-            ))}
-          </div>
-          <div className="mt-5 text-center">
-            <Link
-              href="/real-estate"
-              className="inline-block gradient-btn text-white px-8 py-3 rounded-full font-bold hover:opacity-90 transition-opacity"
-            >
-              Browse All {RE_CITIES.length} Provinces →
-            </Link>
-          </div>
-        </section>
+            </div>
+            <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-9 gap-2.5">
+              {RE_CITIES.map((c) => (
+                <Link key={c.slug} href="/real-estate" className="group block">
+                  <div className="relative rounded-xl overflow-hidden aspect-[3/4]">
+                    <img
+                      src={c.img}
+                      alt={c.city}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-1.5 text-center">
+                      <p className="text-white font-extrabold text-[11px] leading-tight drop-shadow">{c.city}</p>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+            <div className="mt-5 text-center">
+              <Link
+                href="/real-estate"
+                className="inline-block gradient-btn text-white px-8 py-3 rounded-full font-bold hover:opacity-90 transition-opacity"
+              >
+                Browse All {RE_CITIES.length} Provinces →
+              </Link>
+            </div>
+          </section>
+        )}
 
         {/* ─── 4. Hero ─── */}
         <section className="relative overflow-hidden">
@@ -238,23 +247,25 @@ export default async function HomePage() {
         </section>
 
         {/* ─── 5. What are you looking for? ─── */}
-        <section className="max-w-7xl mx-auto px-4 md:px-8 py-12">
-          <h2 className="text-2xl font-bold mb-8 text-center">What are you looking for?</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            {categories.map((cat) => (
-              <Link key={cat.href} href={cat.href} className="group flex flex-col items-center p-8 rounded-2xl border border-border bg-card hover:border-primary/40 hover:shadow-lg transition-all place-card">
-                <div className={`w-14 h-14 rounded-2xl ${cat.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                  <cat.icon className="w-7 h-7" />
-                </div>
-                <h3 className="font-bold text-lg mb-1">{cat.label}</h3>
-                <p className="text-sm text-muted-foreground">{cat.desc}</p>
-              </Link>
-            ))}
-          </div>
-        </section>
+        {cfg.showCategories && (
+          <section className="max-w-7xl mx-auto px-4 md:px-8 py-12">
+            <h2 className="text-2xl font-bold mb-8 text-center">What are you looking for?</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              {categories.map((cat) => (
+                <Link key={cat.href} href={cat.href} className="group flex flex-col items-center p-8 rounded-2xl border border-border bg-card hover:border-primary/40 hover:shadow-lg transition-all place-card">
+                  <div className={`w-14 h-14 rounded-2xl ${cat.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                    <cat.icon className="w-7 h-7" />
+                  </div>
+                  <h3 className="font-bold text-lg mb-1">{cat.label}</h3>
+                  <p className="text-sm text-muted-foreground">{cat.desc}</p>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* ─── 6. Editor's Pick / Featured in Hua Hin ─── */}
-        {featured.length > 0 && (
+        {cfg.showFeatured && featured.length > 0 && (
           <section className="max-w-7xl mx-auto px-4 md:px-8 py-8 pb-16">
             <div className="flex items-center justify-between mb-8">
               <div>
