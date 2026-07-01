@@ -30,11 +30,11 @@ export default async function ThailandNewsPage() {
             <Link href="/th" className="text-sm font-semibold border border-border px-4 py-1.5 rounded-full hover:border-primary hover:text-primary transition-all">
               🇹🇭 อ่านภาษาไทย
             </Link>
-            <a href="https://www.fazwaz.com/property-for-sale/thailand" target="_blank" rel="noopener noreferrer sponsored"
+            <Link href="/real-estate"
               className="text-sm font-semibold border border-border px-4 py-1.5 rounded-full hover:border-primary hover:text-primary transition-all"
             >
               🏠 Real Estate in Thailand
-            </a>
+            </Link>
           </div>
         </div>
 

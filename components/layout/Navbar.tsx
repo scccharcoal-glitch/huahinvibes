@@ -13,7 +13,7 @@ const navLinks = [
   { href: "/attractions", label: "Attractions" },
   { href: "/blog", label: "Blog" },
   { href: "/thailand-news", label: "Thailand News" },
-  { href: "https://www.fazwaz.com/property-for-sale/thailand", label: "Real Estate", external: true },
+  { href: "/real-estate", label: "Real Estate" },
   { href: "/th", label: "🇹🇭 ภาษาไทย" },
 ];
 

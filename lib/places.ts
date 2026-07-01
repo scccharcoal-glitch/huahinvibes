@@ -47,6 +47,7 @@ export const BLOG_CATEGORIES = [
   { value: "lifestyle",         label: "Lifestyle",           labelTh: "ไลฟ์สไตล์"       },
   { value: "events",            label: "Events",              labelTh: "กิจกรรม"          },
   { value: "hotel-review",      label: "Hotel Review",        labelTh: "รีวิวโรงแรม"     },
+  { value: "real-estate",       label: "Real Estate",         labelTh: "อสังหาริมทรัพย์" },
   { value: "thailand-news",     label: "Thailand News",       labelTh: "ข่าวประเทศไทย"   },
   { value: "thailand-news-th",  label: "ข่าวภาษาไทย",        labelTh: "ข่าวภาษาไทย"     },
 ];

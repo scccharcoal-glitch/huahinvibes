@@ -5,6 +5,7 @@ import Footer from "@/components/layout/Footer";
 import SafeImage from "@/components/SafeImage";
 import { getPlaces } from "@/lib/places";
 import { Calendar } from "lucide-react";
+import { RE_CITIES } from "@/lib/real-estate-cities";
 
 export const metadata: Metadata = {
   title: "ข่าวไทย & คู่มือหัวหิน — Hua Hin Vibes ภาษาไทย",
@@ -159,34 +160,29 @@ export default async function ThaiHomePage() {
         <section className="max-w-7xl mx-auto px-4 md:px-8 py-12 pb-16">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold">อสังหาริมทรัพย์ในไทย</h2>
-            <a href="https://www.fazwaz.com/property-for-sale/thailand" target="_blank" rel="noopener noreferrer sponsored" className="text-sm font-semibold text-primary hover:underline">
-              ดูทั้งหมด →
-            </a>
+            <Link href="/real-estate" className="text-sm font-semibold text-primary hover:underline">
+              คู่มือทั้งหมด →
+            </Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { city: "กรุงเทพฯ", href: "bangkok", img: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=400&q=80" },
-              { city: "ภูเก็ต",   href: "phuket",  img: "https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=400&q=80" },
-              { city: "เชียงใหม่",href: "chiang-mai", img: "https://images.unsplash.com/photo-1599661046289-e31897846e41?w=400&q=80" },
-              { city: "หัวหิน",   href: "hua-hin", img: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400&q=80" },
-            ].map((loc) => (
-              <a key={loc.city} href={`https://www.fazwaz.com/property-for-sale/thailand/${loc.href}`} target="_blank" rel="noopener noreferrer sponsored"
-                className="group relative rounded-2xl overflow-hidden aspect-[4/3] block"
-              >
-                <img src={loc.img} alt={loc.city} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/10" />
-                <div className="absolute bottom-0 left-0 p-4">
-                  <p className="text-white font-extrabold text-lg">{loc.city}</p>
+          <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 gap-2.5">
+            {RE_CITIES.map((c) => (
+              <Link key={c.slug} href="/real-estate" className="group block">
+                <div className="relative rounded-xl overflow-hidden aspect-[3/4]">
+                  <img src={c.img} alt={c.cityTh} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-1.5 text-center">
+                    <p className="text-white font-extrabold text-[11px] leading-tight drop-shadow">{c.cityTh}</p>
+                  </div>
                 </div>
-              </a>
+              </Link>
             ))}
           </div>
           <div className="mt-4 text-center">
-            <a href="https://www.fazwaz.com/property-for-sale/thailand" target="_blank" rel="noopener noreferrer sponsored"
+            <Link href="/real-estate"
               className="inline-block gradient-btn text-white px-8 py-3 rounded-full font-bold hover:opacity-90 transition-opacity"
             >
-              ค้นหาอสังหาริมทรัพย์ →
-            </a>
+              ดูคู่มืออสังหาฯ ทุกจังหวัด ({RE_CITIES.length} จังหวัด) →
+            </Link>
           </div>
         </section>
 

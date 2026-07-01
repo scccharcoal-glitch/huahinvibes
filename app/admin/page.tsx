@@ -1,14 +1,15 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { UtensilsCrossed, Hotel, Compass, Plus, TrendingUp, Eye, Star } from "lucide-react";
+import { UtensilsCrossed, Hotel, Compass, Plus, TrendingUp, Eye, Star, Newspaper } from "lucide-react";
 
 export const metadata = { title: "Admin Dashboard — Hua Hin Vibes" };
 
 export default async function AdminDashboard() {
-  const [restaurants, hotels, attractions, recent] = await Promise.all([
+  const [restaurants, hotels, attractions, newsCount, recent] = await Promise.all([
     prisma.place.count({ where: { type: "RESTAURANT" } }),
     prisma.place.count({ where: { type: "HOTEL" } }),
     prisma.place.count({ where: { type: "ATTRACTION" } }),
+    prisma.place.count({ where: { type: "BLOG", category: { in: ["thailand-news", "thailand-news-th"] } } }),
     prisma.place.findMany({ orderBy: { createdAt: "desc" }, take: 5 }),
   ]);
 
@@ -17,6 +18,7 @@ export default async function AdminDashboard() {
     { label: "Hotels", count: hotels, icon: Hotel, href: "/admin/places?type=HOTEL", color: "text-secondary bg-purple-50" },
     { label: "Attractions", count: attractions, icon: Compass, href: "/admin/places?type=ATTRACTION", color: "text-amber-700 bg-amber-50" },
     { label: "Total Places", count: restaurants + hotels + attractions, icon: TrendingUp, href: "/admin/places", color: "text-green-700 bg-green-50" },
+    { label: "Thailand News", count: newsCount, icon: Newspaper, href: "/admin/news", color: "text-blue-700 bg-blue-50" },
   ];
 
   return (
@@ -36,7 +38,7 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-10">
         {stats.map((stat) => (
           <Link
             key={stat.label}

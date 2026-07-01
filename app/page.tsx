@@ -5,7 +5,8 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import SearchBox from "@/components/SearchBox";
 import SafeImage from "@/components/SafeImage";
-import { UtensilsCrossed, Hotel, Compass, Star, MapPin, TrendingUp, Calendar, Newspaper, Clock } from "lucide-react";
+import { UtensilsCrossed, Hotel, Compass, Star, MapPin, TrendingUp, Calendar, Newspaper, Clock, Home } from "lucide-react";
+import { RE_CITIES } from "@/lib/real-estate-cities";
 
 const categories = [
   { href: "/restaurants", icon: UtensilsCrossed, label: "Restaurants", desc: "200+ dining spots", color: "bg-pink-50 text-primary" },
@@ -22,7 +23,7 @@ export default async function HomePage() {
 
   const featuredNews = thNewsEn[0];
   const sideNews = thNewsEn.slice(1, 5);
-  const latestNews = thNewsEn.slice(0, 8);
+  const gridNews = thNewsEn.slice(0, 10); // 5 cols × 2 rows
 
   return (
     <>
@@ -140,9 +141,9 @@ export default async function HomePage() {
           </section>
         )}
 
-        {/* ─── Featured Thailand News ─── */}
+        {/* ─── Featured Thailand News (big hero + side list) ─── */}
         {featuredNews && (
-          <section className="max-w-7xl mx-auto px-4 md:px-8 py-8 pb-16">
+          <section className="max-w-7xl mx-auto px-4 md:px-8 py-8 pb-10">
             <div className="flex items-center justify-between mb-8">
               <div>
                 <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">
@@ -174,7 +175,7 @@ export default async function HomePage() {
               <div className="flex flex-col gap-4">
                 {sideNews.map((item) => (
                   <Link key={item.id} href={`/blog/${item.slug}`} className="group flex gap-3 hover:bg-accent/50 rounded-xl p-2 transition-colors">
-                    <div className="w-20 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-accent">
+                    <div className="relative w-20 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-accent">
                       {item.coverImage ? (
                         <SafeImage src={item.coverImage} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform duration-200" sizes="80px" />
                       ) : (
@@ -195,30 +196,28 @@ export default async function HomePage() {
           </section>
         )}
 
-        {/* ─── Latest Thailand News horizontal scroll ─── */}
-        {latestNews.length > 0 && (
+        {/* ─── Latest Thailand News — 5×2 grid ─── */}
+        {gridNews.length > 0 && (
           <section className="py-8 pb-16 bg-accent/30">
             <div className="max-w-7xl mx-auto px-4 md:px-8">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold">Latest Thailand News</h2>
                 <Link href="/thailand-news" className="text-sm font-semibold text-primary hover:underline">View all →</Link>
               </div>
-              <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 md:mx-0 md:px-0 snap-x snap-mandatory">
-                {latestNews.map((item) => (
-                  <Link key={item.id} href={`/blog/${item.slug}`}
-                    className="group flex-shrink-0 w-52 snap-start block"
-                  >
-                    <div className="relative h-36 rounded-xl overflow-hidden bg-accent mb-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                {gridNews.map((item) => (
+                  <Link key={item.id} href={`/blog/${item.slug}`} className="group block">
+                    <div className="relative h-32 rounded-xl overflow-hidden bg-accent mb-2">
                       {item.coverImage ? (
-                        <SafeImage src={item.coverImage} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform duration-200" sizes="208px" />
+                        <SafeImage src={item.coverImage} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform duration-200" sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 20vw" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-3xl">📰</div>
                       )}
-                      <span className="absolute bottom-2 left-2 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full">Thailand News</span>
+                      <span className="absolute bottom-1.5 left-1.5 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full">News</span>
                     </div>
-                    <p className="text-sm font-bold line-clamp-2 leading-snug group-hover:text-primary transition-colors mb-1">{item.name}</p>
-                    <p className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
+                    <p className="text-xs font-bold line-clamp-2 leading-snug group-hover:text-primary transition-colors mb-1">{item.name}</p>
+                    <p className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+                      <Clock className="w-2.5 h-2.5" />
                       {new Date(item.publishedAt ?? item.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
                     </p>
                   </Link>
@@ -228,39 +227,49 @@ export default async function HomePage() {
           </section>
         )}
 
-        {/* ─── Real Estate in Thailand ─── */}
+        {/* ─── Real Estate in Thailand — 9 cities ─── */}
         <section className="max-w-7xl mx-auto px-4 md:px-8 py-12 pb-16">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold">Real Estate in Thailand</h2>
-            <a href="https://www.fazwaz.com/property-for-sale/thailand" target="_blank" rel="noopener noreferrer sponsored" className="text-sm font-semibold text-primary hover:underline">
-              View all →
-            </a>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">
+                <Home className="w-3 h-3 inline mr-1" />อสังหาริมทรัพย์
+              </p>
+              <h2 className="text-2xl font-bold">Real Estate in Thailand</h2>
+            </div>
+            <Link href="/real-estate" className="text-sm font-semibold text-primary hover:underline">
+              คู่มือทั้งหมด →
+            </Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { city: "Bangkok", area: "Sukhumvit", img: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=400&q=80" },
-              { city: "Phuket", area: "Patong Beach", img: "https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=400&q=80" },
-              { city: "Chiang Mai", area: "Nimman", img: "https://images.unsplash.com/photo-1599661046289-e31897846e41?w=400&q=80" },
-              { city: "Hua Hin", area: "Beach Road", img: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400&q=80" },
-            ].map((loc) => (
-              <a key={loc.city} href={`https://www.fazwaz.com/property-for-sale/thailand/${loc.city.toLowerCase().replace(" ","-")}`} target="_blank" rel="noopener noreferrer sponsored"
-                className="group relative rounded-2xl overflow-hidden aspect-[4/3] block"
+          {/* 9 city cards — 3 cols on lg, scroll on mobile */}
+          <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-9 gap-2.5">
+            {RE_CITIES.map((c) => (
+              <Link
+                key={c.slug}
+                href="/real-estate"
+                className="group block"
               >
-                <img src={loc.img} alt={loc.city} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/10" />
-                <div className="absolute bottom-0 left-0 p-4">
-                  <p className="text-white font-extrabold text-lg leading-tight">{loc.city}</p>
-                  <p className="text-white/80 text-xs">{loc.area}</p>
+                <div className="relative rounded-xl overflow-hidden aspect-[3/4]">
+                  <img
+                    src={c.img}
+                    alt={c.cityTh}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-1.5 text-center">
+                    <p className="text-white font-extrabold text-[11px] leading-tight drop-shadow">{c.cityTh}</p>
+                  </div>
                 </div>
-              </a>
+              </Link>
             ))}
           </div>
-          <div className="mt-4 text-center">
-            <a href="https://www.fazwaz.com/property-for-sale/thailand" target="_blank" rel="noopener noreferrer sponsored"
+          <div className="mt-5 text-center">
+            <Link
+              href="/real-estate"
               className="inline-block gradient-btn text-white px-8 py-3 rounded-full font-bold hover:opacity-90 transition-opacity"
             >
-              Search Properties in Thailand →
-            </a>
+              ดูคู่มืออสังหาฯ ทุกจังหวัด ({RE_CITIES.length} จังหวัด) →
+            </Link>
           </div>
         </section>
 
