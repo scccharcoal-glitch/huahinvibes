@@ -50,6 +50,11 @@ export const BLOG_CATEGORIES = [
   { value: "real-estate",       label: "Real Estate",         labelTh: "อสังหาริมทรัพย์" },
   { value: "thailand-news",     label: "Thailand News",       labelTh: "ข่าวประเทศไทย"   },
   { value: "thailand-news-th",  label: "ข่าวภาษาไทย",        labelTh: "ข่าวภาษาไทย"     },
+  { value: "thailand-news-th-politics",  label: "Thai Politics News",  labelTh: "ข่าวการเมือง"    },
+  { value: "thailand-news-th-economy",   label: "Thai Economy News",   labelTh: "ข่าวเศรษฐกิจ"   },
+  { value: "thailand-news-th-travel",    label: "Thai Travel News",    labelTh: "ข่าวท่องเที่ยว" },
+  { value: "thailand-news-th-property",  label: "Thai Property News",  labelTh: "ข่าวอสังหาฯ"    },
+  { value: "thailand-news-th-lifestyle", label: "Thai Lifestyle News", labelTh: "ข่าวไลฟ์สไตล์"  },
 ];
 
 export const PRICE_RANGES = [
