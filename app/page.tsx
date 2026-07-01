@@ -1,12 +1,11 @@
 import Link from "next/link";
-import { getFeaturedDirectoryPlaces, getLatestBlogPosts, BLOG_CATEGORIES } from "@/lib/places";
-import { fetchThailandNewsEn, timeAgoEn } from "@/lib/thailand-news";
+import { getFeaturedDirectoryPlaces, getLatestBlogPosts, getPlaces, BLOG_CATEGORIES } from "@/lib/places";
 import PlaceCard from "@/components/places/PlaceCard";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import SearchBox from "@/components/SearchBox";
 import SafeImage from "@/components/SafeImage";
-import { UtensilsCrossed, Hotel, Compass, Star, MapPin, TrendingUp, Calendar, Newspaper } from "lucide-react";
+import { UtensilsCrossed, Hotel, Compass, Star, MapPin, TrendingUp, Calendar, Newspaper, Clock } from "lucide-react";
 
 const categories = [
   { href: "/restaurants", icon: UtensilsCrossed, label: "Restaurants", desc: "200+ dining spots", color: "bg-pink-50 text-primary" },
@@ -15,15 +14,15 @@ const categories = [
 ];
 
 export default async function HomePage() {
-  const [featured, latestPosts, thNews] = await Promise.all([
+  const [featured, latestPosts, thNewsEn] = await Promise.all([
     getFeaturedDirectoryPlaces(6),
     getLatestBlogPosts(6),
-    fetchThailandNewsEn(),
+    getPlaces({ type: "BLOG", category: "thailand-news" }),
   ]);
 
-  const featuredNews = thNews[0];
-  const sideNews = thNews.slice(1, 5);
-  const latestNews = thNews.slice(0, 8);
+  const featuredNews = thNewsEn[0];
+  const sideNews = thNewsEn.slice(1, 5);
+  const latestNews = thNewsEn.slice(0, 8);
 
   return (
     <>
@@ -155,38 +154,41 @@ export default async function HomePage() {
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Big feature card */}
-              <a href={featuredNews.link} target="_blank" rel="noopener noreferrer" className="lg:col-span-2 group block relative rounded-2xl overflow-hidden bg-accent min-h-[320px]">
-                {featuredNews.image ? (
-                  <img src={featuredNews.image} alt={featuredNews.title} className="w-full h-full object-cover absolute inset-0 group-hover:scale-105 transition-transform duration-300" />
+              <Link href={`/blog/${featuredNews.slug}`} className="lg:col-span-2 group block relative rounded-2xl overflow-hidden bg-accent min-h-[320px]">
+                {featuredNews.coverImage ? (
+                  <SafeImage src={featuredNews.coverImage} alt={featuredNews.name} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="100vw" />
                 ) : (
                   <div className="w-full h-full absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20" />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-6">
-                  {featuredNews.category && (
-                    <span className="inline-block bg-primary text-white text-xs font-bold px-3 py-1 rounded-full mb-3">{featuredNews.category}</span>
-                  )}
-                  <h3 className="text-white font-extrabold text-xl md:text-2xl leading-snug mb-2 line-clamp-3">{featuredNews.title}</h3>
-                  <p className="text-white/70 text-xs">{timeAgoEn(featuredNews.pubDate)} · {featuredNews.source}</p>
+                  <span className="inline-block bg-primary text-white text-xs font-bold px-3 py-1 rounded-full mb-3">Thailand News</span>
+                  <h3 className="text-white font-extrabold text-xl md:text-2xl leading-snug mb-2 line-clamp-3">{featuredNews.name}</h3>
+                  <p className="text-white/70 text-xs flex items-center gap-1">
+                    <Clock className="w-3 h-3" />
+                    {new Date(featuredNews.publishedAt ?? featuredNews.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                  </p>
                 </div>
-              </a>
+              </Link>
               {/* Side list */}
               <div className="flex flex-col gap-4">
-                {sideNews.map((item, i) => (
-                  <a key={i} href={item.link} target="_blank" rel="noopener noreferrer" className="group flex gap-3 hover:bg-accent/50 rounded-xl p-2 transition-colors">
+                {sideNews.map((item) => (
+                  <Link key={item.id} href={`/blog/${item.slug}`} className="group flex gap-3 hover:bg-accent/50 rounded-xl p-2 transition-colors">
                     <div className="w-20 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-accent">
-                      {item.image ? (
-                        <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" />
+                      {item.coverImage ? (
+                        <SafeImage src={item.coverImage} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform duration-200" sizes="80px" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-2xl">📰</div>
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      {item.category && <span className="text-xs font-bold text-primary">{item.category}</span>}
-                      <p className="text-sm font-bold leading-snug line-clamp-2 group-hover:text-primary transition-colors">{item.title}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">{timeAgoEn(item.pubDate)}</p>
+                      <p className="text-sm font-bold leading-snug line-clamp-2 group-hover:text-primary transition-colors">{item.name}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        {new Date(item.publishedAt ?? item.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                      </p>
                     </div>
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -201,26 +203,25 @@ export default async function HomePage() {
                 <h2 className="text-2xl font-bold">Latest Thailand News</h2>
                 <Link href="/thailand-news" className="text-sm font-semibold text-primary hover:underline">View all →</Link>
               </div>
-              <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 md:mx-0 md:px-0 snap-x snap-mandatory scrollbar-hide">
-                {latestNews.map((item, i) => (
-                  <a key={i} href={item.link} target="_blank" rel="noopener noreferrer"
+              <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 md:mx-0 md:px-0 snap-x snap-mandatory">
+                {latestNews.map((item) => (
+                  <Link key={item.id} href={`/blog/${item.slug}`}
                     className="group flex-shrink-0 w-52 snap-start block"
                   >
                     <div className="relative h-36 rounded-xl overflow-hidden bg-accent mb-2">
-                      {item.image ? (
-                        <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" />
+                      {item.coverImage ? (
+                        <SafeImage src={item.coverImage} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform duration-200" sizes="208px" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-3xl">📰</div>
                       )}
-                      {item.category && (
-                        <span className="absolute bottom-2 left-2 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-                          {item.category}
-                        </span>
-                      )}
+                      <span className="absolute bottom-2 left-2 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full">Thailand News</span>
                     </div>
-                    <p className="text-sm font-bold line-clamp-2 leading-snug group-hover:text-primary transition-colors mb-1">{item.title}</p>
-                    <p className="text-xs text-muted-foreground">{timeAgoEn(item.pubDate)}</p>
-                  </a>
+                    <p className="text-sm font-bold line-clamp-2 leading-snug group-hover:text-primary transition-colors mb-1">{item.name}</p>
+                    <p className="text-xs text-muted-foreground flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {new Date(item.publishedAt ?? item.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                    </p>
+                  </Link>
                 ))}
               </div>
             </div>

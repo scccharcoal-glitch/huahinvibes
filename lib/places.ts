@@ -41,12 +41,14 @@ export const ATTRACTION_CATEGORIES = [
 ];
 
 export const BLOG_CATEGORIES = [
-  { value: "food-guide",    label: "Food Guide",       labelTh: "คู่มืออาหาร"      },
-  { value: "travel-tips",   label: "Travel Tips",      labelTh: "เทคนิคเดินทาง"   },
-  { value: "hidden-gems",   label: "Hidden Gems",      labelTh: "ที่ซ่อนเร้น"      },
-  { value: "lifestyle",     label: "Lifestyle",        labelTh: "ไลฟ์สไตล์"       },
-  { value: "events",        label: "Events",           labelTh: "กิจกรรม"          },
-  { value: "hotel-review",  label: "Hotel Review",     labelTh: "รีวิวโรงแรม"     },
+  { value: "food-guide",        label: "Food Guide",          labelTh: "คู่มืออาหาร"      },
+  { value: "travel-tips",       label: "Travel Tips",         labelTh: "เทคนิคเดินทาง"   },
+  { value: "hidden-gems",       label: "Hidden Gems",         labelTh: "ที่ซ่อนเร้น"      },
+  { value: "lifestyle",         label: "Lifestyle",           labelTh: "ไลฟ์สไตล์"       },
+  { value: "events",            label: "Events",              labelTh: "กิจกรรม"          },
+  { value: "hotel-review",      label: "Hotel Review",        labelTh: "รีวิวโรงแรม"     },
+  { value: "thailand-news",     label: "Thailand News",       labelTh: "ข่าวประเทศไทย"   },
+  { value: "thailand-news-th",  label: "ข่าวภาษาไทย",        labelTh: "ข่าวภาษาไทย"     },
 ];
 
 export const PRICE_RANGES = [
