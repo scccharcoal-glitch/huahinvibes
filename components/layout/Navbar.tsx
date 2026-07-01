@@ -12,6 +12,9 @@ const navLinks = [
   { href: "/hotels", label: "Hotels" },
   { href: "/attractions", label: "Attractions" },
   { href: "/blog", label: "Blog" },
+  { href: "/thailand-news", label: "Thailand News" },
+  { href: "https://www.fazwaz.com/property-for-sale/thailand", label: "Real Estate", external: true },
+  { href: "/th", label: "🇹🇭 ภาษาไทย" },
 ];
 
 export default function Navbar() {
@@ -32,7 +35,9 @@ export default function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className={`text-sm font-semibold transition-colors hover:text-primary ${
+              target={"external" in link && link.external ? "_blank" : undefined}
+              rel={"external" in link && link.external ? "noopener noreferrer" : undefined}
+              className={`text-sm font-semibold transition-colors hover:text-primary whitespace-nowrap ${
                 pathname === link.href
                   ? "text-primary border-b-2 border-primary pb-0.5"
                   : "text-muted-foreground"
@@ -73,6 +78,8 @@ export default function Navbar() {
             <Link
               key={link.href}
               href={link.href}
+              target={"external" in link && link.external ? "_blank" : undefined}
+              rel={"external" in link && link.external ? "noopener noreferrer" : undefined}
               onClick={() => setMenuOpen(false)}
               className={`block text-sm font-semibold py-2 transition-colors ${
                 pathname === link.href ? "text-primary" : "text-muted-foreground hover:text-primary"

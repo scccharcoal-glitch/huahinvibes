@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { getFeaturedDirectoryPlaces, getLatestBlogPosts, BLOG_CATEGORIES } from "@/lib/places";
+import { fetchThailandNewsEn, timeAgoEn } from "@/lib/thailand-news";
 import PlaceCard from "@/components/places/PlaceCard";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import SearchBox from "@/components/SearchBox";
 import SafeImage from "@/components/SafeImage";
-import { UtensilsCrossed, Hotel, Compass, Star, MapPin, TrendingUp, Calendar } from "lucide-react";
+import { UtensilsCrossed, Hotel, Compass, Star, MapPin, TrendingUp, Calendar, Newspaper } from "lucide-react";
 
 const categories = [
   { href: "/restaurants", icon: UtensilsCrossed, label: "Restaurants", desc: "200+ dining spots", color: "bg-pink-50 text-primary" },
@@ -14,10 +15,15 @@ const categories = [
 ];
 
 export default async function HomePage() {
-  const [featured, latestPosts] = await Promise.all([
+  const [featured, latestPosts, thNews] = await Promise.all([
     getFeaturedDirectoryPlaces(6),
     getLatestBlogPosts(6),
+    fetchThailandNewsEn(),
   ]);
+
+  const featuredNews = thNews[0];
+  const sideNews = thNews.slice(1, 5);
+  const latestNews = thNews.slice(0, 8);
 
   return (
     <>
@@ -40,11 +46,7 @@ export default async function HomePage() {
               Your premium guide to restaurants, hotels, and experiences in Hua Hin — Thailand&apos;s most beloved coastal destination.
             </p>
             <div className="flex justify-center mb-8">
-              <SearchBox
-                size="large"
-                placeholder="Search somtam lao, seafood, cafe, spa..."
-                className="mx-auto"
-              />
+              <SearchBox size="large" placeholder="Search somtam lao, seafood, cafe, spa..." className="mx-auto" />
             </div>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/restaurants" className="gradient-btn text-white px-8 py-3.5 rounded-full font-bold hover:opacity-90 transition-opacity shadow-lg shadow-primary/25">
@@ -54,8 +56,6 @@ export default async function HomePage() {
                 Find Hotels
               </Link>
             </div>
-
-            {/* Stats */}
             <div className="grid grid-cols-3 gap-4 max-w-md mx-auto mt-14">
               {[
                 { icon: MapPin, value: "200+", label: "Places" },
@@ -76,11 +76,7 @@ export default async function HomePage() {
           <h2 className="text-2xl font-bold mb-8 text-center">What are you looking for?</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             {categories.map((cat) => (
-              <Link
-                key={cat.href}
-                href={cat.href}
-                className="group flex flex-col items-center p-8 rounded-2xl border border-border bg-card hover:border-primary/40 hover:shadow-lg transition-all place-card"
-              >
+              <Link key={cat.href} href={cat.href} className="group flex flex-col items-center p-8 rounded-2xl border border-border bg-card hover:border-primary/40 hover:shadow-lg transition-all place-card">
                 <div className={`w-14 h-14 rounded-2xl ${cat.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
                   <cat.icon className="w-7 h-7" />
                 </div>
@@ -99,14 +95,10 @@ export default async function HomePage() {
                 <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">Editor&apos;s Pick</p>
                 <h2 className="text-2xl font-bold">Featured in Hua Hin</h2>
               </div>
-              <Link href="/restaurants" className="text-sm font-semibold text-primary hover:underline">
-                View all →
-              </Link>
+              <Link href="/restaurants" className="text-sm font-semibold text-primary hover:underline">View all →</Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featured.map((place) => (
-                <PlaceCard key={place.id} place={place} />
-              ))}
+              {featured.map((place) => <PlaceCard key={place.id} place={place} />)}
             </div>
           </section>
         )}
@@ -119,9 +111,7 @@ export default async function HomePage() {
                 <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">Travel Journal</p>
                 <h2 className="text-2xl font-bold">Latest Articles</h2>
               </div>
-              <Link href="/blog" className="text-sm font-semibold text-primary hover:underline">
-                View all →
-              </Link>
+              <Link href="/blog" className="text-sm font-semibold text-primary hover:underline">View all →</Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {latestPosts.map((post) => {
@@ -130,29 +120,15 @@ export default async function HomePage() {
                   <Link key={post.id} href={`/blog/${post.slug}`} className="group block">
                     <div className="relative h-48 rounded-2xl overflow-hidden mb-3 bg-accent">
                       {post.coverImage ? (
-                        <SafeImage
-                          src={post.coverImage}
-                          alt={post.name}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
-                          sizes="(max-width: 768px) 100vw, 33vw"
-                        />
+                        <SafeImage src={post.coverImage} alt={post.name} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="(max-width: 768px) 100vw, 33vw" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-4xl">📝</div>
                       )}
-                      {cat && (
-                        <span className="absolute top-3 left-3 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">
-                          {cat.label}
-                        </span>
-                      )}
+                      {cat && <span className="absolute top-3 left-3 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">{cat.label}</span>}
                     </div>
-                    <h3 className="font-bold text-base leading-snug mb-1 group-hover:text-primary transition-colors line-clamp-2">
-                      {post.name}
-                    </h3>
+                    <h3 className="font-bold text-base leading-snug mb-1 group-hover:text-primary transition-colors line-clamp-2">{post.name}</h3>
                     {(post.excerpt ?? post.description) && (
-                      <p className="text-muted-foreground text-sm line-clamp-2 mb-2">
-                        {post.excerpt ?? post.description}
-                      </p>
+                      <p className="text-muted-foreground text-sm line-clamp-2 mb-2">{post.excerpt ?? post.description}</p>
                     )}
                     <span className="flex items-center gap-1 text-xs text-muted-foreground">
                       <Calendar className="w-3 h-3" />
@@ -165,13 +141,133 @@ export default async function HomePage() {
           </section>
         )}
 
+        {/* ─── Featured Thailand News ─── */}
+        {featuredNews && (
+          <section className="max-w-7xl mx-auto px-4 md:px-8 py-8 pb-16">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">
+                  <Newspaper className="w-3 h-3 inline mr-1" />Thailand
+                </p>
+                <h2 className="text-2xl font-bold">Featured News in Thailand</h2>
+              </div>
+              <Link href="/thailand-news" className="text-sm font-semibold text-primary hover:underline">View all →</Link>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Big feature card */}
+              <a href={featuredNews.link} target="_blank" rel="noopener noreferrer" className="lg:col-span-2 group block relative rounded-2xl overflow-hidden bg-accent min-h-[320px]">
+                {featuredNews.image ? (
+                  <img src={featuredNews.image} alt={featuredNews.title} className="w-full h-full object-cover absolute inset-0 group-hover:scale-105 transition-transform duration-300" />
+                ) : (
+                  <div className="w-full h-full absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20" />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  {featuredNews.category && (
+                    <span className="inline-block bg-primary text-white text-xs font-bold px-3 py-1 rounded-full mb-3">{featuredNews.category}</span>
+                  )}
+                  <h3 className="text-white font-extrabold text-xl md:text-2xl leading-snug mb-2 line-clamp-3">{featuredNews.title}</h3>
+                  <p className="text-white/70 text-xs">{timeAgoEn(featuredNews.pubDate)} · {featuredNews.source}</p>
+                </div>
+              </a>
+              {/* Side list */}
+              <div className="flex flex-col gap-4">
+                {sideNews.map((item, i) => (
+                  <a key={i} href={item.link} target="_blank" rel="noopener noreferrer" className="group flex gap-3 hover:bg-accent/50 rounded-xl p-2 transition-colors">
+                    <div className="w-20 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-accent">
+                      {item.image ? (
+                        <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-2xl">📰</div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      {item.category && <span className="text-xs font-bold text-primary">{item.category}</span>}
+                      <p className="text-sm font-bold leading-snug line-clamp-2 group-hover:text-primary transition-colors">{item.title}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{timeAgoEn(item.pubDate)}</p>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ─── Latest Thailand News horizontal scroll ─── */}
+        {latestNews.length > 0 && (
+          <section className="py-8 pb-16 bg-accent/30">
+            <div className="max-w-7xl mx-auto px-4 md:px-8">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold">Latest Thailand News</h2>
+                <Link href="/thailand-news" className="text-sm font-semibold text-primary hover:underline">View all →</Link>
+              </div>
+              <div className="flex gap-4 overflow-x-auto pb-4 -mx-4 px-4 md:mx-0 md:px-0 snap-x snap-mandatory scrollbar-hide">
+                {latestNews.map((item, i) => (
+                  <a key={i} href={item.link} target="_blank" rel="noopener noreferrer"
+                    className="group flex-shrink-0 w-52 snap-start block"
+                  >
+                    <div className="relative h-36 rounded-xl overflow-hidden bg-accent mb-2">
+                      {item.image ? (
+                        <img src={item.image} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-3xl">📰</div>
+                      )}
+                      {item.category && (
+                        <span className="absolute bottom-2 left-2 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                          {item.category}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm font-bold line-clamp-2 leading-snug group-hover:text-primary transition-colors mb-1">{item.title}</p>
+                    <p className="text-xs text-muted-foreground">{timeAgoEn(item.pubDate)}</p>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ─── Real Estate in Thailand ─── */}
+        <section className="max-w-7xl mx-auto px-4 md:px-8 py-12 pb-16">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold">Real Estate in Thailand</h2>
+            <a href="https://www.fazwaz.com/property-for-sale/thailand" target="_blank" rel="noopener noreferrer sponsored" className="text-sm font-semibold text-primary hover:underline">
+              View all →
+            </a>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { city: "Bangkok", area: "Sukhumvit", img: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=400&q=80" },
+              { city: "Phuket", area: "Patong Beach", img: "https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=400&q=80" },
+              { city: "Chiang Mai", area: "Nimman", img: "https://images.unsplash.com/photo-1599661046289-e31897846e41?w=400&q=80" },
+              { city: "Hua Hin", area: "Beach Road", img: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400&q=80" },
+            ].map((loc) => (
+              <a key={loc.city} href={`https://www.fazwaz.com/property-for-sale/thailand/${loc.city.toLowerCase().replace(" ","-")}`} target="_blank" rel="noopener noreferrer sponsored"
+                className="group relative rounded-2xl overflow-hidden aspect-[4/3] block"
+              >
+                <img src={loc.img} alt={loc.city} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-black/10" />
+                <div className="absolute bottom-0 left-0 p-4">
+                  <p className="text-white font-extrabold text-lg leading-tight">{loc.city}</p>
+                  <p className="text-white/80 text-xs">{loc.area}</p>
+                </div>
+              </a>
+            ))}
+          </div>
+          <div className="mt-4 text-center">
+            <a href="https://www.fazwaz.com/property-for-sale/thailand" target="_blank" rel="noopener noreferrer sponsored"
+              className="inline-block gradient-btn text-white px-8 py-3 rounded-full font-bold hover:opacity-90 transition-opacity"
+            >
+              Search Properties in Thailand →
+            </a>
+          </div>
+        </section>
+
         {/* pSEO Quick Links */}
         <section className="bg-gradient-to-r from-primary to-secondary py-16">
           <div className="max-w-7xl mx-auto px-4 md:px-8 text-center text-white">
             <h2 className="text-3xl font-extrabold mb-4">Looking for something specific?</h2>
-            <p className="text-white/80 mb-8 max-w-xl mx-auto">
-              Browse by cuisine, hotel type, or attraction category
-            </p>
+            <p className="text-white/80 mb-8 max-w-xl mx-auto">Browse by cuisine, hotel type, or attraction category</p>
             <div className="flex flex-wrap gap-3 justify-center">
               {[
                 { label: "Indian Restaurant", href: "/restaurants/indian/hua-hin" },
@@ -181,9 +277,7 @@ export default async function HomePage() {
                 { label: "Japanese Food", href: "/restaurants/japanese/hua-hin" },
                 { label: "Beach Spa", href: "/attractions/spa/hua-hin" },
               ].map((chip) => (
-                <Link
-                  key={chip.href}
-                  href={chip.href}
+                <Link key={chip.href} href={chip.href}
                   className="bg-white/20 backdrop-blur-sm border border-white/30 text-white text-sm font-semibold px-5 py-2 rounded-full hover:bg-white hover:text-primary transition-all"
                 >
                   {chip.label}
