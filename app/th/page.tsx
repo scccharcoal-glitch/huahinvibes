@@ -52,8 +52,8 @@ export default async function ThaiHomePage() {
               <Link href="/hotels" className="border-2 border-primary text-primary px-8 py-3.5 rounded-full font-bold hover:bg-primary hover:text-white transition-all">
                 โรงแรมในหัวหิน
               </Link>
-              <Link href="/thailand-news" className="border-2 border-border text-muted-foreground px-8 py-3.5 rounded-full font-bold hover:border-primary hover:text-primary transition-all">
-                ข่าว EN
+              <Link href="/blog?category=thailand-news-th" className="border-2 border-border text-muted-foreground px-8 py-3.5 rounded-full font-bold hover:border-primary hover:text-primary transition-all">
+                ข่าวล่าสุด
               </Link>
             </div>
           </div>
