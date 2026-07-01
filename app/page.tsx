@@ -23,13 +23,179 @@ export default async function HomePage() {
 
   const featuredNews = thNewsEn[0];
   const sideNews = thNewsEn.slice(1, 5);
-  const gridNews = thNewsEn.slice(0, 10); // 5 cols × 2 rows
+  const gridNews = thNewsEn.slice(0, 10);
 
   return (
     <>
       <Navbar />
       <main className="flex-1">
-        {/* Hero */}
+
+        {/* ─── 1. Thailand News — Featured ─── */}
+        {featuredNews && (
+          <section className="max-w-7xl mx-auto px-4 md:px-8 py-8 pt-10 pb-10">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">
+                  <Newspaper className="w-3 h-3 inline mr-1" />Thailand
+                </p>
+                <h2 className="text-2xl font-bold">Featured News in Thailand</h2>
+              </div>
+              <Link href="/thailand-news" className="text-sm font-semibold text-primary hover:underline">View all →</Link>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <Link href={`/blog/${featuredNews.slug}`} className="lg:col-span-2 group block relative rounded-2xl overflow-hidden bg-accent min-h-[320px]">
+                {featuredNews.coverImage ? (
+                  <SafeImage src={featuredNews.coverImage} alt={featuredNews.name} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="100vw" />
+                ) : (
+                  <div className="w-full h-full absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20" />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <span className="inline-block bg-primary text-white text-xs font-bold px-3 py-1 rounded-full mb-3">Thailand News</span>
+                  <h3 className="text-white font-extrabold text-xl md:text-2xl leading-snug mb-2 line-clamp-3">{featuredNews.name}</h3>
+                  <p className="text-white/70 text-xs flex items-center gap-1">
+                    <Clock className="w-3 h-3" />
+                    {new Date(featuredNews.publishedAt ?? featuredNews.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                  </p>
+                </div>
+              </Link>
+              <div className="flex flex-col gap-4">
+                {sideNews.map((item) => (
+                  <Link key={item.id} href={`/blog/${item.slug}`} className="group flex gap-3 hover:bg-accent/50 rounded-xl p-2 transition-colors">
+                    <div className="relative w-20 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-accent">
+                      {item.coverImage ? (
+                        <SafeImage src={item.coverImage} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform duration-200" sizes="80px" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-2xl">📰</div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-bold leading-snug line-clamp-2 group-hover:text-primary transition-colors">{item.name}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        {new Date(item.publishedAt ?? item.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ─── Latest Thailand News — 5×2 grid ─── */}
+        {gridNews.length > 0 && (
+          <section className="py-8 pb-14 bg-accent/30">
+            <div className="max-w-7xl mx-auto px-4 md:px-8">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold">Latest Thailand News</h2>
+                <Link href="/thailand-news" className="text-sm font-semibold text-primary hover:underline">View all →</Link>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                {gridNews.map((item) => (
+                  <Link key={item.id} href={`/blog/${item.slug}`} className="group block">
+                    <div className="relative h-32 rounded-xl overflow-hidden bg-accent mb-2">
+                      {item.coverImage ? (
+                        <SafeImage src={item.coverImage} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform duration-200" sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 20vw" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-3xl">📰</div>
+                      )}
+                      <span className="absolute bottom-1.5 left-1.5 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full">News</span>
+                    </div>
+                    <p className="text-xs font-bold line-clamp-2 leading-snug group-hover:text-primary transition-colors mb-1">{item.name}</p>
+                    <p className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+                      <Clock className="w-2.5 h-2.5" />
+                      {new Date(item.publishedAt ?? item.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ─── 2. Real Estate ─── */}
+        <section className="max-w-7xl mx-auto px-4 md:px-8 py-12 pb-16">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">
+                <Home className="w-3 h-3 inline mr-1" />Real Estate
+              </p>
+              <h2 className="text-2xl font-bold">Real Estate in Thailand</h2>
+            </div>
+            <Link href="/real-estate" className="text-sm font-semibold text-primary hover:underline">
+              View all →
+            </Link>
+          </div>
+          <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-9 gap-2.5">
+            {RE_CITIES.map((c) => (
+              <Link key={c.slug} href="/real-estate" className="group block">
+                <div className="relative rounded-xl overflow-hidden aspect-[3/4]">
+                  <img
+                    src={c.img}
+                    alt={c.city}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-1.5 text-center">
+                    <p className="text-white font-extrabold text-[11px] leading-tight drop-shadow">{c.city}</p>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+          <div className="mt-5 text-center">
+            <Link
+              href="/real-estate"
+              className="inline-block gradient-btn text-white px-8 py-3 rounded-full font-bold hover:opacity-90 transition-opacity"
+            >
+              Browse All {RE_CITIES.length} Provinces →
+            </Link>
+          </div>
+        </section>
+
+        {/* ─── 3. Travel Journal ─── */}
+        {latestPosts.length > 0 && (
+          <section className="max-w-7xl mx-auto px-4 md:px-8 py-8 pb-16 bg-accent/20">
+            <div className="max-w-7xl mx-auto">
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">Travel Journal</p>
+                  <h2 className="text-2xl font-bold">Latest Articles</h2>
+                </div>
+                <Link href="/blog" className="text-sm font-semibold text-primary hover:underline">View all →</Link>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {latestPosts.map((post) => {
+                  const cat = BLOG_CATEGORIES.find((c) => c.value === post.category);
+                  return (
+                    <Link key={post.id} href={`/blog/${post.slug}`} className="group block">
+                      <div className="relative h-48 rounded-2xl overflow-hidden mb-3 bg-accent">
+                        {post.coverImage ? (
+                          <SafeImage src={post.coverImage} alt={post.name} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="(max-width: 768px) 100vw, 33vw" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-4xl">📝</div>
+                        )}
+                        {cat && <span className="absolute top-3 left-3 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">{cat.label}</span>}
+                      </div>
+                      <h3 className="font-bold text-base leading-snug mb-1 group-hover:text-primary transition-colors line-clamp-2">{post.name}</h3>
+                      {(post.excerpt ?? post.description) && (
+                        <p className="text-muted-foreground text-sm line-clamp-2 mb-2">{post.excerpt ?? post.description}</p>
+                      )}
+                      <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                        <Calendar className="w-3 h-3" />
+                        {new Date(post.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+                      </span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ─── 4. Hero ─── */}
         <section className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-secondary/10 pointer-events-none" />
           <div className="max-w-7xl mx-auto px-4 md:px-8 py-20 md:py-28 text-center relative">
@@ -71,7 +237,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Categories */}
+        {/* ─── 5. What are you looking for? ─── */}
         <section className="max-w-7xl mx-auto px-4 md:px-8 py-12">
           <h2 className="text-2xl font-bold mb-8 text-center">What are you looking for?</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -87,7 +253,7 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Featured Places */}
+        {/* ─── 6. Editor's Pick / Featured in Hua Hin ─── */}
         {featured.length > 0 && (
           <section className="max-w-7xl mx-auto px-4 md:px-8 py-8 pb-16">
             <div className="flex items-center justify-between mb-8">
@@ -103,199 +269,6 @@ export default async function HomePage() {
           </section>
         )}
 
-        {/* Latest Blog Posts */}
-        {latestPosts.length > 0 && (
-          <section className="max-w-7xl mx-auto px-4 md:px-8 py-8 pb-16">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">Travel Journal</p>
-                <h2 className="text-2xl font-bold">Latest Articles</h2>
-              </div>
-              <Link href="/blog" className="text-sm font-semibold text-primary hover:underline">View all →</Link>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {latestPosts.map((post) => {
-                const cat = BLOG_CATEGORIES.find((c) => c.value === post.category);
-                return (
-                  <Link key={post.id} href={`/blog/${post.slug}`} className="group block">
-                    <div className="relative h-48 rounded-2xl overflow-hidden mb-3 bg-accent">
-                      {post.coverImage ? (
-                        <SafeImage src={post.coverImage} alt={post.name} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="(max-width: 768px) 100vw, 33vw" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-4xl">📝</div>
-                      )}
-                      {cat && <span className="absolute top-3 left-3 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">{cat.label}</span>}
-                    </div>
-                    <h3 className="font-bold text-base leading-snug mb-1 group-hover:text-primary transition-colors line-clamp-2">{post.name}</h3>
-                    {(post.excerpt ?? post.description) && (
-                      <p className="text-muted-foreground text-sm line-clamp-2 mb-2">{post.excerpt ?? post.description}</p>
-                    )}
-                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <Calendar className="w-3 h-3" />
-                      {new Date(post.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
-                    </span>
-                  </Link>
-                );
-              })}
-            </div>
-          </section>
-        )}
-
-        {/* ─── Featured Thailand News (big hero + side list) ─── */}
-        {featuredNews && (
-          <section className="max-w-7xl mx-auto px-4 md:px-8 py-8 pb-10">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">
-                  <Newspaper className="w-3 h-3 inline mr-1" />Thailand
-                </p>
-                <h2 className="text-2xl font-bold">Featured News in Thailand</h2>
-              </div>
-              <Link href="/thailand-news" className="text-sm font-semibold text-primary hover:underline">View all →</Link>
-            </div>
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Big feature card */}
-              <Link href={`/blog/${featuredNews.slug}`} className="lg:col-span-2 group block relative rounded-2xl overflow-hidden bg-accent min-h-[320px]">
-                {featuredNews.coverImage ? (
-                  <SafeImage src={featuredNews.coverImage} alt={featuredNews.name} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="100vw" />
-                ) : (
-                  <div className="w-full h-full absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20" />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-6">
-                  <span className="inline-block bg-primary text-white text-xs font-bold px-3 py-1 rounded-full mb-3">Thailand News</span>
-                  <h3 className="text-white font-extrabold text-xl md:text-2xl leading-snug mb-2 line-clamp-3">{featuredNews.name}</h3>
-                  <p className="text-white/70 text-xs flex items-center gap-1">
-                    <Clock className="w-3 h-3" />
-                    {new Date(featuredNews.publishedAt ?? featuredNews.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                  </p>
-                </div>
-              </Link>
-              {/* Side list */}
-              <div className="flex flex-col gap-4">
-                {sideNews.map((item) => (
-                  <Link key={item.id} href={`/blog/${item.slug}`} className="group flex gap-3 hover:bg-accent/50 rounded-xl p-2 transition-colors">
-                    <div className="relative w-20 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-accent">
-                      {item.coverImage ? (
-                        <SafeImage src={item.coverImage} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform duration-200" sizes="80px" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-2xl">📰</div>
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold leading-snug line-clamp-2 group-hover:text-primary transition-colors">{item.name}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        {new Date(item.publishedAt ?? item.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                      </p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* ─── Latest Thailand News — 5×2 grid ─── */}
-        {gridNews.length > 0 && (
-          <section className="py-8 pb-16 bg-accent/30">
-            <div className="max-w-7xl mx-auto px-4 md:px-8">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold">Latest Thailand News</h2>
-                <Link href="/thailand-news" className="text-sm font-semibold text-primary hover:underline">View all →</Link>
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-                {gridNews.map((item) => (
-                  <Link key={item.id} href={`/blog/${item.slug}`} className="group block">
-                    <div className="relative h-32 rounded-xl overflow-hidden bg-accent mb-2">
-                      {item.coverImage ? (
-                        <SafeImage src={item.coverImage} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform duration-200" sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 20vw" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-3xl">📰</div>
-                      )}
-                      <span className="absolute bottom-1.5 left-1.5 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full">News</span>
-                    </div>
-                    <p className="text-xs font-bold line-clamp-2 leading-snug group-hover:text-primary transition-colors mb-1">{item.name}</p>
-                    <p className="text-[10px] text-muted-foreground flex items-center gap-0.5">
-                      <Clock className="w-2.5 h-2.5" />
-                      {new Date(item.publishedAt ?? item.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                    </p>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* ─── Real Estate in Thailand — 9 cities ─── */}
-        <section className="max-w-7xl mx-auto px-4 md:px-8 py-12 pb-16">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">
-                <Home className="w-3 h-3 inline mr-1" />Real Estate
-              </p>
-              <h2 className="text-2xl font-bold">Real Estate in Thailand</h2>
-            </div>
-            <Link href="/real-estate" className="text-sm font-semibold text-primary hover:underline">
-              View all →
-            </Link>
-          </div>
-          {/* 9 city cards — 3 cols on lg, scroll on mobile */}
-          <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-9 gap-2.5">
-            {RE_CITIES.map((c) => (
-              <Link
-                key={c.slug}
-                href="/real-estate"
-                className="group block"
-              >
-                <div className="relative rounded-xl overflow-hidden aspect-[3/4]">
-                  <img
-                    src={c.img}
-                    alt={c.city}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-1.5 text-center">
-                    <p className="text-white font-extrabold text-[11px] leading-tight drop-shadow">{c.city}</p>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-          <div className="mt-5 text-center">
-            <Link
-              href="/real-estate"
-              className="inline-block gradient-btn text-white px-8 py-3 rounded-full font-bold hover:opacity-90 transition-opacity"
-            >
-              Browse All {RE_CITIES.length} Provinces →
-            </Link>
-          </div>
-        </section>
-
-        {/* pSEO Quick Links */}
-        <section className="bg-gradient-to-r from-primary to-secondary py-16">
-          <div className="max-w-7xl mx-auto px-4 md:px-8 text-center text-white">
-            <h2 className="text-3xl font-extrabold mb-4">Looking for something specific?</h2>
-            <p className="text-white/80 mb-8 max-w-xl mx-auto">Browse by cuisine, hotel type, or attraction category</p>
-            <div className="flex flex-wrap gap-3 justify-center">
-              {[
-                { label: "Indian Restaurant", href: "/restaurants/indian/hua-hin" },
-                { label: "Thai Seafood", href: "/restaurants/thai-seafood/khao-takiab" },
-                { label: "Luxury Resort", href: "/hotels/resort/hua-hin" },
-                { label: "Night Market", href: "/attractions/market/hua-hin" },
-                { label: "Japanese Food", href: "/restaurants/japanese/hua-hin" },
-                { label: "Beach Spa", href: "/attractions/spa/hua-hin" },
-              ].map((chip) => (
-                <Link key={chip.href} href={chip.href}
-                  className="bg-white/20 backdrop-blur-sm border border-white/30 text-white text-sm font-semibold px-5 py-2 rounded-full hover:bg-white hover:text-primary transition-all"
-                >
-                  {chip.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
       </main>
       <Footer />
     </>
