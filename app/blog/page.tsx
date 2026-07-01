@@ -45,7 +45,7 @@ export default async function BlogPage({
           >
             All Posts
           </Link>
-          {BLOG_CATEGORIES.map((c) => (
+          {BLOG_CATEGORIES.filter((c) => !c.value.startsWith("thailand-news")).map((c) => (
             <Link
               key={c.value}
               href={`/blog?category=${c.value}`}
