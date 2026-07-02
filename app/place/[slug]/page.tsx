@@ -274,14 +274,26 @@ export default async function PlaceDetailPage({
 
               {/* Booking */}
               {place.bookingUrl && (
-                <a
-                  href={place.bookingUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block text-center border-2 border-primary text-primary w-full py-2.5 rounded-xl text-sm font-bold hover:bg-primary hover:text-white transition-all"
-                >
-                  {place.type === "HOTEL" ? "Check Latest Rates & Deals" : "Reserve a Table"}
-                </a>
+                <div className="space-y-2">
+                  <a
+                    href={place.bookingUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block text-center border-2 border-primary text-primary w-full py-2.5 rounded-xl text-sm font-bold hover:bg-primary hover:text-white transition-all"
+                  >
+                    {place.type === "HOTEL" ? "Check Latest Rates & Deals" : "Reserve a Table"}
+                  </a>
+                  {place.type === "HOTEL" && (
+                    <a
+                      href={place.bookingUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block text-center bg-primary text-white w-full py-2.5 rounded-xl text-sm font-bold hover:opacity-90 transition-opacity"
+                    >
+                      เช็กราคาล่าสุดและดีลส่วนลด
+                    </a>
+                  )}
+                </div>
               )}
 
               {/* Reviews from Google Maps */}
