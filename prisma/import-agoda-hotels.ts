@@ -167,6 +167,12 @@ function buildDescription(name: string, address: string | null, starRating: numb
 
 function withAgodaCid(url: string | null) {
   if (!url) return null;
+  const hotelIdMatch = url.match(/[?&]hid=([^&]+)/);
+  if (hotelIdMatch) {
+    const cid = process.env.AGODA_CID || "1947603";
+    return `https://www.agoda.com/partners/partnersearch.aspx?pcs=1&cid=${encodeURIComponent(cid)}&hl=en-us&hid=${encodeURIComponent(hotelIdMatch[1])}`;
+  }
+
   const cid = process.env.AGODA_CID;
   if (!cid || /[?&]cid=/.test(url)) return url;
   return `${url}${url.includes("?") ? "&" : "?"}cid=${encodeURIComponent(cid)}`;
