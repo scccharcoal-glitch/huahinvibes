@@ -232,7 +232,7 @@ export const getFeaturedDirectoryPlaces = cache(async (limit = 6) => {
         featured: true,
         type: { in: ["RESTAURANT", "HOTEL", "ATTRACTION"] },
       },
-      orderBy: [{ rating: "desc" }, { createdAt: "desc" }],
+      orderBy: [{ createdAt: "desc" }, { rating: "desc" }],
       take: limit,
     });
   } catch {
