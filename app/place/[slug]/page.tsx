@@ -43,25 +43,28 @@ export async function generateMetadata({
 type Review = { author?: string; text: string; rating?: number };
 
 function getTypeLabel(type: string) {
-  if (type === "RESTAURANT") return "Restaurant";
-  if (type === "HOTEL") return "Hotel";
-  if (type === "ATTRACTION") return "Attraction";
-  if (type === "REAL_ESTATE") return "Real Estate";
+  const normalizedType = type.toUpperCase();
+  if (normalizedType === "RESTAURANT") return "Restaurant";
+  if (normalizedType === "HOTEL") return "Hotel";
+  if (normalizedType === "ATTRACTION") return "Attraction";
+  if (normalizedType === "REAL_ESTATE") return "Real Estate";
   return type.replace(/_/g, " ").toLowerCase();
 }
 
 function getListingHref(type: string) {
-  if (type === "RESTAURANT") return "/restaurants";
-  if (type === "HOTEL") return "/hotels";
-  if (type === "ATTRACTION") return "/attractions";
-  if (type === "REAL_ESTATE") return "/real-estate";
+  const normalizedType = type.toUpperCase();
+  if (normalizedType === "RESTAURANT") return "/restaurants";
+  if (normalizedType === "HOTEL") return "/hotels";
+  if (normalizedType === "ATTRACTION") return "/attractions";
+  if (normalizedType === "REAL_ESTATE") return "/real-estate";
   return "/";
 }
 
 function getSchemaType(type: string) {
-  if (type === "RESTAURANT") return "Restaurant";
-  if (type === "HOTEL") return "Hotel";
-  if (type === "REAL_ESTATE") return "RealEstateAgent";
+  const normalizedType = type.toUpperCase();
+  if (normalizedType === "RESTAURANT") return "Restaurant";
+  if (normalizedType === "HOTEL") return "Hotel";
+  if (normalizedType === "REAL_ESTATE") return "RealEstateAgent";
   return "TouristAttraction";
 }
 
@@ -100,6 +103,7 @@ export default async function PlaceDetailPage({
   const tags = place.tags?.split(",").filter(Boolean) ?? [];
   const typeLabel = getTypeLabel(place.type);
   const listingHref = getListingHref(place.type);
+  const isHotel = place.type.toUpperCase() === "HOTEL";
   const schemaImage = isPublicImageUrl(place.coverImage) ? place.coverImage : undefined;
   const priceText = getPriceNumeric(place.priceRange);
   const reviews = parseReviews(place.reviewsJson);
@@ -281,9 +285,9 @@ export default async function PlaceDetailPage({
                     rel="noopener noreferrer"
                     className="block text-center border-2 border-primary text-primary w-full py-2.5 rounded-xl text-sm font-bold hover:bg-primary hover:text-white transition-all"
                   >
-                    {place.type === "HOTEL" ? "Check Latest Rates & Deals" : "Reserve a Table"}
+                    {isHotel ? "Check Latest Rates & Deals" : "Reserve a Table"}
                   </a>
-                  {place.type === "HOTEL" && (
+                  {isHotel && (
                     <a
                       href={place.bookingUrl}
                       target="_blank"
