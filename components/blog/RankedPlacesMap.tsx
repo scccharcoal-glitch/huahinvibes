@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { getPlaceHref } from "@/lib/slug";
 
 type PlacePin = {
   id: string;
@@ -66,7 +67,7 @@ export default function RankedPlacesMap({ places }: { places: PlacePin[] }) {
               {place.rating && place.rating > 0 && (
                 <div className="text-xs text-amber-600">⭐ {place.rating.toFixed(1)}</div>
               )}
-              <a href={`/place/${place.slug}`} className="text-xs text-blue-600 underline mt-1 block">
+              <a href={getPlaceHref(place.slug)} className="text-xs text-blue-600 underline mt-1 block">
                 View Details →
               </a>
             </Popup>

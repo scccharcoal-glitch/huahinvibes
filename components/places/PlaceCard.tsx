@@ -2,10 +2,11 @@ import Link from "next/link";
 import { Star, MapPin, Phone, Clock } from "lucide-react";
 import { type Place } from "@prisma/client";
 import { getPriceSymbol } from "@/lib/places";
+import { getPlaceHref } from "@/lib/slug";
 import SafeImage from "@/components/SafeImage";
 
 function routeForPlace(place: Place): string {
-  return `/place/${place.slug}`;
+  return getPlaceHref(place.slug);
 }
 
 function typeBadgeColor(type: string) {

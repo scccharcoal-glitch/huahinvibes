@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { UtensilsCrossed, Hotel, Compass, Plus, TrendingUp, Eye, Star, Newspaper } from "lucide-react";
+import { getPlaceHref } from "@/lib/slug";
 
 export const metadata = { title: "Admin Dashboard — Hua Hin Vibes" };
 
@@ -88,7 +89,7 @@ export default async function AdminDashboard() {
                   <Link href={`/admin/places/${place.id}`} className="text-xs text-primary hover:underline font-medium">
                     Edit
                   </Link>
-                  <a href={`/place/${place.slug}`} target="_blank" className="text-muted-foreground hover:text-primary">
+                  <a href={getPlaceHref(place.slug)} target="_blank" className="text-muted-foreground hover:text-primary">
                     <Eye className="w-3.5 h-3.5" />
                   </a>
                 </div>

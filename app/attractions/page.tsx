@@ -4,6 +4,7 @@ import PlaceCard from "@/components/places/PlaceCard";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Link from "next/link";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Attractions & Activities in Hua Hin — Best Things To Do",
@@ -22,6 +23,9 @@ export default async function AttractionsPage({
     <>
       <Navbar />
       <main className="flex-1 max-w-7xl mx-auto px-4 md:px-8 py-10">
+        <div className="mb-6">
+          <Breadcrumbs crumbs={[{ label: "Attractions", href: "/attractions" }]} />
+        </div>
         <div className="mb-8">
           <p className="text-xs font-bold uppercase tracking-widest text-primary mb-2">Things To Do</p>
           <h1 className="text-3xl md:text-4xl font-extrabold mb-3">Attractions in Hua Hin</h1>

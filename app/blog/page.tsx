@@ -1,9 +1,11 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { getPlaces, BLOG_CATEGORIES } from "@/lib/places";
+import { getBlogHref } from "@/lib/slug";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import SafeImage from "@/components/SafeImage";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import { Calendar, Tag } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -26,6 +28,13 @@ export default async function BlogPage({
     <>
       <Navbar />
       <main className="flex-1 max-w-7xl mx-auto px-4 md:px-8 py-10">
+
+        <div className="mb-6">
+          <Breadcrumbs crumbs={[
+            { label: "Blog", href: "/blog" },
+            ...(category ? [{ label: BLOG_CATEGORIES.find((c) => c.value === category)?.label ?? category }] : []),
+          ]} />
+        </div>
 
         {/* Header */}
         <div className="mb-10">
@@ -70,7 +79,7 @@ export default async function BlogPage({
             {posts.map((post) => {
               const cat = BLOG_CATEGORIES.find((c) => c.value === post.category);
               return (
-                <Link key={post.id} href={`/blog/${post.slug}`} className="group block">
+                <Link key={post.id} href={getBlogHref(post.slug)} className="group block">
                   {/* Cover */}
                   <div className="relative h-52 rounded-2xl overflow-hidden mb-4 bg-accent">
                     {post.coverImage ? (

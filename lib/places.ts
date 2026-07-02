@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { prisma } from "./prisma";
+import { decodeSlug, normalizeSlug } from "@/lib/slug";
 
 export type PlaceType = "RESTAURANT" | "HOTEL" | "ATTRACTION" | "BLOG";
 
@@ -240,7 +241,7 @@ export const getFeaturedDirectoryPlaces = cache(async (limit = 6) => {
 });
 
 export const getPlaceBySlug = cache(async (slug: string) => {
-  try { return await prisma.place.findUnique({ where: { slug } }); } catch { return null; }
+  try { return await prisma.place.findUnique({ where: { slug: decodeSlug(slug) } }); } catch { return null; }
 });
 
 export const getPlaceById = cache(async (id: string) => {
@@ -318,11 +319,7 @@ export const searchData = async (query: string, location: string) => {
 export const getCachedData = cache(searchData);
 
 export function slugify(text: string): string {
-  return text.toLowerCase()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .trim();
+  return normalizeSlug(text);
 }
 
 export function getPriceSymbol(priceRange?: string | null): string {

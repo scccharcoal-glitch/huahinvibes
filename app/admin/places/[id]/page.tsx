@@ -3,6 +3,7 @@ import { getPlaceById } from "@/lib/places";
 import PlaceForm from "@/components/admin/PlaceForm";
 import Link from "next/link";
 import { ChevronLeft, Eye } from "lucide-react";
+import { getBlogHref, getPlaceHref } from "@/lib/slug";
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -15,7 +16,7 @@ export default async function EditPlacePage({ params }: { params: Promise<{ id: 
   const place = await getPlaceById(id);
   if (!place) notFound();
 
-  const viewUrl = place.type === "BLOG" ? `/blog/${place.slug}` : `/place/${place.slug}`;
+  const viewUrl = place.type === "BLOG" ? getBlogHref(place.slug) : getPlaceHref(place.slug);
 
   return (
     <div className="p-8 max-w-4xl">

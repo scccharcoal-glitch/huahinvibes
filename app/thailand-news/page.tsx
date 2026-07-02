@@ -4,7 +4,9 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import SafeImage from "@/components/SafeImage";
 import { getPlaces } from "@/lib/places";
+import { getBlogHref } from "@/lib/slug";
 import { Calendar } from "lucide-react";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Latest Thailand News — Hua Hin Vibes",
@@ -22,6 +24,9 @@ export default async function ThailandNewsPage() {
     <>
       <Navbar />
       <main className="flex-1 max-w-7xl mx-auto px-4 md:px-8 py-10">
+        <div className="mb-6">
+          <Breadcrumbs crumbs={[{ label: "Thailand News", href: "/thailand-news" }]} />
+        </div>
         <div className="mb-8">
           <p className="text-xs font-bold uppercase tracking-widest text-primary mb-2">Thailand</p>
           <h1 className="text-3xl md:text-4xl font-extrabold mb-2">Latest Thailand News</h1>
@@ -40,7 +45,7 @@ export default async function ThailandNewsPage() {
 
         {/* Featured */}
         {featured && (
-          <Link href={`/blog/${featured.slug}`}
+          <Link href={getBlogHref(featured.slug)}
             className="group relative block rounded-2xl overflow-hidden mb-10 h-80 md:h-[420px] bg-accent"
           >
             {featured.coverImage && (
@@ -65,7 +70,7 @@ export default async function ThailandNewsPage() {
         {rest.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {rest.map((item) => (
-              <Link key={item.id} href={`/blog/${item.slug}`}
+              <Link key={item.id} href={getBlogHref(item.slug)}
                 className="group block hover:bg-accent/40 rounded-2xl p-3 transition-colors -m-3"
               >
                 <div className="relative h-48 rounded-xl overflow-hidden bg-accent mb-3">

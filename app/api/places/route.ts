@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin-auth";
 import { submitPlaceToIndexNow } from "@/lib/indexnow";
+import { makeSlug } from "@/lib/slug";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
@@ -32,8 +33,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "name and type are required" }, { status: 400 });
     }
 
-    // Ensure unique slug
-    const baseSlug = body.slug || body.name.toLowerCase().replace(/[^\w\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-").trim();
+    // Ensure unique slug, including Thai slugs such as ตลาดโต้รุ่ง-หัวหิน.
+    const baseSlug = makeSlug(body.slug || body.name, "place");
     let slug = baseSlug;
     let suffix = 0;
 

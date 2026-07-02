@@ -4,27 +4,22 @@ import Link from "next/link";
 import { getPlaceBySlug, BLOG_CATEGORIES, getPriceNumeric } from "@/lib/places";
 import { prisma } from "@/lib/prisma";
 import { isPublicImageUrl } from "@/lib/image-url";
+import { decodeSlug, getBlogHref, getPlaceHref } from "@/lib/slug";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import BlogPostActions from "@/components/blog/BlogPostActions";
 import SafeImage from "@/components/SafeImage";
-import { Calendar, Tag, ArrowLeft } from "lucide-react";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
+import { Calendar, Tag } from "lucide-react";
 import RankedPlacesMap from "@/components/blog/RankedPlacesMapClient";
 
 const BLOG_SLUG_REDIRECTS: Record<string, string> = {
   "ตลาดโต้รุ่ง-หัวหิน": "talad-to-rung-hua-hin",
 };
 
-function getDecodedSlug(slug: string) {
-  try {
-    return decodeURIComponent(slug);
-  } catch {
-    return slug;
-  }
-}
-
 function getCanonicalBlogSlug(slug: string) {
-  return BLOG_SLUG_REDIRECTS[getDecodedSlug(slug)] ?? slug;
+  const decoded = decodeSlug(slug);
+  return BLOG_SLUG_REDIRECTS[decoded] ?? decoded;
 }
 
 export async function generateMetadata({
@@ -47,7 +42,7 @@ export async function generateMetadata({
       images: ogImage ? [ogImage] : [],
       type: "article",
     },
-    alternates: { canonical: `/blog/${canonicalSlug}` },
+    alternates: { canonical: getBlogHref(canonicalSlug) },
   };
 }
 
@@ -60,7 +55,7 @@ export default async function BlogPostPage({
 }) {
   const { slug } = await params;
   const canonicalSlug = getCanonicalBlogSlug(slug);
-  if (canonicalSlug !== slug) permanentRedirect(`/blog/${canonicalSlug}`);
+  if (canonicalSlug !== decodeSlug(slug)) permanentRedirect(getBlogHref(canonicalSlug));
 
   const post = await getPlaceBySlug(canonicalSlug);
   if (!post || post.type !== "BLOG") notFound();
@@ -103,11 +98,13 @@ export default async function BlogPostPage({
       <Navbar />
       <main className="flex-1 max-w-4xl mx-auto px-4 md:px-8 py-10">
 
-        {/* Back */}
-        <Link href="/blog" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary mb-6 transition-colors w-fit">
-          <ArrowLeft className="w-4 h-4" />
-          Back to Blog
-        </Link>
+        <div className="mb-6">
+          <Breadcrumbs crumbs={[
+            { label: "Blog", href: "/blog" },
+            ...(cat ? [{ label: cat.label, href: `/blog?category=${cat.value}` }] : []),
+            { label: post.name },
+          ]} />
+        </div>
 
         <BlogPostActions postId={post.id} postName={post.name} />
 
@@ -227,7 +224,7 @@ export default async function BlogPostPage({
                     )}
                   </div>
                   <a
-                    href={`/place/${place.slug}`}
+                    href={getPlaceHref(place.slug)}
                     className="gradient-btn text-white text-sm font-bold px-5 py-2 rounded-xl hover:opacity-90 transition-opacity w-fit"
                   >
                     View Details →

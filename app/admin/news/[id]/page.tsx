@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import NewsForm from "@/components/admin/NewsForm";
 import Link from "next/link";
 import { ChevronLeft, Eye } from "lucide-react";
+import { getBlogHref } from "@/lib/slug";
 
 export const metadata = { title: "แก้ไขข่าว — Admin" };
 export const dynamic = "force-dynamic";
@@ -29,7 +30,7 @@ export default async function EditNewsPage({ params }: { params: Promise<{ id: s
             <p className="text-muted-foreground text-sm mt-1 font-mono">{place.slug}</p>
           </div>
           <a
-            href={`/blog/${place.slug}`}
+            href={getBlogHref(place.slug)}
             target="_blank"
             className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary border border-border px-4 py-2 rounded-xl transition-colors"
           >

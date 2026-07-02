@@ -5,6 +5,7 @@ import Footer from "@/components/layout/Footer";
 import SafeImage from "@/components/SafeImage";
 import { getPlaces } from "@/lib/places";
 import { getHomepageConfig } from "@/lib/site-config";
+import { getBlogHref } from "@/lib/slug";
 import { Calendar } from "lucide-react";
 import { RE_CITIES } from "@/lib/real-estate-cities";
 
@@ -74,7 +75,7 @@ export default async function ThaiHomePage() {
               </div>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <Link href={`/blog/${featured.slug}`}
+              <Link href={getBlogHref(featured.slug)}
                 className="lg:col-span-2 group relative block rounded-2xl overflow-hidden bg-accent min-h-[300px]"
               >
                 {featured.coverImage ? (
@@ -94,7 +95,7 @@ export default async function ThaiHomePage() {
               </Link>
               <div className="flex flex-col gap-3">
                 {side.map((item) => (
-                  <Link key={item.id} href={`/blog/${item.slug}`}
+                  <Link key={item.id} href={getBlogHref(item.slug)}
                     className="group flex gap-3 hover:bg-accent/50 rounded-xl p-2 transition-colors"
                   >
                     <div className="relative w-20 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-accent">
@@ -130,7 +131,7 @@ export default async function ThaiHomePage() {
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   {items.map((item) => (
-                    <Link key={item.id} href={`/blog/${item.slug}`} className="group block">
+                    <Link key={item.id} href={getBlogHref(item.slug)} className="group block">
                       <div className="relative h-36 rounded-xl overflow-hidden bg-accent mb-2">
                         {item.coverImage ? (
                           <SafeImage src={item.coverImage} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform duration-200" sizes="(max-width: 640px) 50vw, 25vw" />

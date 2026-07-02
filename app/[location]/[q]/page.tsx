@@ -10,6 +10,7 @@ import {
   getProgrammaticSeoLocations,
   getProgrammaticSeoQueries,
 } from "@/lib/places";
+import { getPlaceHref } from "@/lib/slug";
 
 type PageParams = Promise<{ location: string; q: string }>;
 
@@ -96,7 +97,7 @@ export default async function ProgrammaticSeoPage({
         name: place.name,
         address: place.address,
         telephone: place.phone,
-        url: `/place/${place.slug}`,
+        url: getPlaceHref(place.slug),
         aggregateRating: place.rating
           ? {
               "@type": "AggregateRating",

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { type Place } from "@prisma/client";
 import { imageFileToDataUrl } from "@/lib/image-file";
+import { makeSlug } from "@/lib/slug";
 import RichTextEditor from "./RichTextEditor";
 
 type NewsInput = {
@@ -30,17 +31,17 @@ const EN_CATEGORIES = [
   { value: "thailand-news-lifestyle",label: "ไลฟ์สไตล์ (Lifestyle)" },
 ];
 const TH_CATEGORIES = [
-  { value: "thailand-news-th",          label: "ข่าวทั่วไป" },
+  { value: "thailand-news-th",          label: "ข่าวทั่วไป (โชว์ที่ /th)" },
+  { value: "lifestyle-th",              label: "ไลฟ์สไตล์ (โชว์ที่ /th)" },
   { value: "thailand-news-th-politics", label: "ข่าวการเมือง" },
   { value: "thailand-news-th-economy",  label: "ข่าวเศรษฐกิจ" },
   { value: "thailand-news-th-travel",   label: "ข่าวท่องเที่ยว" },
   { value: "thailand-news-th-property", label: "ข่าวอสังหาฯ" },
-  { value: "thailand-news-th-lifestyle",label: "ข่าวไลฟ์สไตล์" },
 ];
 
 function detectLang(category?: string | null): "en" | "th" {
   if (!category) return "en";
-  return category.endsWith("-th") ? "th" : "en";
+  return category.endsWith("-th") || category.includes("-th-") ? "th" : "en";
 }
 
 interface Props {
@@ -77,12 +78,7 @@ export default function NewsForm({ place, mode }: Props) {
     setForm((prev) => {
       const next = { ...prev, [key]: value };
       if (key === "name" && mode === "create") {
-        next.slug = value
-          .toLowerCase()
-          .replace(/[^\w\s-]/g, "")
-          .replace(/\s+/g, "-")
-          .replace(/-+/g, "-")
-          .trim();
+        next.slug = makeSlug(value, "");
       }
       return next;
     });
@@ -279,7 +275,7 @@ export default function NewsForm({ place, mode }: Props) {
                 value={form.slug}
                 onChange={(e) => set("slug", e.target.value)}
                 className={inputCls}
-                placeholder="thailand-tourism-record-2025"
+                placeholder={lang === "en" ? "thailand-tourism-record-2025" : "ตลาดโต้รุ่ง-หัวหิน หรือ talad-to-rung"}
               />
             </div>
             <div>

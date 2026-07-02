@@ -1,4 +1,5 @@
 import type { Place } from "@prisma/client";
+import { getBlogHref, getPlaceHref } from "@/lib/slug";
 
 const DEFAULT_INDEXNOW_KEY = "8b7c6d5e4f3a2910b1c2d3e4f5a6b7c8";
 const INDEXNOW_ENDPOINT = "https://api.indexnow.org/indexnow";
@@ -14,7 +15,7 @@ function getIndexNowKey() {
 }
 
 export function getPlacePublicPath(place: Pick<Place, "type" | "slug">) {
-  return place.type === "BLOG" ? `/blog/${place.slug}` : `/place/${place.slug}`;
+  return place.type === "BLOG" ? getBlogHref(place.slug) : getPlaceHref(place.slug);
 }
 
 export async function submitUrlToIndexNow(pathOrUrl: string) {

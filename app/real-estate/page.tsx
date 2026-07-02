@@ -4,6 +4,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Home, TrendingUp, ArrowRight, BookOpen } from "lucide-react";
 import { RE_CITIES } from "@/lib/real-estate-cities";
+import { getBlogHref } from "@/lib/slug";
 
 export const metadata: Metadata = {
   title: "Real Estate in Thailand — Hua Hin Vibes",
@@ -68,7 +69,7 @@ export default function RealEstatePage() {
             {RE_CITIES.map((c) => (
               <Link
                 key={c.slug}
-                href={`/blog/${c.slug}`}
+                href={getBlogHref(c.slug)}
                 className="group block rounded-2xl overflow-hidden border border-border bg-card hover:shadow-lg hover:border-primary/30 transition-all"
               >
                 <div className="relative h-48 overflow-hidden">

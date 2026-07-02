@@ -5,6 +5,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Link from "next/link";
 import { type Place } from "@prisma/client";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 
 type RestaurantSearchParams = Promise<{ cuisine?: string; area?: string; q?: string }>;
 
@@ -163,6 +164,12 @@ export default async function RestaurantsPage({
     <>
       <Navbar />
       <main className="flex-1 max-w-7xl mx-auto px-4 md:px-8 py-10">
+        <div className="mb-6">
+          <Breadcrumbs crumbs={[
+            { label: "Restaurants", href: "/restaurants" },
+            ...(cuisine ? [{ label: CUISINES.find((c) => c.value === cuisine)?.labelEn ?? cuisine }] : []),
+          ]} />
+        </div>
         {/* Header */}
         <div className="mb-8">
           <p className="text-xs font-bold uppercase tracking-widest text-primary mb-2">Dining in Hua Hin</p>

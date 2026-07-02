@@ -1,13 +1,14 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { getPlaceBySlug, getPriceNumeric } from "@/lib/places";
 import { isPublicImageUrl } from "@/lib/image-url";
 import { prisma } from "@/lib/prisma";
+import { decodeSlug, getPlaceHref } from "@/lib/slug";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import SafeImage from "@/components/SafeImage";
 import { Star, MapPin, Phone, Clock, Globe, ExternalLink, MessageSquareQuote } from "lucide-react";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 
 export async function generateStaticParams() {
   try {
@@ -29,11 +30,13 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const place = await getPlaceBySlug(slug);
+  const decodedSlug = decodeSlug(slug);
+  const place = await getPlaceBySlug(decodedSlug);
   if (!place) return {};
   return {
     title: place.seoTitle ?? place.name,
     description: place.seoDesc ?? place.description ?? undefined,
+    alternates: { canonical: getPlaceHref(place.slug) },
   };
 }
 
@@ -90,7 +93,8 @@ export default async function PlaceDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const place = await getPlaceBySlug(slug);
+  const decodedSlug = decodeSlug(slug);
+  const place = await getPlaceBySlug(decodedSlug);
   if (!place) notFound();
 
   const tags = place.tags?.split(",").filter(Boolean) ?? [];
@@ -124,14 +128,12 @@ export default async function PlaceDetailPage({
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <Navbar />
       <main className="flex-1 max-w-5xl mx-auto px-4 md:px-8 py-10">
-        {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-xs text-muted-foreground mb-6 flex-wrap">
-          <Link href="/" className="hover:text-primary flex-shrink-0">Home</Link>
-          <span>/</span>
-          <Link href={listingHref} className="hover:text-primary capitalize flex-shrink-0">{typeLabel}s</Link>
-          <span>/</span>
-          <span className="text-foreground font-medium truncate">{place.name}</span>
-        </nav>
+        <div className="mb-6">
+          <Breadcrumbs crumbs={[
+            { label: `${typeLabel}s`, href: listingHref },
+            { label: place.name },
+          ]} />
+        </div>
 
         {/* Cover image */}
         {place.coverImage && (

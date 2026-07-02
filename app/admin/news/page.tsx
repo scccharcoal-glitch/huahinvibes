@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Plus, Edit, Eye, Newspaper } from "lucide-react";
+import { getBlogHref } from "@/lib/slug";
 
 export const metadata = { title: "Thailand News — Admin" };
 export const dynamic = "force-dynamic";
@@ -179,7 +180,7 @@ export default async function AdminNewsPage({
                             <Edit className="w-3.5 h-3.5" /> แก้ไข
                           </Link>
                           <a
-                            href={`/blog/${item.slug}`}
+                            href={getBlogHref(item.slug)}
                             target="_blank"
                             className="text-muted-foreground hover:text-secondary flex items-center gap-1 text-xs"
                           >

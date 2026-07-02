@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { type Place } from "@prisma/client";
 import { AREAS, CUISINES, HOTEL_TYPES, ATTRACTION_CATEGORIES, BLOG_CATEGORIES, PRICE_RANGES } from "@/lib/places";
 import { imageFileToDataUrl } from "@/lib/image-file";
+import { decodeSlug, makeSlug } from "@/lib/slug";
 import RichTextEditor from "./RichTextEditor";
 
 type PlaceInput = Partial<Omit<Place, "id" | "createdAt" | "updatedAt" | "publishedAt" | "linkedPlaces">> & {
@@ -98,7 +99,7 @@ export default function PlaceForm({ place, mode }: Props) {
   function extractSlug(urlOrSlug: string): string {
     // handles https://huahinvibes.com/place/some-slug or just some-slug
     const match = urlOrSlug.match(/\/place\/([^/?#]+)/);
-    return match ? match[1] : urlOrSlug.trim();
+    return decodeSlug(match ? match[1] : urlOrSlug.trim());
   }
 
   const [reviewsRaw, setReviewsRaw] = useState<string>(place?.reviewsJson ?? "");
@@ -109,14 +110,8 @@ export default function PlaceForm({ place, mode }: Props) {
   function set(key: keyof PlaceInput, value: unknown) {
     setForm((prev) => {
       const next = { ...prev, [key]: value };
-      // Auto-generate slug from name
       if (key === "name" && mode === "create") {
-        next.slug = (value as string)
-          .toLowerCase()
-          .replace(/[^\w\s-]/g, "")
-          .replace(/\s+/g, "-")
-          .replace(/-+/g, "-")
-          .trim();
+        next.slug = makeSlug(value as string, "");
       }
       return next;
     });
@@ -236,7 +231,7 @@ export default function PlaceForm({ place, mode }: Props) {
           </div>
           <div>
             <label className={labelCls}>Slug (URL)</label>
-            <input value={form.slug ?? ""} onChange={(e) => set("slug", e.target.value)} className={inputCls} placeholder="baan-itsara-indian-restaurant" />
+            <input value={form.slug ?? ""} onChange={(e) => set("slug", e.target.value)} className={inputCls} placeholder="ร้านอาหาร-ครัวห้วยทราย หรือ krua-huay-sai" />
           </div>
           <div>
             <label className={labelCls}>Type *</label>

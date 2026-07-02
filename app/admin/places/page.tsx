@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Plus, Edit, Eye, Star } from "lucide-react";
+import { getBlogHref, getPlaceHref } from "@/lib/slug";
 
 export const metadata = { title: "All Places — Admin" };
 
@@ -154,7 +155,7 @@ export default async function AdminPlacesPage({
                           <Edit className="w-3.5 h-3.5" /> Edit
                         </Link>
                         <a
-                          href={place.type === "BLOG" ? `/blog/${place.slug}` : `/place/${place.slug}`}
+                          href={place.type === "BLOG" ? getBlogHref(place.slug) : getPlaceHref(place.slug)}
                           target="_blank"
                           className="text-muted-foreground hover:text-secondary flex items-center gap-1 text-xs"
                         >

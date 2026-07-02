@@ -4,6 +4,7 @@ import PlaceCard from "@/components/places/PlaceCard";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Link from "next/link";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Hotels & Resorts in Hua Hin — Best Accommodation Guide",
@@ -22,6 +23,9 @@ export default async function HotelsPage({
     <>
       <Navbar />
       <main className="flex-1 max-w-7xl mx-auto px-4 md:px-8 py-10">
+        <div className="mb-6">
+          <Breadcrumbs crumbs={[{ label: "Hotels & Resorts", href: "/hotels" }]} />
+        </div>
         <div className="mb-8">
           <p className="text-xs font-bold uppercase tracking-widest text-primary mb-2">Accommodation</p>
           <h1 className="text-3xl md:text-4xl font-extrabold mb-3">Hotels & Resorts in Hua Hin</h1>

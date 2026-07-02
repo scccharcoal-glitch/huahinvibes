@@ -9,6 +9,7 @@ import {
   getProgrammaticSeoLocations,
   getProgrammaticSeoQueries,
 } from "@/lib/places";
+import { getBlogHref, getPlaceHref } from "@/lib/slug";
 
 
 const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL ?? "https://www.huahinvibes.com")
@@ -96,7 +97,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const placePages: MetadataRoute.Sitemap = places
     .filter((p) => p.type !== "BLOG")
     .map((place) => ({
-      url: `${baseUrl}/place/${place.slug}`,
+      url: `${baseUrl}${getPlaceHref(place.slug)}`,
       lastModified: place.updatedAt,
       changeFrequency: "weekly" as const,
       priority: 0.7,
@@ -106,7 +107,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const blogPages: MetadataRoute.Sitemap = places
     .filter((p) => p.type === "BLOG")
     .map((post) => ({
-      url: `${baseUrl}/blog/${post.slug}`,
+      url: `${baseUrl}${getBlogHref(post.slug)}`,
       lastModified: post.updatedAt,
       changeFrequency: "monthly" as const,
       priority: 0.75,

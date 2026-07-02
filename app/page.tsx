@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getFeaturedDirectoryPlaces, getLatestBlogPosts, getPlaces, BLOG_CATEGORIES } from "@/lib/places";
 import { getHomepageConfig } from "@/lib/site-config";
+import { getBlogHref } from "@/lib/slug";
 import PlaceCard from "@/components/places/PlaceCard";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -58,7 +59,7 @@ export default async function HomePage() {
               <Link href="/thailand-news" className="text-sm font-semibold text-primary hover:underline">View all →</Link>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <Link href={`/blog/${featuredNews.slug}`} className="lg:col-span-2 group block relative rounded-2xl overflow-hidden bg-accent min-h-[320px]">
+              <Link href={getBlogHref(featuredNews.slug)} className="lg:col-span-2 group block relative rounded-2xl overflow-hidden bg-accent min-h-[320px]">
                 {featuredNews.coverImage ? (
                   <SafeImage src={featuredNews.coverImage} alt={featuredNews.name} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="100vw" />
                 ) : (
@@ -76,7 +77,7 @@ export default async function HomePage() {
               </Link>
               <div className="flex flex-col gap-4">
                 {sideNews.map((item) => (
-                  <Link key={item.id} href={`/blog/${item.slug}`} className="group flex gap-3 hover:bg-accent/50 rounded-xl p-2 transition-colors">
+                  <Link key={item.id} href={getBlogHref(item.slug)} className="group flex gap-3 hover:bg-accent/50 rounded-xl p-2 transition-colors">
                     <div className="relative w-20 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-accent">
                       {item.coverImage ? (
                         <SafeImage src={item.coverImage} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform duration-200" sizes="80px" />
@@ -113,7 +114,7 @@ export default async function HomePage() {
                 {latestPosts.map((post) => {
                   const cat = BLOG_CATEGORIES.find((c) => c.value === post.category);
                   return (
-                    <Link key={post.id} href={`/blog/${post.slug}`} className="group block">
+                    <Link key={post.id} href={getBlogHref(post.slug)} className="group block">
                       <div className="relative h-48 rounded-2xl overflow-hidden mb-3 bg-accent">
                         {post.coverImage ? (
                           <SafeImage src={post.coverImage} alt={post.name} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="(max-width: 768px) 100vw, 33vw" />
@@ -151,7 +152,7 @@ export default async function HomePage() {
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   {items.map((item) => (
-                    <Link key={item.id} href={`/blog/${item.slug}`} className="group block">
+                    <Link key={item.id} href={getBlogHref(item.slug)} className="group block">
                       <div className="relative h-36 rounded-xl overflow-hidden bg-accent mb-2">
                         {item.coverImage ? (
                           <SafeImage src={item.coverImage} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform duration-200" sizes="(max-width: 640px) 50vw, 25vw" />

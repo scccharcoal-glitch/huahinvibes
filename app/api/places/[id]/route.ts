@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/admin-auth";
 import { submitPlaceToIndexNow } from "@/lib/indexnow";
+import { makeSlug } from "@/lib/slug";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -18,11 +19,21 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   try {
     const body = await req.json();
 
+    const nextSlug = makeSlug(body.slug || body.name, "place");
+    const existing = await prisma.place.findFirst({
+      where: { slug: nextSlug, NOT: { id } },
+      select: { id: true },
+    });
+
+    if (existing) {
+      return NextResponse.json({ error: "Slug already exists" }, { status: 409 });
+    }
+
     const place = await prisma.place.update({
       where: { id },
       data: {
         name: body.name,
-        slug: body.slug,
+        slug: nextSlug,
         type: body.type,
         status: body.status,
         featured: body.featured ?? false,
