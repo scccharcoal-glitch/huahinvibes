@@ -280,7 +280,7 @@ export default async function PlaceDetailPage({
                   rel="noopener noreferrer"
                   className="block text-center border-2 border-primary text-primary w-full py-2.5 rounded-xl text-sm font-bold hover:bg-primary hover:text-white transition-all"
                 >
-                  {place.type === "HOTEL" ? "Book Now" : "Reserve a Table"}
+                  {place.type === "HOTEL" ? "Check Latest Rates & Deals" : "Reserve a Table"}
                 </a>
               )}
 
