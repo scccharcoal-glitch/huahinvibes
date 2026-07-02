@@ -49,3 +49,6 @@ next-env.d.ts
 *.db-journal
 *.db-wal
 *.db-shm
+
+# Agoda partner import data (local only)
+prisma/agoda-hotels.json

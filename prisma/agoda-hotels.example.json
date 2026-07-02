@@ -1,0 +1,16 @@
+[
+  {
+    "hotel_id": "123456",
+    "hotel_name": "Example Hua Hin Beach Resort",
+    "address": "Hua Hin Beach, Hua Hin",
+    "city": "Hua Hin",
+    "latitude": 12.5683,
+    "longitude": 99.9577,
+    "star_rating": 4,
+    "review_score": 8.7,
+    "review_count": 1240,
+    "image_url": "https://example.com/hotel.jpg",
+    "url": "https://www.agoda.com/partners/partnersearch.aspx?...",
+    "overview": "Beachfront resort in Hua Hin with pool, sea views, and easy access to local restaurants."
+  }
+]

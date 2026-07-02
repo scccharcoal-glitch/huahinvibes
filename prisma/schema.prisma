@@ -25,6 +25,7 @@ model Place {
   lat         Float?
   lng         Float?
   googlePlaceId String?
+  agodaHotelId String? @unique
 
   cuisine     String?
   priceRange  String?

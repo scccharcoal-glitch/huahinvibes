@@ -95,6 +95,32 @@ GOOGLE_MAPS_API_KEY=
 app/api/google-places/route.ts
 ```
 
+## Agoda Hotel Import
+
+Agoda partner hotel data can be imported into the `Place` table as hotel drafts.
+
+1. Copy the example file:
+
+```bash
+cp prisma/agoda-hotels.example.json prisma/agoda-hotels.json
+```
+
+2. Paste the Agoda hotel export into `prisma/agoda-hotels.json`.
+
+3. Run the database migration once so hotels can store `agodaHotelId`:
+
+```bash
+npm run db:migrate
+```
+
+4. Import or update hotels:
+
+```bash
+npm run import:agoda:hotels
+```
+
+The importer uses `agodaHotelId` to prevent duplicate hotels. New Agoda hotels are saved as drafts first so they can be checked in the admin before publishing.
+
 ## Vercel Notes
 
 Recommended install command:
