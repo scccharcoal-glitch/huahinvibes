@@ -135,6 +135,7 @@ export default function HomepageConfigPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     fetch("/api/admin/homepage-config")
@@ -145,14 +146,21 @@ export default function HomepageConfigPage() {
 
   async function save() {
     setSaving(true);
-    await fetch("/api/admin/homepage-config", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(config),
-    });
-    setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
+    setError("");
+    try {
+      const res = await fetch("/api/admin/homepage-config", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(config),
+      });
+      if (!res.ok) throw new Error("Save failed. Please log in again and retry.");
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2500);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Save failed");
+    } finally {
+      setSaving(false);
+    }
   }
 
   function toggle(key: keyof Config) {
@@ -175,6 +183,7 @@ export default function HomepageConfigPage() {
             <h1 className="text-2xl font-extrabold">Homepage Sections</h1>
           </div>
           <p className="text-sm text-muted-foreground">เลือกว่าจะแสดง section ไหน และตั้งค่าแต่ละส่วน</p>
+          {error && <p className="text-sm text-red-600 mt-2">{error}</p>}
         </div>
         <Link href="/" target="_blank" className="text-xs text-primary hover:underline">
           ดูหน้าเว็บ →

@@ -16,6 +16,8 @@ const categories = [
   { href: "/attractions", icon: Compass, label: "Attractions", desc: "Beaches, temples, markets", color: "bg-amber-50 text-amber-700" },
 ];
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const cfg = await getHomepageConfig();
 
@@ -40,6 +42,7 @@ export default async function HomePage() {
 
   const featuredNews = newsRowsData[0]?.[0];
   const sideNews = newsRowsData[0]?.slice(1, 5) ?? [];
+  const featuredNewsLabel = cfg.newsRows[0]?.label ?? "Featured News in Thailand";
 
   return (
     <>
@@ -54,7 +57,7 @@ export default async function HomePage() {
                 <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">
                   <Newspaper className="w-3 h-3 inline mr-1" />Thailand
                 </p>
-                <h2 className="text-2xl font-bold">Featured News in Thailand</h2>
+                <h2 className="text-2xl font-bold">{featuredNewsLabel}</h2>
               </div>
               <Link href="/thailand-news" className="text-sm font-semibold text-primary hover:underline">View all →</Link>
             </div>
