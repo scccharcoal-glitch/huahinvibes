@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json();
   await saveHomepageConfig(body);
+  revalidatePath("/", "layout");
   revalidatePath("/");
   revalidatePath("/th");
   return NextResponse.json({ ok: true });

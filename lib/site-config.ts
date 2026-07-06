@@ -7,6 +7,11 @@ export type NewsRow = {
   limit: number;
 };
 
+export type SponsorLink = {
+  label: string;
+  url: string;
+};
+
 export type HomepageConfig = {
   showNews: boolean;
   showRealestate: boolean;
@@ -20,6 +25,7 @@ export type HomepageConfig = {
   featuredLimit: number;
   newsRows: NewsRow[];
   thRows: NewsRow[];
+  sponsorLinks: SponsorLink[];
 };
 
 const DEFAULT_NEWS_ROWS: NewsRow[] = [
@@ -44,11 +50,28 @@ const DEFAULTS: HomepageConfig = {
   featuredLimit: 6,
   newsRows: DEFAULT_NEWS_ROWS,
   thRows: DEFAULT_TH_ROWS,
+  sponsorLinks: [],
 };
 
 function parseRows(raw: string | undefined, fallback: NewsRow[]): NewsRow[] {
   if (!raw) return fallback;
   try { return JSON.parse(raw); } catch { return fallback; }
+}
+
+function parseSponsorLinks(raw: string | undefined): SponsorLink[] {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed
+      .map((item) => ({
+        label: String(item?.label ?? "").trim(),
+        url: String(item?.url ?? "").trim(),
+      }))
+      .filter((item) => item.label && item.url);
+  } catch {
+    return [];
+  }
 }
 
 export const getHomepageConfig = cache(async (): Promise<HomepageConfig> => {
@@ -70,6 +93,7 @@ export const getHomepageConfig = cache(async (): Promise<HomepageConfig> => {
       featuredLimit:   parseInt(map["hp_featured_limit"] ?? "6"),
       newsRows:        parseRows(map["hp_news_rows"], DEFAULT_NEWS_ROWS),
       thRows:          parseRows(map["hp_th_rows"],   DEFAULT_TH_ROWS),
+      sponsorLinks:    parseSponsorLinks(map["hp_sponsor_links"]),
     };
   } catch {
     return DEFAULTS;
@@ -90,6 +114,7 @@ export async function saveHomepageConfig(config: Partial<HomepageConfig>) {
   if (config.featuredLimit   !== undefined) updates.push({ key: "hp_featured_limit",   value: String(config.featuredLimit) });
   if (config.newsRows        !== undefined) updates.push({ key: "hp_news_rows",        value: JSON.stringify(config.newsRows) });
   if (config.thRows          !== undefined) updates.push({ key: "hp_th_rows",          value: JSON.stringify(config.thRows) });
+  if (config.sponsorLinks    !== undefined) updates.push({ key: "hp_sponsor_links",    value: JSON.stringify(config.sponsorLinks) });
 
   await Promise.all(
     updates.map((u) =>

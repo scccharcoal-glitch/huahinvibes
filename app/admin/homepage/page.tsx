@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { LayoutDashboard, Eye, EyeOff, Save, Loader2, CheckCircle, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
-import type { NewsRow } from "@/lib/site-config";
+import type { NewsRow, SponsorLink } from "@/lib/site-config";
 
 type Config = {
   showNews: boolean;
@@ -18,6 +18,7 @@ type Config = {
   featuredLimit: number;
   newsRows: NewsRow[];
   thRows: NewsRow[];
+  sponsorLinks: SponsorLink[];
 };
 
 const ALL_CATEGORIES = [
@@ -120,6 +121,80 @@ function RowEditor({
   );
 }
 
+function SponsorLinkEditor({
+  links,
+  onChange,
+}: {
+  links: SponsorLink[];
+  onChange: (links: SponsorLink[]) => void;
+}) {
+  function update(i: number, field: keyof SponsorLink, val: string) {
+    const next = links.map((link, idx) => idx === i ? { ...link, [field]: val } : link);
+    onChange(next);
+  }
+
+  function remove(i: number) {
+    onChange(links.filter((_, idx) => idx !== i));
+  }
+
+  function add() {
+    onChange([...links, { label: "", url: "" }]);
+  }
+
+  return (
+    <div className="p-4 rounded-xl border border-border bg-card space-y-3">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="font-semibold text-sm">Sponsor Links</p>
+          <p className="text-xs text-muted-foreground">แสดงใน footer จากซ้ายไปขวา คั่นด้วยเส้น | เหมือนตัวอย่าง</p>
+        </div>
+        <button
+          onClick={add}
+          className="flex items-center gap-1.5 rounded-full border border-primary px-3 py-1.5 text-xs font-semibold text-primary hover:bg-primary hover:text-white transition-colors"
+        >
+          <Plus className="w-3.5 h-3.5" /> เพิ่มลิงก์
+        </button>
+      </div>
+
+      <div className="space-y-3">
+        {links.length === 0 && (
+          <div className="rounded-xl border border-dashed border-border p-4 text-xs text-muted-foreground">
+            ยังไม่มี sponsor link กด “เพิ่มลิงก์” เพื่อเริ่มใส่ข้อมูล
+          </div>
+        )}
+        {links.map((link, i) => (
+          <div key={i} className="grid grid-cols-1 md:grid-cols-[1fr_1.3fr_auto] gap-3 p-3 rounded-xl border border-border bg-background">
+            <div>
+              <label className="text-xs text-muted-foreground mb-1 block">ข้อความลิงก์ Sponsor {i + 1}</label>
+              <input
+                value={link.label}
+                onChange={(e) => update(i, "label", e.target.value)}
+                className="w-full text-sm border border-border rounded-lg px-3 py-2 bg-background"
+                placeholder="เช่น Agoda Hotels | ดีลโรงแรมหัวหิน"
+              />
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground mb-1 block">URL Sponsor</label>
+              <input
+                value={link.url}
+                onChange={(e) => update(i, "url", e.target.value)}
+                className="w-full text-sm border border-border rounded-lg px-3 py-2 bg-background"
+                placeholder="https://..."
+              />
+            </div>
+            <button
+              onClick={() => remove(i)}
+              className="self-end rounded-lg border border-border px-3 py-2 text-sm font-semibold hover:border-red-300 hover:text-red-600 transition-colors"
+            >
+              ลบ
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function HomepageConfigPage() {
   const [config, setConfig] = useState<Config>({
     showNews: true, showRealestate: true, showBlog: true,
@@ -131,6 +206,7 @@ export default function HomepageConfigPage() {
       { category: "thailand-news-th", label: "ข่าวล่าสุด", limit: 4 },
       { category: "thailand-news", label: "Thailand News", limit: 4 },
     ],
+    sponsorLinks: [],
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -174,7 +250,7 @@ export default function HomepageConfigPage() {
   );
 
   return (
-    <div className="max-w-2xl mx-auto p-6 pb-20">
+    <div className="max-w-4xl mx-auto p-6 pb-20">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
@@ -294,6 +370,11 @@ export default function HomepageConfigPage() {
             </div>
           </div>
         )}
+
+        <SponsorLinkEditor
+          links={config.sponsorLinks}
+          onChange={(sponsorLinks) => setConfig((c) => ({ ...c, sponsorLinks }))}
+        />
       </div>
 
       {/* Save button */}
