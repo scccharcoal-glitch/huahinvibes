@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import { getHomepageConfig } from "@/lib/site-config";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -34,52 +35,27 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { customHeadHtml, customBodyHtml } = await getHomepageConfig();
+
   return (
     <html lang="en" className={`${jakarta.variable} h-full`}>
-      <head>
-        {/* Default Statcounter code for huahinvibes.com https://www.huahinvibes.com */}
-        <script
-          type="text/javascript"
-          dangerouslySetInnerHTML={{
-            __html: `
-var sc_project=13338058;
-var sc_invisible=1;
-var sc_security="4d0535cb";
-`,
-          }}
-        />
-        <script
-          type="text/javascript"
-          src="https://www.statcounter.com/counter/counter.js"
-          async
-        />
-      </head>
+      <head
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: customHeadHtml }}
+      />
       <body className="min-h-full flex flex-col">
         {children}
-        <noscript>
-          <div className="statcounter">
-            <a
-              title="Web Analytics"
-              href="https://statcounter.com/"
-              target="_blank"
-              rel="nofollow noopener noreferrer external"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                className="statcounter"
-                src="https://c.statcounter.com/13338058/0/4d0535cb/1/"
-                alt="Web Analytics"
-                referrerPolicy="no-referrer-when-downgrade"
-              />
-            </a>
-          </div>
-        </noscript>
-        {/* End of Statcounter Code */}
+        {customBodyHtml && (
+          <div
+            suppressHydrationWarning
+            dangerouslySetInnerHTML={{ __html: customBodyHtml }}
+          />
+        )}
       </body>
     </html>
   );

@@ -19,6 +19,8 @@ type Config = {
   newsRows: NewsRow[];
   thRows: NewsRow[];
   sponsorLinks: SponsorLink[];
+  customHeadHtml: string;
+  customBodyHtml: string;
 };
 
 const ALL_CATEGORIES = [
@@ -207,6 +209,8 @@ export default function HomepageConfigPage() {
       { category: "thailand-news", label: "Thailand News", limit: 4 },
     ],
     sponsorLinks: [],
+    customHeadHtml: "",
+    customBodyHtml: "",
   });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -375,6 +379,45 @@ export default function HomepageConfigPage() {
           links={config.sponsorLinks}
           onChange={(sponsorLinks) => setConfig((c) => ({ ...c, sponsorLinks }))}
         />
+
+        <div className="p-4 rounded-xl border border-border bg-card space-y-4">
+          <div>
+            <p className="font-semibold text-sm">Tracking / Custom HTML</p>
+            <p className="text-xs text-muted-foreground">
+              วางโค้ด Statcounter, Google Analytics, verification หรือ HTML อื่น ๆ ได้ที่นี่
+            </p>
+          </div>
+
+          <div>
+            <label className="text-xs text-muted-foreground mb-1 block">
+              HTML before &lt;/head&gt;
+            </label>
+            <textarea
+              value={config.customHeadHtml}
+              onChange={(e) => setConfig((c) => ({ ...c, customHeadHtml: e.target.value }))}
+              className="w-full min-h-44 font-mono text-xs border border-border rounded-lg px-3 py-2 bg-background"
+              placeholder={`<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXX"></script>`}
+              spellCheck={false}
+            />
+          </div>
+
+          <div>
+            <label className="text-xs text-muted-foreground mb-1 block">
+              HTML before &lt;/body&gt;
+            </label>
+            <textarea
+              value={config.customBodyHtml}
+              onChange={(e) => setConfig((c) => ({ ...c, customBodyHtml: e.target.value }))}
+              className="w-full min-h-36 font-mono text-xs border border-border rounded-lg px-3 py-2 bg-background"
+              placeholder="<noscript>...</noscript>"
+              spellCheck={false}
+            />
+          </div>
+
+          <p className="text-xs text-muted-foreground">
+            แนะนำให้ใส่เฉพาะโค้ดจากบริการที่เชื่อถือได้ เช่น Google, Statcounter หรือ Search Console
+          </p>
+        </div>
       </div>
 
       {/* Save button */}

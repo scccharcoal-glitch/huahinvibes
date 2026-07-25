@@ -26,6 +26,8 @@ export type HomepageConfig = {
   newsRows: NewsRow[];
   thRows: NewsRow[];
   sponsorLinks: SponsorLink[];
+  customHeadHtml: string;
+  customBodyHtml: string;
 };
 
 const DEFAULT_NEWS_ROWS: NewsRow[] = [
@@ -36,6 +38,25 @@ const DEFAULT_TH_ROWS: NewsRow[] = [
   { category: "thailand-news-th", label: "ข่าวล่าสุด", limit: 4 },
   { category: "thailand-news", label: "Thailand News", limit: 4 },
 ];
+
+const DEFAULT_CUSTOM_HEAD_HTML = `<!-- Default Statcounter code for huahinvibes.com
+https://www.huahinvibes.com -->
+<script type="text/javascript">
+var sc_project=13338058; 
+var sc_invisible=1; 
+var sc_security="4d0535cb"; 
+</script>
+<script type="text/javascript"
+src="https://www.statcounter.com/counter/counter.js"
+async></script>
+<!-- End of Statcounter Code -->`;
+
+const DEFAULT_CUSTOM_BODY_HTML = `<noscript><div class="statcounter"><a title="Web Analytics"
+href="https://statcounter.com/" target="_blank" rel="nofollow noopener noreferrer external"><img
+class="statcounter"
+src="https://c.statcounter.com/13338058/0/4d0535cb/1/"
+alt="Web Analytics"
+referrerPolicy="no-referrer-when-downgrade"></a></div></noscript>`;
 
 const DEFAULTS: HomepageConfig = {
   showNews: true,
@@ -51,6 +72,8 @@ const DEFAULTS: HomepageConfig = {
   newsRows: DEFAULT_NEWS_ROWS,
   thRows: DEFAULT_TH_ROWS,
   sponsorLinks: [],
+  customHeadHtml: DEFAULT_CUSTOM_HEAD_HTML,
+  customBodyHtml: DEFAULT_CUSTOM_BODY_HTML,
 };
 
 function parseRows(raw: string | undefined, fallback: NewsRow[]): NewsRow[] {
@@ -94,6 +117,8 @@ export const getHomepageConfig = cache(async (): Promise<HomepageConfig> => {
       newsRows:        parseRows(map["hp_news_rows"], DEFAULT_NEWS_ROWS),
       thRows:          parseRows(map["hp_th_rows"],   DEFAULT_TH_ROWS),
       sponsorLinks:    parseSponsorLinks(map["hp_sponsor_links"]),
+      customHeadHtml:  map["hp_custom_head_html"] ?? DEFAULTS.customHeadHtml,
+      customBodyHtml:  map["hp_custom_body_html"] ?? DEFAULTS.customBodyHtml,
     };
   } catch {
     return DEFAULTS;
@@ -115,6 +140,8 @@ export async function saveHomepageConfig(config: Partial<HomepageConfig>) {
   if (config.newsRows        !== undefined) updates.push({ key: "hp_news_rows",        value: JSON.stringify(config.newsRows) });
   if (config.thRows          !== undefined) updates.push({ key: "hp_th_rows",          value: JSON.stringify(config.thRows) });
   if (config.sponsorLinks    !== undefined) updates.push({ key: "hp_sponsor_links",    value: JSON.stringify(config.sponsorLinks) });
+  if (config.customHeadHtml  !== undefined) updates.push({ key: "hp_custom_head_html", value: config.customHeadHtml });
+  if (config.customBodyHtml  !== undefined) updates.push({ key: "hp_custom_body_html", value: config.customBodyHtml });
 
   await Promise.all(
     updates.map((u) =>
