@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -41,7 +42,39 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${jakarta.variable} h-full`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <Script id="statcounter-config" strategy="afterInteractive">
+          {`
+            var sc_project=13338058;
+            var sc_invisible=1;
+            var sc_security="4d0535cb";
+          `}
+        </Script>
+        <Script
+          id="statcounter-script"
+          src="https://www.statcounter.com/counter/counter.js"
+          strategy="afterInteractive"
+        />
+        <noscript>
+          <div className="statcounter">
+            <a
+              title="Web Analytics Made Easy - Statcounter"
+              href="https://statcounter.com/"
+              target="_blank"
+              rel="nofollow noopener noreferrer external"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                className="statcounter"
+                src="https://c.statcounter.com/13338058/0/4d0535cb/1/"
+                alt="Web Analytics Made Easy - Statcounter"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </a>
+          </div>
+        </noscript>
+      </body>
     </html>
   );
 }
