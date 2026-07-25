@@ -41,29 +41,30 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${jakarta.variable} h-full`}>
-      <body className="min-h-full flex flex-col">
-        {children}
+      <head>
+        {/* Default Statcounter code for huahinvibes.com https://www.huahinvibes.com */}
         <script
-          id="statcounter-config"
           type="text/javascript"
           dangerouslySetInnerHTML={{
             __html: `
-            var sc_project=13338058;
-            var sc_invisible=1;
-            var sc_security="4d0535cb";
-          `,
+var sc_project=13338058;
+var sc_invisible=1;
+var sc_security="4d0535cb";
+`,
           }}
         />
         <script
-          id="statcounter-script"
           type="text/javascript"
           src="https://www.statcounter.com/counter/counter.js"
           async
         />
+      </head>
+      <body className="min-h-full flex flex-col">
+        {children}
         <noscript>
           <div className="statcounter">
             <a
-              title="Web Analytics Made Easy - Statcounter"
+              title="Web Analytics"
               href="https://statcounter.com/"
               target="_blank"
               rel="nofollow noopener noreferrer external"
@@ -72,12 +73,13 @@ export default function RootLayout({
               <img
                 className="statcounter"
                 src="https://c.statcounter.com/13338058/0/4d0535cb/1/"
-                alt="Web Analytics Made Easy - Statcounter"
+                alt="Web Analytics"
                 referrerPolicy="no-referrer-when-downgrade"
               />
             </a>
           </div>
         </noscript>
+        {/* End of Statcounter Code */}
       </body>
     </html>
   );
